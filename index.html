@@ -327,6 +327,25 @@
     border-radius:1px;box-shadow:0 0 8px rgba(0,0,0,0.5)}
   .modal-range-labels{display:flex;justify-content:space-between;margin-top:6px;
     font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted)}
+
+  /* Volume Profile in modal */
+  .modal-vp{padding:14px 22px 18px;border-bottom:1px solid var(--border-soft)}
+  .modal-vp-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+  .modal-vp-title{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);
+    text-transform:uppercase;letter-spacing:0.05em;font-weight:600}
+  .modal-vp-meta{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted)}
+  .modal-vp-chart{display:flex;flex-direction:column;gap:1px;font-family:'JetBrains Mono',monospace}
+  .modal-vp-row{display:grid;grid-template-columns:55px 1fr 50px;align-items:center;gap:8px;
+    height:13px;font-size:10px}
+  .modal-vp-price{color:var(--text-muted);text-align:right}
+  .modal-vp-bar{position:relative;height:10px;background:var(--bg-input);border-radius:2px;overflow:hidden}
+  .modal-vp-bar-fill{position:absolute;left:0;top:0;bottom:0;
+    background:var(--accent);opacity:0.6;border-radius:2px;transition:width 0.4s ease}
+  .modal-vp-row.poc .modal-vp-bar-fill{background:var(--warn);opacity:0.9}
+  .modal-vp-row.current .modal-vp-bar-fill{background:var(--pos);opacity:0.85}
+  .modal-vp-row.current .modal-vp-price{color:var(--pos);font-weight:700}
+  .modal-vp-row.poc .modal-vp-price{color:var(--warn);font-weight:700}
+  .modal-vp-vol{color:var(--text-dim);text-align:right;font-size:9.5px}
   @keyframes flashUp {
     0%   { background: rgba(38,166,154,0.45); }
     100% { background: transparent; }
@@ -662,6 +681,20 @@
   .wl-vol.high{background:var(--pos-soft);color:var(--pos);border:1px solid rgba(38,166,154,0.3)}
   .wl-vol.norm{background:rgba(120,123,134,0.10);color:var(--text-muted);border:1px solid rgba(120,123,134,0.2)}
 
+  /* RSI pills */
+  .rsi-pill{display:inline-block;padding:2px 8px;border-radius:4px;
+    font-size:10.5px;font-weight:600;font-family:'JetBrains Mono',monospace}
+  .rsi-pill.rsi-overbought{background:var(--neg-soft);color:var(--neg);border:1px solid rgba(239,83,80,0.35)}
+  .rsi-pill.rsi-oversold{background:var(--pos-soft);color:var(--pos);border:1px solid rgba(38,166,154,0.35)}
+  .rsi-pill.rsi-neutral{background:rgba(120,123,134,0.10);color:var(--text-muted);border:1px solid rgba(120,123,134,0.2)}
+
+  /* Beta pills */
+  .beta-pill{display:inline-block;padding:2px 8px;border-radius:4px;
+    font-size:10.5px;font-weight:600;font-family:'JetBrains Mono',monospace}
+  .beta-pill.beta-low{background:var(--accent-soft);color:var(--accent-bright);border:1px solid rgba(41,98,255,0.3)}
+  .beta-pill.beta-mid{background:rgba(120,123,134,0.10);color:var(--text-muted);border:1px solid rgba(120,123,134,0.2)}
+  .beta-pill.beta-high{background:var(--warn-soft);color:var(--warn);border:1px solid rgba(255,152,0,0.35)}
+
   /* KPI strip for watchlist */
   .wl-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
   .wl-kpi{padding:14px 16px;background:var(--bg-panel);
@@ -981,8 +1014,9 @@
           <th data-sort="m1" data-tf-col="1M">1M %</th>
           <th data-sort="ytd" data-tf-col="YTD">YTD %</th>
           <th>Trend</th>
+          <th data-sort="rsi">RSI 14</th>
+          <th data-sort="beta">β SPY</th>
           <th data-sort="hi">From 52W High</th>
-          <th data-sort="lo">From 52W Low</th>
           <th>Volume</th>
           <th>MA Cross</th>
         </tr></thead>
@@ -1080,6 +1114,13 @@
     </div>
     <div class="modal-spark">
       <svg id="modal-spark-svg" viewBox="0 0 600 120" preserveAspectRatio="none"></svg>
+    </div>
+    <div class="modal-vp" id="modal-vp" style="display:none">
+      <div class="modal-vp-head">
+        <div class="modal-vp-title">Volume Profile</div>
+        <div class="modal-vp-meta" id="modal-vp-meta">—</div>
+      </div>
+      <div class="modal-vp-chart" id="modal-vp-chart"></div>
     </div>
     <div class="modal-range-bar" id="modal-range-bar" style="display:none">
       <div style="font-family:'Inter',sans-serif;font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;font-weight:500">52 Week Range</div>
@@ -1323,19 +1364,28 @@ const WATCHLIST_DEMO = [
 
 // generate demo sparkline history (30 days each)
 const WATCHLIST_HISTORY_DEMO = {};
+const WATCHLIST_HISTORY_FULL_DEMO = {};
 (function genWLHistory(){
   for (const stock of WATCHLIST_DEMO){
     const arr = [];
+    const fullArr = [];
     let p = stock.price * (1 - stock.m1/100); // start from 1m ago
     const drift = (stock.price - p) / 30;
     const vol = stock.price * 0.018;
+    const baseVol = stock.avgVol || 10000000;
+    const today = new Date();
     for (let i=0; i<30; i++){
       const noise = (Math.random()-0.5) * vol;
       p = p + drift + noise;
       arr.push(p);
+      const date = new Date(today.getTime() - (29-i) * 86400000);
+      const volume = Math.floor(baseVol * (0.6 + Math.random() * 0.8));
+      fullArr.push({ date, close: p, volume });
     }
-    arr[arr.length-1] = stock.price; // anchor end to current
+    arr[arr.length-1] = stock.price;
+    if (fullArr.length) fullArr[fullArr.length-1].close = stock.price;
     WATCHLIST_HISTORY_DEMO[stock.sym] = arr;
+    WATCHLIST_HISTORY_FULL_DEMO[stock.sym] = fullArr;
   }
 })();
 // generate fake demo history (180 trading days for each index)
@@ -1374,6 +1424,7 @@ const state = {
   stocks:  DEMO.stocks.slice(),
   watchlist: WATCHLIST_DEMO.slice(),
   watchlistHistory: {...WATCHLIST_HISTORY_DEMO},
+  watchlistHistoryFull: {...WATCHLIST_HISTORY_FULL_DEMO},  // sym -> [{date, close, volume?}]
   alerts: [],
   live: false,
   lastUpdate: null,
@@ -1662,34 +1713,95 @@ async function loadLive(){
   }
 
   // --- parse watchlist_history tab ---
-  // Layout: each symbol gets 3 columns (Date, Close, blank), 12 symbols = 36 cols
-  // Row 1: SYMBOL ticker labels at cols 0,3,6,9,...
-  // Row 2: header (Date, Close)
-  // Row 3+: data
+  // Robust detection: scan row 2 (first data row) for cells that look like dates.
+  // Each "Date column" starts a block. This works regardless of locale (Hebrew/English headers).
+  // Block layout: [Date, Close] or [Date, Close, Volume]
   if (wlHistRows && wlHistRows.length > 2){
     const series = {};
+    const fullSeries = {};
     const isDDMM = detectDDMM(wlHistRows, 0, 2);
-    // discover symbols from row 0
     const headerRow = wlHistRows[0] || [];
-    for (let col = 0; col < headerRow.length; col += 3){
-      const sym = (headerRow[col]||"").trim().toUpperCase();
-      if (!sym) continue;
+    const subHeaderRow = wlHistRows[1] || [];
+    const firstDataRow = wlHistRows[2] || [];
+
+    // Find columns that contain valid dates in the first data row
+    const blockStarts = [];
+    for (let c = 0; c < firstDataRow.length; c++){
+      const val = (firstDataRow[c]||"").toString().trim();
+      if (!val) continue;
+      const d = parseHistDate(val, isDDMM);
+      if (d) blockStarts.push(c);
+    }
+
+    // Detect Volume by checking if column+2 of first block is numeric in row 2
+    // (Close is always col+1 — numeric. Volume would be col+2 — large numeric.)
+    let hasVolume = false;
+    if (blockStarts.length > 0){
+      const c = blockStarts[0];
+      const probe = num((firstDataRow[c+2]||"").toString().trim());
+      // Volume values are typically > 10000 (whole shares); close prices rarely are
+      if (probe !== null && probe > 1000) hasVolume = true;
+    }
+
+    // Build blocks: each block has a column and a symbol (from row 0 if available)
+    let blocks;
+    if (blockStarts.length > 0) {
+      blocks = blockStarts.map(col => {
+        let raw = (headerRow[col]||"").toString().trim();
+        // gviz CSV sometimes merges row 0 + row 1 into one header cell.
+        // Result: "NVDA Date" instead of "NVDA". Strip trailing "Date" / "תאריך" / etc.
+        // The symbol is always the first whitespace-separated token (uppercase letters/dots).
+        if (raw){
+          const m = raw.match(/^([A-Z][A-Z0-9.\-]*)/i);
+          if (m) raw = m[1];
+        }
+        return { col, sym: raw.toUpperCase() };
+      }).filter(b => b.sym);
+    } else {
+      // Fallback: row 0 has symbols at irregular positions
+      blocks = [];
+      for (let c = 0; c < headerRow.length; c++){
+        let raw = (headerRow[c]||"").toString().trim();
+        if (!raw) continue;
+        const m = raw.match(/^([A-Z][A-Z0-9.\-]*)/i);
+        if (m) raw = m[1];
+        blocks.push({ col: c, sym: raw.toUpperCase() });
+      }
+    }
+
+    for (const { sym, col } of blocks){
       const arr = [];
       for (let i = 2; i < wlHistRows.length; i++){
         const r = wlHistRows[i];
-        const dStr = (r[col]||"").trim();
-        const cStr = (r[col+1]||"").trim();
+        const dStr = (r[col]||"").toString().trim();
+        const cStr = (r[col+1]||"").toString().trim();
         if (!dStr || !cStr) continue;
         const close = num(cStr);
         const d = parseHistDate(dStr, isDDMM);
-        if (d && close !== null) arr.push({date:d, close});
+        if (!d || close === null) continue;
+        const point = { date: d, close };
+        if (hasVolume) {
+          const vStr = (r[col+2]||"").toString().trim();
+          if (vStr){
+            const v = num(vStr);
+            if (v !== null) point.volume = v;
+          }
+        }
+        arr.push(point);
       }
       arr.sort((a,b) => a.date - b.date);
-      // Take just last 30 days for sparkline
-      const closes = arr.slice(-30).map(p => p.close);
-      if (closes.length) series[sym] = closes;
+      if (arr.length){
+        fullSeries[sym] = arr;
+        series[sym] = arr.slice(-30).map(p => p.close);
+      }
     }
-    if (Object.keys(series).length) state.watchlistHistory = series;
+    if (Object.keys(series).length) {
+      state.watchlistHistory = series;
+      state.watchlistHistoryFull = fullSeries;
+      console.log(`[watchlist_history] parsed ${Object.keys(series).length} symbols (${blockStarts.length} date blocks via row-2 detection, hasVolume=${hasVolume})`);
+    } else {
+      console.warn("[watchlist_history] no series parsed - blockStarts:", blockStarts, "syms in row 0:", headerRow.filter(c => (c||"").toString().trim()));
+    }
   }
 
   // --- parse alerts tab ---
@@ -2529,9 +2641,25 @@ function renderWatchlist(){
     return dir === "asc" ? av - bv : bv - av;
   });
 
+  // Compute Beta and RSI for each symbol from history
+  const spyHist = state.history && state.history.SPY ? state.history.SPY.map(p => p.close) : null;
+  for (const s of wl){
+    const hist = state.watchlistHistory[s.sym];
+    if (hist && hist.length > 15) {
+      s.rsi = computeRSI(hist);
+      if (spyHist && spyHist.length > 15) {
+        s.beta = computeBeta(hist, spyHist);
+      } else {
+        s.beta = null;
+      }
+    } else {
+      s.rsi = null;
+      s.beta = null;
+    }
+  }
+
   tbody.innerHTML = wl.map(s => {
     const fromHi = (s.price != null && s.hi52 != null) ? ((s.price/s.hi52 - 1) * 100) : null;
-    const fromLo = (s.price != null && s.lo52 != null) ? ((s.price/s.lo52 - 1) * 100) : null;
 
     let cross = "neutral", crossLbl = "—";
     if (s.ma50 != null && s.ma200 != null) {
@@ -2552,7 +2680,25 @@ function renderWatchlist(){
     const closes = state.watchlistHistory[s.sym];
     const spark = makeTrendSparkline(closes);
 
-    // Build pct cells with primary/secondary classes
+    // RSI cell
+    let rsiCell = `<td class="nul">—</td>`;
+    if (s.rsi != null && !isNaN(s.rsi)) {
+      let rsiCls = "rsi-neutral";
+      let rsiLbl = "";
+      if (s.rsi >= 70) { rsiCls = "rsi-overbought"; rsiLbl = "OB"; }
+      else if (s.rsi <= 30) { rsiCls = "rsi-oversold"; rsiLbl = "OS"; }
+      rsiCell = `<td><span class="rsi-pill ${rsiCls}">${s.rsi.toFixed(1)}${rsiLbl ? ' · '+rsiLbl : ''}</span></td>`;
+    }
+
+    // Beta cell
+    let betaCell = `<td class="nul">—</td>`;
+    if (s.beta != null && !isNaN(s.beta)) {
+      let betaCls = "beta-mid";
+      if (s.beta < 0.7) betaCls = "beta-low";
+      else if (s.beta > 1.3) betaCls = "beta-high";
+      betaCell = `<td><span class="beta-pill ${betaCls}">${s.beta.toFixed(2)}</span></td>`;
+    }
+
     const pcCellTf = (v, tf) => {
       const tfCls = tf === state.wlPrimaryTf ? "tf-primary" : "tf-secondary";
       if (v == null || isNaN(v)) return `<td class="nul ${tfCls}">—</td>`;
@@ -2569,8 +2715,9 @@ function renderWatchlist(){
       ${pcCellTf(s.m1, "1M")}
       ${pcCellTf(s.ytd, "YTD")}
       <td>${spark}</td>
+      ${rsiCell}
+      ${betaCell}
       <td><span class="${fromHi != null && fromHi >= -3 ? 'pos' : 'neg'}" style="${fromHi != null && fromHi >= -3 ? '' : 'color:var(--muted)'}">${fromHi != null ? fromHi.toFixed(2)+'%' : '—'}</span></td>
-      <td><span class="pos" style="color:var(--lime)">${fromLo != null ? '+'+fromLo.toFixed(1)+'%' : '—'}</span></td>
       <td>${volTag}</td>
       <td><span class="wl-cross ${cross}">${crossLbl}</span></td>
     </tr>`;
@@ -2734,8 +2881,109 @@ function renderScannerResults(){
 function renderScanner(){ renderScannerChips(); renderScannerResults(); }
 
 /* ============================================================
-   STOCK DETAIL MODAL
+   TECHNICAL INDICATORS — Beta, RSI, Volume Profile
    ============================================================ */
+
+// Convert array of close prices to daily returns
+function toReturns(closes){
+  if (!closes || closes.length < 2) return [];
+  const r = [];
+  for (let i = 1; i < closes.length; i++){
+    r.push((closes[i] - closes[i-1]) / closes[i-1]);
+  }
+  return r;
+}
+
+// Compute Beta of stock returns vs SPY returns
+// Beta = Cov(stock, market) / Var(market)
+function computeBeta(stockCloses, spyCloses){
+  if (!stockCloses || !spyCloses) return null;
+  // Align by length — use the shorter of the two
+  const n = Math.min(stockCloses.length, spyCloses.length);
+  if (n < 20) return null; // need enough data
+  const s = stockCloses.slice(-n);
+  const m = spyCloses.slice(-n);
+  const sR = toReturns(s);
+  const mR = toReturns(m);
+  if (sR.length < 15) return null;
+
+  const meanS = sR.reduce((a,b)=>a+b,0) / sR.length;
+  const meanM = mR.reduce((a,b)=>a+b,0) / mR.length;
+  let cov = 0, varM = 0;
+  for (let i = 0; i < sR.length; i++){
+    cov += (sR[i] - meanS) * (mR[i] - meanM);
+    varM += (mR[i] - meanM) ** 2;
+  }
+  cov /= sR.length;
+  varM /= mR.length;
+  if (varM === 0) return null;
+  return cov / varM;
+}
+
+// Compute RSI 14 using Wilder's smoothing
+function computeRSI(closes, period = 14){
+  if (!closes || closes.length < period + 1) return null;
+  let gains = 0, losses = 0;
+  // Initial averages over first `period` periods
+  for (let i = 1; i <= period; i++){
+    const diff = closes[i] - closes[i-1];
+    if (diff > 0) gains += diff;
+    else losses -= diff;
+  }
+  let avgGain = gains / period;
+  let avgLoss = losses / period;
+  // Wilder smoothing for the rest
+  for (let i = period + 1; i < closes.length; i++){
+    const diff = closes[i] - closes[i-1];
+    const gain = diff > 0 ? diff : 0;
+    const loss = diff < 0 ? -diff : 0;
+    avgGain = (avgGain * (period - 1) + gain) / period;
+    avgLoss = (avgLoss * (period - 1) + loss) / period;
+  }
+  if (avgLoss === 0) return 100;
+  const rs = avgGain / avgLoss;
+  return 100 - (100 / (1 + rs));
+}
+
+// Compute Volume Profile: bin price range into N buckets, sum volume per bucket
+function computeVolumeProfile(history, bins = 20){
+  if (!history || history.length < 2) return null;
+  const withVol = history.filter(p => p.volume != null && p.volume > 0);
+  if (withVol.length < 5) return null;
+
+  const prices = withVol.map(p => p.close);
+  const minP = Math.min(...prices);
+  const maxP = Math.max(...prices);
+  if (maxP <= minP) return null;
+  const binSize = (maxP - minP) / bins;
+  const buckets = new Array(bins).fill(0).map((_, i) => ({
+    pLow: minP + i * binSize,
+    pHigh: minP + (i+1) * binSize,
+    pMid: minP + (i + 0.5) * binSize,
+    vol: 0,
+    days: 0
+  }));
+  for (const p of withVol){
+    let idx = Math.floor((p.close - minP) / binSize);
+    if (idx >= bins) idx = bins - 1;
+    if (idx < 0) idx = 0;
+    buckets[idx].vol += p.volume;
+    buckets[idx].days += 1;
+  }
+  const maxVol = Math.max(...buckets.map(b => b.vol));
+  // POC = Point of Control: bin with highest volume
+  const pocIdx = buckets.findIndex(b => b.vol === maxVol);
+  return {
+    buckets,
+    minPrice: minP,
+    maxPrice: maxP,
+    maxVol,
+    pocPrice: pocIdx >= 0 ? buckets[pocIdx].pMid : null,
+    totalVol: buckets.reduce((s,b) => s + b.vol, 0)
+  };
+}
+
+
 
 // Aggregate everything we know about a symbol
 function getSymbolInfo(sym){
@@ -2872,7 +3120,68 @@ function openStockModal(sym){
   }
   if (info.sector) addStat("Sector", info.sector);
 
+  // Compute RSI and Beta from history if available
+  const histFull = state.watchlistHistoryFull && state.watchlistHistoryFull[info.sym];
+  const histCloses = state.watchlistHistory && state.watchlistHistory[info.sym];
+  if (histCloses && histCloses.length > 15) {
+    const rsi = computeRSI(histCloses);
+    if (rsi != null) {
+      let label = rsi >= 70 ? "Overbought" : rsi <= 30 ? "Oversold" : "Neutral";
+      let cls = rsi >= 70 ? "neg" : rsi <= 30 ? "pos" : "muted";
+      addStat("RSI 14", `${rsi.toFixed(1)} · ${label}`, cls);
+    }
+    const spyHist = state.history && state.history.SPY ? state.history.SPY.map(p => p.close) : null;
+    if (spyHist && spyHist.length > 15) {
+      const beta = computeBeta(histCloses, spyHist);
+      if (beta != null) {
+        let label = beta < 0.7 ? "Defensive" : beta > 1.3 ? "Aggressive" : "Market-like";
+        let cls = beta > 1.3 ? "neg" : beta < 0.7 ? "pos" : "muted";
+        addStat("β vs SPY", `${beta.toFixed(2)} · ${label}`, cls);
+      }
+    }
+  }
+
   grid.innerHTML = stats.length ? stats.join("") : `<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);font-family:'Inter',sans-serif;font-size:12px;padding:18px">No additional data available</div>`;
+
+  // Volume Profile (if we have full history with volumes)
+  const vpEl = document.getElementById("modal-vp");
+  if (histFull && histFull.length > 5) {
+    const vp = computeVolumeProfile(histFull, 16);
+    if (vp && vp.maxVol > 0) {
+      vpEl.style.display = "block";
+      const meta = document.getElementById("modal-vp-meta");
+      if (meta) {
+        const pocStr = vp.pocPrice != null ? `POC: $${vp.pocPrice.toFixed(2)}` : '';
+        meta.textContent = `${histFull.length} sessions · ${pocStr}`;
+      }
+      const chart = document.getElementById("modal-vp-chart");
+      // Display from highest price (top) to lowest (bottom) - reverse buckets
+      const rows = [];
+      for (let i = vp.buckets.length - 1; i >= 0; i--) {
+        const b = vp.buckets[i];
+        const widthPct = (b.vol / vp.maxVol) * 100;
+        let rowCls = "";
+        if (b.vol === vp.maxVol) rowCls = "poc";
+        if (info.price != null && info.price >= b.pLow && info.price < b.pHigh) {
+          rowCls = "current";
+        }
+        const volK = b.vol > 1e9 ? (b.vol/1e9).toFixed(1)+'B'
+                   : b.vol > 1e6 ? (b.vol/1e6).toFixed(1)+'M'
+                   : b.vol > 1e3 ? (b.vol/1e3).toFixed(0)+'K'
+                   : b.vol.toFixed(0);
+        rows.push(`<div class="modal-vp-row ${rowCls}">
+          <div class="modal-vp-price">$${b.pMid.toFixed(2)}</div>
+          <div class="modal-vp-bar"><div class="modal-vp-bar-fill" style="width:${widthPct.toFixed(1)}%"></div></div>
+          <div class="modal-vp-vol">${b.days > 0 ? volK : ''}</div>
+        </div>`);
+      }
+      chart.innerHTML = rows.join("");
+    } else {
+      vpEl.style.display = "none";
+    }
+  } else {
+    vpEl.style.display = "none";
+  }
 
   // External links
   document.getElementById("modal-tv-link").href = `https://www.tradingview.com/symbols/${info.sym}/`;
