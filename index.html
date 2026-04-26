@@ -180,6 +180,15 @@
     --dim:var(--text-dim);
   }
   *{box-sizing:border-box;margin:0;padding:0}
+
+  /* Custom scrollbars throughout the app */
+  *{scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:4px;
+    border:2px solid var(--bg-app);transition:background 0.15s}
+  ::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+  ::-webkit-scrollbar-corner{background:transparent}
   html,body{background:var(--bg-app);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;font-feature-settings:"cv02","cv03","cv04","cv11"}
   body{
     padding:20px;
@@ -263,7 +272,130 @@
     font-family:'JetBrains Mono',monospace;letter-spacing:0;line-height:1.4}
   .tab-badge.show{display:inline-block}
 
-  /* === STOCK DETAIL MODAL === */
+  /* === SETUP SCREEN === */
+  .setup-screen{position:fixed;inset:0;background:var(--bg-app);z-index:9000;
+    display:none;align-items:center;justify-content:center;padding:20px;overflow:auto}
+  .setup-screen.show{display:flex}
+  .setup-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;
+    width:min(540px,100%);padding:28px 32px;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;gap:18px}
+  .setup-brand{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+  .setup-logo{width:36px;height:36px;border-radius:8px;
+    background:linear-gradient(135deg,var(--accent) 0%,var(--accent-bright) 100%);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:700;font-size:18px;letter-spacing:-0.02em;flex-shrink:0}
+  .setup-brand h1{font-size:18px;font-weight:600;color:var(--text-bright);letter-spacing:-0.01em;line-height:1.2}
+  .setup-brand .accent{color:var(--accent-bright);font-weight:500}
+  .setup-tagline{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted);letter-spacing:0.1em;margin-top:4px;font-weight:500}
+  .setup-h{font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--text-bright);
+    margin-top:6px;margin-bottom:-6px;letter-spacing:-0.005em}
+  .setup-desc{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-muted);line-height:1.55}
+  .setup-desc code{background:var(--bg-input);color:var(--accent-bright);padding:1px 6px;
+    border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;border:1px solid var(--border)}
+  .setup-step{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;
+    background:var(--bg-input);border:1px solid var(--border);border-radius:8px}
+  .setup-step-num{flex-shrink:0;width:24px;height:24px;border-radius:50%;
+    background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700}
+  .setup-step-body{flex:1;font-family:'Inter',sans-serif;font-size:13px;color:var(--text);line-height:1.55}
+  .setup-step-body strong{color:var(--text-bright);font-weight:600}
+  .setup-step-action{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+  .setup-btn{padding:9px 16px;background:var(--accent);color:#fff;border:0;border-radius:6px;
+    font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;
+    transition:background 0.12s;text-decoration:none;display:inline-flex;align-items:center;gap:7px;letter-spacing:0.01em}
+  .setup-btn:hover{background:var(--accent-bright)}
+  .setup-btn.secondary{background:transparent;color:var(--text);border:1px solid var(--border)}
+  .setup-btn.secondary:hover{color:var(--text-bright);border-color:var(--border-strong);background:var(--bg-panel-hover)}
+  .setup-btn.demo{background:transparent;color:var(--text-muted);border:1px solid var(--border)}
+  .setup-btn.demo:hover{color:var(--text);border-color:var(--border-strong)}
+
+  .setup-input-row{display:flex;gap:8px;align-items:stretch;margin-top:8px}
+  .setup-input{flex:1;padding:9px 12px;background:var(--bg-panel);border:1px solid var(--border);
+    border-radius:6px;color:var(--text-bright);font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    transition:border-color 0.12s;outline:none;font-weight:500;min-width:0}
+  .setup-input:focus{border-color:var(--accent)}
+  .setup-input::placeholder{color:var(--text-dim)}
+
+  .setup-error{padding:10px 14px;background:var(--neg-soft);border:1px solid rgba(239,83,80,0.35);
+    border-radius:6px;color:var(--neg);font-family:'Inter',sans-serif;font-size:12px;display:none;
+    align-items:center;gap:8px}
+  .setup-error.show{display:flex}
+  .setup-error::before{content:"⚠";font-size:14px;flex-shrink:0}
+
+  .setup-divider{display:flex;align-items:center;gap:12px;margin:6px 0;
+    font-family:'Inter',sans-serif;font-size:11px;color:var(--text-dim);letter-spacing:0.05em;text-transform:uppercase}
+  .setup-divider::before,.setup-divider::after{content:"";flex:1;height:1px;background:var(--border-soft)}
+
+  .setup-footer{display:flex;justify-content:space-between;align-items:center;
+    margin-top:6px;padding-top:14px;border-top:1px solid var(--border-soft);
+    font-family:'Inter',sans-serif;font-size:11.5px;color:var(--text-dim);flex-wrap:wrap;gap:8px}
+  .setup-footer a{color:var(--text-muted);text-decoration:none}
+  .setup-footer a:hover{color:var(--text-bright)}
+
+  /* Settings button in header */
+  .header-btn{padding:5px 10px;background:var(--bg-input);border:1px solid var(--border);border-radius:6px;
+    color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;font-size:11px;
+    transition:all 0.15s;font-weight:500;letter-spacing:0.02em;display:inline-flex;align-items:center;gap:6px}
+  .header-btn:hover{color:var(--text-bright);border-color:var(--border-strong)}
+  .header-btn .icon{font-size:13px;line-height:1}
+  .pf-empty{padding:48px 24px;text-align:center;background:var(--bg-panel);border:1px dashed var(--border);
+    border-radius:8px;color:var(--text-muted);font-family:'Inter',sans-serif;font-size:13px;display:flex;flex-direction:column;gap:10px;align-items:center}
+  .pf-empty .pf-empty-icon{font-size:32px;opacity:0.4}
+  .pf-empty code{background:var(--bg-input);color:var(--accent-bright);padding:2px 8px;border-radius:4px;
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;border:1px solid var(--border)}
+
+  .pf-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .pf-card{padding:14px 16px;background:var(--bg-panel);border:1px solid var(--border);
+    border-radius:8px;position:relative;overflow:hidden;transition:border-color 0.15s}
+  .pf-card:hover{border-color:var(--border-strong)}
+  .pf-card.green::before,.pf-card.red::before,.pf-card.blue::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+  .pf-card.green::before{background:var(--pos)}
+  .pf-card.red::before{background:var(--neg)}
+  .pf-card.blue::before{background:var(--accent)}
+  .pf-card-lbl{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);font-weight:500}
+  .pf-card-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;margin-top:4px;line-height:1.1;letter-spacing:-0.02em;color:var(--text-bright)}
+  .pf-card-val.pos{color:var(--pos)}
+  .pf-card-val.neg{color:var(--neg)}
+  .pf-card-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-top:3px}
+
+  .pf-table{width:100%}
+  .pf-table thead th{background:var(--bg-deep);color:var(--text-muted);font-weight:500;font-size:10.5px;
+    letter-spacing:0.02em;text-align:right;padding:10px 12px;border-bottom:1px solid var(--border);
+    font-family:'Inter',sans-serif}
+  .pf-table thead th:first-child,.pf-table thead th:nth-child(2){text-align:left}
+  .pf-table tbody td{padding:11px 12px;text-align:right;border-bottom:1px solid var(--border-soft);
+    font-variant-numeric:tabular-nums;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .pf-table tbody td:first-child,.pf-table tbody td:nth-child(2){text-align:left}
+  .pf-table tbody tr:last-child td{border-bottom:0}
+  .pf-table tbody tr:hover td{background:var(--bg-panel-hover)}
+  .pf-table tfoot td{padding:11px 12px;font-family:'JetBrains Mono',monospace;font-size:12px;
+    text-align:right;border-top:2px solid var(--border-strong);font-weight:700;color:var(--text-bright);
+    background:var(--bg-deep)}
+  .pf-table tfoot td:first-child{text-align:left}
+  .pf-alloc-bar{display:inline-block;width:80px;height:5px;background:var(--bg-input);border-radius:2px;
+    overflow:hidden;vertical-align:middle;margin-right:6px}
+  .pf-alloc-bar > span{display:block;height:100%;background:var(--accent);border-radius:2px}
+
+  .pf-charts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .pf-chart-panel{padding:18px 22px;background:var(--bg-panel);border:1px solid var(--border);border-radius:8px}
+  .pf-chart-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--text-bright);
+    margin-bottom:14px;letter-spacing:-0.005em}
+  .pf-donut-wrap{display:flex;gap:18px;align-items:center}
+  .pf-donut-svg{width:160px;height:160px;flex-shrink:0}
+  .pf-donut-legend{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0;
+    font-family:'JetBrains Mono',monospace;font-size:11px;max-height:180px;overflow-y:auto}
+  .pf-donut-legend-item{display:flex;align-items:center;gap:7px;color:var(--text-muted)}
+  .pf-donut-legend-item .swatch{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+  .pf-donut-legend-item .lbl{flex:1;color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pf-donut-legend-item .pct{color:var(--text-muted);font-weight:600}
+
+  /* === ISRAEL === */
+  .il-section{display:flex;flex-direction:column;gap:8px}
+  .il-bias-tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;
+    font-family:'Inter',sans-serif;letter-spacing:0.02em}
+
+
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.55);
     z-index:500;display:none;align-items:center;justify-content:center;
     backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
@@ -274,7 +406,21 @@
   .modal{background:var(--bg-panel);border:1px solid var(--border);
     border-radius:12px;width:min(640px,calc(100vw - 40px));max-height:calc(100vh - 60px);
     overflow:auto;box-shadow:0 12px 48px rgba(0,0,0,0.5);
-    animation:modalSlideIn 0.25s ease-out;display:flex;flex-direction:column}
+    animation:modalSlideIn 0.25s ease-out;display:flex;flex-direction:column;
+    /* Firefox */
+    scrollbar-width:thin;
+    scrollbar-color:var(--border-strong) transparent;
+  }
+  /* WebKit / Blink */
+  .modal::-webkit-scrollbar{width:8px;height:8px}
+  .modal::-webkit-scrollbar-track{background:transparent}
+  .modal::-webkit-scrollbar-thumb{
+    background:var(--border-strong);
+    border-radius:4px;
+    border:2px solid var(--bg-panel);
+  }
+  .modal::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+  .modal::-webkit-scrollbar-corner{background:transparent}
   @keyframes modalSlideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
   .modal-header{display:flex;align-items:flex-start;justify-content:space-between;
@@ -737,6 +883,72 @@
 </head>
 <body>
 
+<!-- SETUP SCREEN -->
+<div class="setup-screen" id="setup-screen">
+  <div class="setup-card">
+    <div class="setup-brand">
+      <div class="setup-logo">M</div>
+      <div>
+        <h1>Market<span class="accent">::</span>Terminal</h1>
+        <div class="setup-tagline">PRO · WELCOME</div>
+      </div>
+    </div>
+
+    <div class="setup-desc">
+      Connect your Google Sheet to start tracking markets, indices, and your portfolio.
+      Your data stays in your Drive — nothing is sent anywhere.
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">1</div>
+      <div class="setup-step-body">
+        <strong>Copy the template to your Drive.</strong>
+        Click below — Google will create your own copy in seconds.
+        <div class="setup-step-action">
+          <a class="setup-btn" id="setup-copy-btn" target="_blank" rel="noopener">
+            <span>📋</span>
+            <span>Copy Template</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">2</div>
+      <div class="setup-step-body">
+        <strong>Make it public.</strong>
+        In your new sheet, click <strong>Share → General access → Anyone with the link → Viewer</strong>.
+        Required for the dashboard to read data.
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">3</div>
+      <div class="setup-step-body">
+        <strong>Paste your Sheet ID below.</strong>
+        It's the long string in the URL between <code>/d/</code> and <code>/edit</code>.
+        <div class="setup-input-row">
+          <input type="text" class="setup-input" id="setup-sheet-input" placeholder="1aB2cD3eF4gH5iJ6kL7mN8oP9qR0sT..." autocomplete="off" spellcheck="false">
+          <button class="setup-btn" id="setup-connect-btn">Connect</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="setup-error" id="setup-error"></div>
+
+    <div class="setup-divider">or</div>
+
+    <div style="display:flex;justify-content:center">
+      <button class="setup-btn demo" id="setup-demo-btn">Try Demo Mode (no sheet)</button>
+    </div>
+
+    <div class="setup-footer">
+      <span>Your data is yours. Nothing leaves your Drive.</span>
+      <a href="#" id="setup-help-link">What is a Sheet ID?</a>
+    </div>
+  </div>
+</div>
+
 <!-- SPLASH LOADER -->
 <div class="splash" id="splash">
   <div class="splash-inner">
@@ -757,6 +969,8 @@
         <div class="splash-step" data-step="watchlist"><span class="icon"></span>Personal watchlist</div>
         <div class="splash-step" data-step="watchlist-history"><span class="icon"></span>Watchlist sparklines</div>
         <div class="splash-step" data-step="alerts"><span class="icon"></span>Price alerts</div>
+        <div class="splash-step" data-step="portfolio"><span class="icon"></span>Portfolio positions</div>
+        <div class="splash-step" data-step="israel"><span class="icon"></span>Israeli market</div>
       </div>
       <div class="splash-status" id="splash-status">Connecting to data source…</div>
     </div>
@@ -784,6 +998,7 @@
       <div class="pill"><span class="lbl">DATE</span><span id="hdr-date">—</span></div>
       <div class="pill"><span class="lbl">UPDATED</span><span id="hdr-updated">—</span></div>
       <div class="pill" id="hdr-mode">DEMO</div>
+      <button class="header-btn" id="settings-btn" title="Change sheet"><span class="icon">⚙</span></button>
       <div class="theme-picker" id="theme-picker">
         <button class="theme-btn" id="theme-btn">
           <span class="swatch-dot" id="theme-swatch"></span>
@@ -851,6 +1066,8 @@
     <button class="tab active" data-view="markets"><span class="tab-icon">▣</span>MARKETS</button>
     <button class="tab" data-view="watchlist"><span class="tab-icon">★</span>WATCHLIST</button>
     <button class="tab" data-view="scanner"><span class="tab-icon">⌕</span>SCANNER</button>
+    <button class="tab" data-view="portfolio"><span class="tab-icon">◉</span>PORTFOLIO</button>
+    <button class="tab" data-view="israel"><span class="tab-icon">✡</span>ISRAEL</button>
     <button class="tab" data-view="alerts"><span class="tab-icon">⚑</span>ALERTS<span class="tab-badge" id="alerts-badge"></span></button>
   </div>
 
@@ -1049,6 +1266,104 @@
 
   </div> <!-- /view-scanner -->
 
+  <!-- ========== VIEW: PORTFOLIO ========== -->
+  <div class="view" id="view-portfolio">
+
+    <div class="stitle">
+      <span class="dot" style="background:var(--accent)"></span>
+      <span>PORTFOLIO SUMMARY</span>
+      <span class="line"></span>
+      <span class="tag" id="pf-meta">— POSITIONS</span>
+    </div>
+
+    <div id="pf-summary-wrap"></div>
+
+    <div class="stitle">
+      <span class="dot" style="background:var(--pos)"></span>
+      <span>POSITIONS</span>
+      <span class="line"></span>
+      <span class="tag">CURRENT HOLDINGS</span>
+    </div>
+
+    <div class="panel">
+      <table class="pf-table" id="pf-table">
+        <thead><tr>
+          <th>Symbol</th>
+          <th>Name</th>
+          <th>Shares</th>
+          <th>Avg Cost</th>
+          <th>Current</th>
+          <th>Market Value</th>
+          <th>P&amp;L $</th>
+          <th>P&amp;L %</th>
+          <th>1D %</th>
+          <th>Allocation</th>
+        </tr></thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+
+    <div id="pf-charts-wrap"></div>
+
+  </div> <!-- /view-portfolio -->
+
+  <!-- ========== VIEW: ISRAEL ========== -->
+  <div class="view" id="view-israel">
+
+    <div class="stitle">
+      <span class="dot" style="background:var(--accent)"></span>
+      <span>ISRAELI MARKET · INDICES</span>
+      <span class="line"></span>
+      <span class="tag" id="il-idx-meta">—</span>
+    </div>
+
+    <div class="panel">
+      <table id="il-indices">
+        <thead><tr>
+          <th>Symbol</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>1D %</th>
+          <th>1W %</th>
+          <th>1M %</th>
+          <th>3M %</th>
+          <th>YTD %</th>
+          <th>12M %</th>
+          <th>52W High</th>
+          <th>52W Low</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="stitle">
+      <span class="dot" style="background:var(--pos)"></span>
+      <span>ISRAELI MARKET · STOCKS</span>
+      <span class="line"></span>
+      <span class="tag" id="il-stocks-meta">—</span>
+    </div>
+
+    <div class="panel">
+      <table id="il-stocks">
+        <thead><tr>
+          <th>Symbol</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>1D %</th>
+          <th>1W %</th>
+          <th>1M %</th>
+          <th>YTD %</th>
+          <th>12M %</th>
+          <th>52W High</th>
+          <th>52W Low</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+  </div> <!-- /view-israel -->
+
   <!-- ========== VIEW: ALERTS ========== -->
   <div class="view" id="view-alerts">
 
@@ -1146,7 +1461,7 @@
 /* ============================================================
    SPLASH LOADER
    ============================================================ */
-const SPLASH_STEPS = ["indices","history","stocks","watchlist","watchlist-history","alerts"];
+const SPLASH_STEPS = ["indices","history","stocks","watchlist","watchlist-history","alerts","portfolio","israel"];
 let splashFirstRun = true;
 let splashTimeout = null;
 
@@ -1210,6 +1525,101 @@ function startSplashSafetyTimer(){
 })();
 
 
+/* ============================================================
+   SETUP SCREEN (sheet ID onboarding)
+   ============================================================ */
+
+function showSetupScreen(errorMsg){
+  const screen = document.getElementById("setup-screen");
+  if (!screen) return;
+  screen.classList.add("show");
+
+  // Hide splash if visible — setup takes priority
+  const sp = document.getElementById("splash");
+  if (sp) sp.classList.add("fade");
+
+  // Wire copy button
+  const copyBtn = document.getElementById("setup-copy-btn");
+  if (copyBtn) copyBtn.href = `https://docs.google.com/spreadsheets/d/${TEMPLATE_SHEET_ID}/copy`;
+
+  // Pre-fill input from existing sheetId if any
+  const input = document.getElementById("setup-sheet-input");
+  if (input) input.value = CONFIG.sheetId || "";
+
+  const err = document.getElementById("setup-error");
+  if (err) err.classList.remove("show");
+  if (errorMsg && err) {
+    err.textContent = errorMsg;
+    err.classList.add("show");
+  }
+}
+
+function hideSetupScreen(){
+  const screen = document.getElementById("setup-screen");
+  if (screen) screen.classList.remove("show");
+  const err = document.getElementById("setup-error");
+  if (err) err.classList.remove("show");
+}
+
+// Extract sheet ID from a full URL or return as-is if already an ID
+function extractSheetId(input){
+  if (!input) return "";
+  const trimmed = input.trim();
+  const match = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (match) return match[1];
+  if (trimmed.length > 20 && !trimmed.includes("/") && !trimmed.includes(" ")) {
+    return trimmed;
+  }
+  return "";
+}
+
+(function setupScreenHandlers(){
+  const connectBtn = document.getElementById("setup-connect-btn");
+  const input = document.getElementById("setup-sheet-input");
+  const demoBtn = document.getElementById("setup-demo-btn");
+  const helpLink = document.getElementById("setup-help-link");
+
+  function tryConnect(){
+    const raw = (input?.value || "").trim();
+    const id = extractSheetId(raw);
+    const err = document.getElementById("setup-error");
+    if (!id) {
+      if (err){
+        err.textContent = "Couldn't find a Sheet ID in that. Paste either the full Sheet URL or just the ID.";
+        err.classList.add("show");
+      }
+      return;
+    }
+    saveSheetId(id);
+    setDemoMode(false);
+    try {
+      const newUrl = window.location.pathname + "?sheet=" + id;
+      window.history.replaceState(null, "", newUrl);
+    } catch(e){}
+    window.location.reload();
+  }
+
+  if (connectBtn) connectBtn.onclick = tryConnect;
+  if (input) input.onkeydown = (e) => { if (e.key === "Enter") tryConnect(); };
+  if (demoBtn) demoBtn.onclick = () => {
+    setDemoMode(true);
+    clearSheetId();
+    hideSetupScreen();
+    hideSplash();
+  };
+  if (helpLink) helpLink.onclick = (e) => {
+    e.preventDefault();
+    alert("Open your Google Sheet. The URL looks like:\n\nhttps://docs.google.com/spreadsheets/d/1aB2cD3eF4gH5iJ6kL7mN8oP9qR0sT/edit\n\nThe Sheet ID is the long string between /d/ and /edit — in this example: 1aB2cD3eF4gH5iJ6kL7mN8oP9qR0sT");
+  };
+})();
+
+// Settings button — re-open setup
+(function setupSettingsBtn(){
+  const btn = document.getElementById("settings-btn");
+  if (btn) btn.onclick = () => showSetupScreen();
+})();
+
+
 const THEMES = {
   tradingview: { name: "TradingView", swatch: "linear-gradient(135deg,#2962FF,#26A69A)" },
   bloomberg:   { name: "Bloomberg",   swatch: "linear-gradient(135deg,#00FFFF,#00FF99)" },
@@ -1253,15 +1663,61 @@ function readThemeColor(varName, fallback){
    CONFIG — paste your sheet ID below.
    The sheet must be shared as "Anyone with the link can view".
    ============================================================ */
+/* ============================================================
+   SHEET ID RESOLUTION
+   Priority: ?sheet=ID in URL > localStorage > none (show setup)
+   ============================================================ */
+
+// === EDIT THIS to point users to your master template ===
+// Create a public Google Sheet with all the tabs filled in,
+// then paste its ID here. Users will click "Copy Template" to fork it.
+const TEMPLATE_SHEET_ID = "1Ro0o9E8iv0TPFQzFBtFqhwJu3P3H7TNWUh7vgQ8X9W8";
+
+function resolveSheetId(){
+  // 1. URL parameter
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const fromUrl = params.get("sheet");
+    if (fromUrl && fromUrl.length > 10) return fromUrl;
+  } catch(e){}
+  // 2. localStorage
+  try {
+    const stored = localStorage.getItem("mt-sheet-id");
+    if (stored && stored.length > 10) return stored;
+  } catch(e){}
+  return "";
+}
+
+function saveSheetId(id){
+  try { localStorage.setItem("mt-sheet-id", id); } catch(e){}
+}
+
+function clearSheetId(){
+  try { localStorage.removeItem("mt-sheet-id"); } catch(e){}
+}
+
+function isDemoMode(){
+  try { return localStorage.getItem("mt-demo-mode") === "1"; } catch(e){ return false; }
+}
+function setDemoMode(on){
+  try {
+    if (on) localStorage.setItem("mt-demo-mode","1");
+    else localStorage.removeItem("mt-demo-mode");
+  } catch(e){}
+}
+
 const CONFIG = {
-  sheetId: "1Ro0o9E8iv0TPFQzFBtFqhwJu3P3H7TNWUh7vgQ8X9W8",            // ← paste sheet ID here (the long /d/ID/edit part)
-  dataTab:    "sectors",   // tab with indices+sectors (your existing tab)
-  historyTab: "history",  // tab with daily closes for SPY/DIA/QQQ/IWM
-  stocksTab:  "stocks",   // tab with 30 stocks for the heatmap
-  watchlistTab:        "watchlist",         // tab with personal watchlist
-  watchlistHistoryTab: "watchlist_history", // tab with sparkline history
-  alertsTab:           "alerts",            // tab with price alerts
-  refreshSec: 60
+  sheetId: resolveSheetId(),
+  dataTab:    "sectors",
+  historyTab: "history",
+  stocksTab:  "stocks",
+  watchlistTab:        "watchlist",
+  watchlistHistoryTab: "watchlist_history",
+  alertsTab:           "alerts",
+  portfolioTab:        "portfolio",
+  israelTab:           "israel",
+  refreshSec: 120,        // base refresh interval (Google Sheets data is delayed ~20 min anyway)
+  maxRefreshSec: 600      // max interval after repeated rate-limiting
 };
 /* ============================================================ */
 
@@ -1426,6 +1882,11 @@ const state = {
   watchlistHistory: {...WATCHLIST_HISTORY_DEMO},
   watchlistHistoryFull: {...WATCHLIST_HISTORY_FULL_DEMO},  // sym -> [{date, close, volume?}]
   alerts: [],
+  portfolio: [],     // [{sym, shares, avgCost, notes}]
+  israel: {
+    indices: [],     // [{sym, name, price, d1, w1, m1, ytd}]
+    stocks: []       // same shape
+  },
   live: false,
   lastUpdate: null,
   perfTimeframe: "3M",
@@ -1437,7 +1898,10 @@ const state = {
   // NEW: change tracking & UI state
   prevValues: {},      // sym -> { price, d1, w1, m1, ytd, ... } from previous render
   wlPrimaryTf: "1D",   // primary % column shown in watchlist
-  modalSym: null       // currently open in modal, or null
+  modalSym: null,      // currently open in modal, or null
+  // Rate limiting backoff
+  backoffSec: 0,        // current extra wait time
+  consecutiveFails: 0   // count of consecutive failed loads
 };
 
 /* --- HELPERS --- */
@@ -1565,12 +2029,24 @@ async function loadLive(){
   const fetchTab = async (tab) => {
     const url = buildGvizUrl(CONFIG.sheetId, tab) + "&_t=" + Date.now();
     const res = await fetch(url, {cache:"no-store"});
+    if (res.status === 429) {
+      const err = new Error(`HTTP 429 on ${tab}`);
+      err.rateLimited = true;
+      throw err;
+    }
     if (!res.ok) throw new Error(`HTTP ${res.status} on ${tab}`);
     return parseCSV(await res.text());
   };
 
+  let rateLimitedHit = false;
+
   // Helper: run a fetch and update splash step
   const fetchWithStep = async (tab, stepId, label) => {
+    // Skip remaining fetches if we've hit rate limit — fail fast
+    if (rateLimitedHit) {
+      if (splashFirstRun) setSplashStep(stepId, "failed");
+      return { rows: null, ok: false, error: new Error("Skipped due to earlier rate-limit") };
+    }
     if (splashFirstRun){
       setSplashStep(stepId, "active");
       setSplashStatus(`Loading ${label}…`);
@@ -1580,7 +2056,8 @@ async function loadLive(){
       if (splashFirstRun) setSplashStep(stepId, "done");
       return { rows: result, ok: true };
     } catch(e) {
-      console.warn(`${tab} tab failed:`, e);
+      console.warn(`${tab} tab failed:`, e.message);
+      if (e.rateLimited) rateLimitedHit = true;
       if (splashFirstRun) setSplashStep(stepId, "failed");
       return { rows: null, ok: false, error: e };
     }
@@ -1588,6 +2065,7 @@ async function loadLive(){
 
   let dataRows = null, histRows = null, stockRows = null;
   let wlRows = null, wlHistRows = null, alertsRows = null;
+  let portfolioRows = null, israelRows = null;
   let anySuccess = false;
 
   const r1 = await fetchWithStep(CONFIG.dataTab, "indices", "indices & sectors");
@@ -1608,14 +2086,31 @@ async function loadLive(){
   const r6 = await fetchWithStep(CONFIG.alertsTab, "alerts", "price alerts");
   alertsRows = r6.rows; if (r6.ok) anySuccess = true;
 
+  const r7 = await fetchWithStep(CONFIG.portfolioTab, "portfolio", "portfolio positions");
+  portfolioRows = r7.rows; if (r7.ok) anySuccess = true;
+
+  const r8 = await fetchWithStep(CONFIG.israelTab, "israel", "Israeli market data");
+  israelRows = r8.rows; if (r8.ok) anySuccess = true;
+
   if (!anySuccess){
-    setMode(false, "All fetches failed");
+    state.consecutiveFails++;
+    setMode(false, rateLimitedHit ? "Rate limited by Google" : "All fetches failed");
     if (splashFirstRun){
-      showSplashError("Could not load any data from your Google Sheet. Check that the sheet ID is correct and that the sheet is shared as 'Anyone with the link'.");
+      hideSplash();
+      if (rateLimitedHit) {
+        showSetupScreen("Google Sheets is rate-limiting requests right now (HTTP 429). This usually clears in 5–10 minutes. Try refreshing later, or switch to Demo Mode meanwhile.");
+      } else {
+        showSetupScreen("Couldn't connect to that sheet. Check that the ID is correct and the sheet is shared as 'Anyone with the link'.");
+      }
+    } else if (rateLimitedHit) {
+      // Mid-session rate limit — back off, don't show modal, show banner instead
+      console.warn("[loadLive] rate-limited; backing off");
     }
     renderAll();
     return;
   }
+  // Reset failure counter on success
+  state.consecutiveFails = 0;
 
   // --- parse data tab ---
   if (dataRows && dataRows.length > 1){
@@ -1831,6 +2326,52 @@ async function loadLive(){
     // fetch failed completely — keep current state.alerts (could be demo or empty)
   } else {
     state.alerts = []; // sheet exists but empty
+  }
+
+  // --- parse portfolio tab ---
+  // Columns: Symbol, Shares, AvgCost, Notes
+  if (portfolioRows && portfolioRows.length > 1){
+    const positions = [];
+    for (const r of portfolioRows.slice(1)){
+      const sym = (r[0]||"").toString().trim().toUpperCase();
+      const shares = num(r[1]);
+      const avgCost = num(r[2]);
+      const notes = (r[3]||"").toString().trim();
+      if (!sym || shares == null || avgCost == null || shares <= 0) continue;
+      positions.push({ sym, shares, avgCost, notes });
+    }
+    state.portfolio = positions;
+  } else if (portfolioRows !== null) {
+    state.portfolio = [];
+  }
+
+  // --- parse israel tab ---
+  // Same shape as the main "sectors" tab: Type, Symbol, Name, Price, 1D, 1W, 1M, 3M, YTD, 12M, H52, L52, Bias
+  // Type can be INDEX or STOCK
+  if (israelRows && israelRows.length > 1){
+    const indices = [];
+    const stocks = [];
+    for (const r of israelRows.slice(1)){
+      const type = (r[0]||"").toString().trim().toUpperCase();
+      const sym = (r[1]||"").toString().trim();
+      const name = (r[2]||"").toString().trim();
+      const price = num(r[3]);
+      const d1 = num(r[4]);
+      const w1 = num(r[5]);
+      const m1 = num(r[6]);
+      const q3 = num(r[7]);
+      const ytd = num(r[8]);
+      const y1 = num(r[9]);
+      const hi52 = num(r[10]);
+      const lo52 = num(r[11]);
+      if (!sym) continue;
+      const item = { sym, name, price, d1, w1, m1, q3, ytd, y1, hi52, lo52 };
+      if (type === "INDEX") indices.push(item);
+      else stocks.push(item);
+    }
+    state.israel = { indices, stocks };
+  } else if (israelRows !== null) {
+    state.israel = { indices: [], stocks: [] };
   }
 
   state.live = true;
@@ -3526,6 +4067,280 @@ function renderAlerts(){
   });
 }
 
+/* ============================================================
+   PORTFOLIO
+   ============================================================ */
+
+// Resolve current price for a portfolio position from any data source
+function getPortfolioPrice(sym){
+  const fromStocks = state.stocks.find(s => s.sym === sym);
+  if (fromStocks?.price != null) return { price: fromStocks.price, d1: fromStocks.chg, name: fromStocks.name, sector: fromStocks.sector };
+  const fromWl = state.watchlist.find(w => w.sym === sym);
+  if (fromWl?.price != null) return { price: fromWl.price, d1: fromWl.d1, name: fromWl.name };
+  const fromIdx = state.indices.find(r => r[1] === sym);
+  if (fromIdx) return { price: fromIdx[3], d1: fromIdx[4], name: fromIdx[2] };
+  // Israeli stocks
+  const fromIl = state.israel.stocks.find(s => s.sym === sym) || state.israel.indices.find(s => s.sym === sym);
+  if (fromIl?.price != null) return { price: fromIl.price, d1: fromIl.d1, name: fromIl.name };
+  return { price: null, d1: null, name: null };
+}
+
+// Donut chart SVG
+function renderDonut(svg, items, size = 160){
+  const cx = size/2, cy = size/2, r = size/2 - 8, ir = r * 0.62;
+  const total = items.reduce((s, it) => s + it.value, 0);
+  if (total <= 0) {
+    svg.innerHTML = `<text x="${cx}" y="${cy}" text-anchor="middle" dy="4" font-family="JetBrains Mono, monospace" font-size="11" fill="${readThemeColor("--text-muted","#787B86")}">no data</text>`;
+    return;
+  }
+  let angle = -Math.PI / 2; // start at top
+  let segs = "";
+  for (const it of items){
+    const slice = (it.value / total) * Math.PI * 2;
+    const a1 = angle, a2 = angle + slice;
+    const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+    const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+    const ix1 = cx + ir * Math.cos(a2), iy1 = cy + ir * Math.sin(a2);
+    const ix2 = cx + ir * Math.cos(a1), iy2 = cy + ir * Math.sin(a1);
+    const large = slice > Math.PI ? 1 : 0;
+    const path = `M ${x1.toFixed(2)},${y1.toFixed(2)} A ${r},${r} 0 ${large} 1 ${x2.toFixed(2)},${y2.toFixed(2)} L ${ix1.toFixed(2)},${iy1.toFixed(2)} A ${ir},${ir} 0 ${large} 0 ${ix2.toFixed(2)},${iy2.toFixed(2)} Z`;
+    segs += `<path d="${path}" fill="${it.color}" stroke="${readThemeColor("--bg-panel","#131722")}" stroke-width="1.5"/>`;
+    angle = a2;
+  }
+  // Center label: total
+  const totalStr = total >= 1e6 ? "$" + (total/1e6).toFixed(2) + "M"
+                 : total >= 1e3 ? "$" + (total/1e3).toFixed(1) + "K"
+                 : "$" + total.toFixed(0);
+  segs += `<text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="${readThemeColor("--text-muted","#787B86")}" letter-spacing="0.05em">TOTAL</text>`;
+  segs += `<text x="${cx}" y="${cy+13}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="${readThemeColor("--text-bright","#F0F3FA")}">${totalStr}</text>`;
+  svg.innerHTML = segs;
+}
+
+// Generate distinct colors for donut slices
+const DONUT_PALETTE = [
+  "#2962FF","#26A69A","#FF9800","#AB47BC","#EF5350",
+  "#5A88FF","#4DDDCD","#FFB74D","#CE93D8","#FF6B6B",
+  "#66BB6A","#42A5F5","#FFA726","#7E57C2","#26C6DA"
+];
+
+function renderPortfolio(){
+  const summaryWrap = document.getElementById("pf-summary-wrap");
+  const tbody = document.querySelector("#pf-table tbody");
+  const tfoot = document.querySelector("#pf-table tfoot");
+  const chartsWrap = document.getElementById("pf-charts-wrap");
+  const meta = document.getElementById("pf-meta");
+  if (!summaryWrap || !tbody || !chartsWrap) return;
+
+  if (!state.portfolio || state.portfolio.length === 0){
+    if (meta) meta.textContent = "0 POSITIONS";
+    summaryWrap.innerHTML = `
+      <div class="pf-empty">
+        <div class="pf-empty-icon">◉</div>
+        <div>No positions yet. Add rows to the <code>portfolio</code> tab in your sheet.</div>
+        <div style="font-size:11.5px">Columns: <code>Symbol</code> · <code>Shares</code> · <code>AvgCost</code> · <code>Notes</code> (optional)</div>
+      </div>`;
+    tbody.innerHTML = "";
+    if (tfoot) tfoot.innerHTML = "";
+    chartsWrap.innerHTML = "";
+    return;
+  }
+
+  // Compute everything for each position
+  const positions = state.portfolio.map((p, i) => {
+    const { price, d1, name, sector } = getPortfolioPrice(p.sym);
+    const cost = p.shares * p.avgCost;
+    const value = price != null ? p.shares * price : null;
+    const pnl = value != null ? value - cost : null;
+    const pnlPct = (value != null && cost > 0) ? (pnl / cost) * 100 : null;
+    const dayChange = (price != null && d1 != null) ? value * (d1 / 100) : null;
+    return { ...p, name, sector, price, d1, cost, value, pnl, pnlPct, dayChange, color: DONUT_PALETTE[i % DONUT_PALETTE.length] };
+  });
+
+  if (meta) meta.textContent = `${positions.length} POSITION${positions.length === 1 ? '' : 'S'}`;
+
+  // Aggregate totals
+  const totalCost = positions.reduce((s, p) => s + p.cost, 0);
+  const totalValue = positions.reduce((s, p) => s + (p.value ?? p.cost), 0);
+  const totalPnL = totalValue - totalCost;
+  const totalPnLPct = totalCost > 0 ? (totalPnL / totalCost) * 100 : 0;
+  const totalDayChange = positions.reduce((s, p) => s + (p.dayChange ?? 0), 0);
+  const totalDayPct = totalValue > 0 ? (totalDayChange / (totalValue - totalDayChange)) * 100 : 0;
+
+  // Best/worst by P&L %
+  const bestP = positions.reduce((a, b) => ((b.pnlPct ?? -Infinity) > (a.pnlPct ?? -Infinity) ? b : a), positions[0]);
+  const worstP = positions.reduce((a, b) => ((b.pnlPct ?? Infinity) < (a.pnlPct ?? Infinity) ? b : a), positions[0]);
+
+  // Compute allocation per position
+  for (const p of positions){
+    p.allocPct = totalValue > 0 ? ((p.value ?? p.cost) / totalValue) * 100 : 0;
+  }
+
+  // Summary cards
+  summaryWrap.innerHTML = `
+    <div class="pf-summary">
+      <div class="pf-card blue">
+        <div class="pf-card-lbl">Total Value</div>
+        <div class="pf-card-val">$${totalValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+        <div class="pf-card-sub">Cost basis: $${totalCost.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+      </div>
+      <div class="pf-card ${totalPnL >= 0 ? 'green' : 'red'}">
+        <div class="pf-card-lbl">Total P&amp;L</div>
+        <div class="pf-card-val ${totalPnL >= 0 ? 'pos' : 'neg'}">${totalPnL >= 0 ? '+' : '−'}$${Math.abs(totalPnL).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+        <div class="pf-card-sub ${totalPnLPct >= 0 ? 'pos' : 'neg'}" style="color:${totalPnLPct >= 0 ? 'var(--pos)' : 'var(--neg)'}">${totalPnLPct >= 0 ? '+' : ''}${totalPnLPct.toFixed(2)}%</div>
+      </div>
+      <div class="pf-card ${totalDayChange >= 0 ? 'green' : 'red'}">
+        <div class="pf-card-lbl">Today's Change</div>
+        <div class="pf-card-val ${totalDayChange >= 0 ? 'pos' : 'neg'}">${totalDayChange >= 0 ? '+' : '−'}$${Math.abs(totalDayChange).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+        <div class="pf-card-sub ${totalDayPct >= 0 ? 'pos' : 'neg'}" style="color:${totalDayPct >= 0 ? 'var(--pos)' : 'var(--neg)'}">${totalDayPct >= 0 ? '+' : ''}${totalDayPct.toFixed(2)}%</div>
+      </div>
+      <div class="pf-card green">
+        <div class="pf-card-lbl">Best / Worst</div>
+        <div class="pf-card-val" style="font-size:14px;line-height:1.3">
+          <span class="pos">${bestP?.sym || '—'}</span> ${bestP?.pnlPct != null ? `<span style="color:var(--pos);font-size:11px">+${bestP.pnlPct.toFixed(1)}%</span>` : ''}
+          <br>
+          <span class="neg">${worstP?.sym || '—'}</span> ${worstP?.pnlPct != null ? `<span style="color:var(--neg);font-size:11px">${worstP.pnlPct.toFixed(1)}%</span>` : ''}
+        </div>
+        <div class="pf-card-sub">P&amp;L % range</div>
+      </div>
+    </div>
+  `;
+
+  // Positions table
+  const sorted = positions.slice().sort((a,b) => (b.value ?? 0) - (a.value ?? 0));
+  tbody.innerHTML = sorted.map(p => {
+    const pnlCls = (p.pnl ?? 0) >= 0 ? "pos" : "neg";
+    const pnlPctCls = (p.pnlPct ?? 0) >= 0 ? "pos" : "neg";
+    const d1Cls = (p.d1 ?? 0) >= 0 ? "pos" : "neg";
+    return `<tr>
+      <td class="sym clickable-sym" data-sym="${p.sym}">${p.sym}</td>
+      <td class="name">${p.name || "—"}</td>
+      <td>${p.shares.toLocaleString()}</td>
+      <td>$${p.avgCost.toFixed(2)}</td>
+      <td>${p.price != null ? '$'+p.price.toFixed(2) : '—'}</td>
+      <td>${p.value != null ? '$'+p.value.toLocaleString(undefined,{maximumFractionDigits:0}) : '—'}</td>
+      <td class="${pnlCls}">${p.pnl != null ? (p.pnl>=0?'+':'−')+'$'+Math.abs(p.pnl).toLocaleString(undefined,{maximumFractionDigits:0}) : '—'}</td>
+      <td class="${pnlPctCls}">${p.pnlPct != null ? (p.pnlPct>=0?'+':'')+p.pnlPct.toFixed(2)+'%' : '—'}</td>
+      <td class="${d1Cls}">${p.d1 != null ? (p.d1>=0?'+':'')+p.d1.toFixed(2)+'%' : '—'}</td>
+      <td>
+        <span class="pf-alloc-bar"><span style="width:${p.allocPct.toFixed(1)}%;background:${p.color}"></span></span>
+        <span style="color:var(--text-muted);font-size:11px">${p.allocPct.toFixed(1)}%</span>
+      </td>
+    </tr>`;
+  }).join("");
+
+  // Footer total row
+  if (tfoot){
+    tfoot.innerHTML = `<tr>
+      <td colspan="5">TOTAL</td>
+      <td>$${totalValue.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+      <td class="${totalPnL>=0?'pos':'neg'}">${totalPnL>=0?'+':'−'}$${Math.abs(totalPnL).toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+      <td class="${totalPnLPct>=0?'pos':'neg'}">${totalPnLPct>=0?'+':''}${totalPnLPct.toFixed(2)}%</td>
+      <td class="${totalDayPct>=0?'pos':'neg'}">${totalDayPct>=0?'+':''}${totalDayPct.toFixed(2)}%</td>
+      <td>100.0%</td>
+    </tr>`;
+  }
+
+  // Charts: by symbol + by sector
+  const byPosition = positions.map(p => ({
+    label: p.sym,
+    value: p.value ?? p.cost,
+    color: p.color
+  }));
+  const sectorMap = {};
+  for (const p of positions){
+    const sec = p.sector || "Other";
+    sectorMap[sec] = (sectorMap[sec] ?? 0) + (p.value ?? p.cost);
+  }
+  const bySector = Object.entries(sectorMap)
+    .map(([label, value], i) => ({ label, value, color: DONUT_PALETTE[i % DONUT_PALETTE.length] }))
+    .sort((a, b) => b.value - a.value);
+
+  chartsWrap.innerHTML = `
+    <div class="pf-charts">
+      <div class="pf-chart-panel">
+        <div class="pf-chart-title">Allocation by Position</div>
+        <div class="pf-donut-wrap">
+          <svg class="pf-donut-svg" id="pf-donut-pos" viewBox="0 0 160 160"></svg>
+          <div class="pf-donut-legend">
+            ${byPosition.map(it => `
+              <div class="pf-donut-legend-item">
+                <span class="swatch" style="background:${it.color}"></span>
+                <span class="lbl">${it.label}</span>
+                <span class="pct">${(it.value/totalValue*100).toFixed(1)}%</span>
+              </div>`).join("")}
+          </div>
+        </div>
+      </div>
+      <div class="pf-chart-panel">
+        <div class="pf-chart-title">Allocation by Sector</div>
+        <div class="pf-donut-wrap">
+          <svg class="pf-donut-svg" id="pf-donut-sec" viewBox="0 0 160 160"></svg>
+          <div class="pf-donut-legend">
+            ${bySector.map(it => `
+              <div class="pf-donut-legend-item">
+                <span class="swatch" style="background:${it.color}"></span>
+                <span class="lbl">${it.label}</span>
+                <span class="pct">${(it.value/totalValue*100).toFixed(1)}%</span>
+              </div>`).join("")}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  renderDonut(document.getElementById("pf-donut-pos"), byPosition);
+  renderDonut(document.getElementById("pf-donut-sec"), bySector);
+}
+
+/* ============================================================
+   ISRAEL
+   ============================================================ */
+
+function renderIsrael(){
+  const idxBody = document.querySelector("#il-indices tbody");
+  const stkBody = document.querySelector("#il-stocks tbody");
+  const idxMeta = document.getElementById("il-idx-meta");
+  const stkMeta = document.getElementById("il-stocks-meta");
+  if (!idxBody || !stkBody) return;
+
+  const il = state.israel || { indices: [], stocks: [] };
+
+  if (idxMeta) idxMeta.textContent = `${il.indices.length} INDICES`;
+  if (stkMeta) stkMeta.textContent = `${il.stocks.length} STOCKS`;
+
+  const pn = v => {
+    if (v == null || isNaN(v)) return `<td class="nul">—</td>`;
+    const cls = v >= 0 ? "pos" : "neg";
+    return `<td class="${cls}">${v>=0?'+':''}${v.toFixed(2)}%</td>`;
+  };
+
+  const renderRows = (rows, hasQ3 = true) => {
+    return rows.map(r => `<tr data-sym="${r.sym}">
+      <td class="sym clickable-sym" data-sym="${r.sym}">${r.sym}</td>
+      <td class="name">${r.name || ""}</td>
+      <td class="price">${r.price != null ? r.price.toLocaleString(undefined,{maximumFractionDigits:2}) : '—'}</td>
+      ${pn(r.d1)}
+      ${pn(r.w1)}
+      ${pn(r.m1)}
+      ${hasQ3 ? pn(r.q3) : ''}
+      ${pn(r.ytd)}
+      ${pn(r.y1)}
+      <td style="color:var(--muted)">${r.hi52 != null ? r.hi52.toLocaleString(undefined,{maximumFractionDigits:2}) : '—'}</td>
+      <td style="color:var(--muted)">${r.lo52 != null ? r.lo52.toLocaleString(undefined,{maximumFractionDigits:2}) : '—'}</td>
+    </tr>`).join("");
+  };
+
+  if (il.indices.length === 0){
+    idxBody.innerHTML = `<tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:24px;font-family:Inter,sans-serif">No indices in <code style="background:var(--bg-input);padding:1px 6px;border-radius:3px;color:var(--accent-bright)">israel</code> tab yet</td></tr>`;
+  } else {
+    idxBody.innerHTML = renderRows(il.indices, true);
+  }
+  if (il.stocks.length === 0){
+    stkBody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:24px;font-family:Inter,sans-serif">No stocks in <code style="background:var(--bg-input);padding:1px 6px;border-radius:3px;color:var(--accent-bright)">israel</code> tab yet</td></tr>`;
+  } else {
+    stkBody.innerHTML = renderRows(il.stocks, false);
+  }
+}
+
 function renderAll(){
   renderIndexCards();
   renderGauge();
@@ -3539,6 +4354,8 @@ function renderAll(){
   renderWatchlist();
   renderScanner();
   renderAlerts();
+  renderPortfolio();
+  renderIsrael();
   checkAlerts();
   // Apply flash-on-change AFTER DOM is updated, BEFORE saving new snapshot
   applyFlashes();
@@ -3643,10 +4460,32 @@ document.querySelectorAll("#wl-tf-btns .tf-btn").forEach(btn => {
 })();
 
 /* --- INIT --- */
-startSplashSafetyTimer();
-renderAll();
-loadLive();
-setInterval(loadLive, CONFIG.refreshSec * 1000);
+// Smart refresh scheduler with exponential backoff on failures
+function scheduleNextLoad(){
+  // Calculate delay: base interval, doubled per consecutive failure (capped)
+  const fails = state.consecutiveFails || 0;
+  const baseSec = CONFIG.refreshSec;
+  const backoffMultiplier = Math.min(Math.pow(2, fails), CONFIG.maxRefreshSec / baseSec);
+  const delaySec = Math.min(baseSec * backoffMultiplier, CONFIG.maxRefreshSec);
+  if (fails > 0) console.log(`[scheduler] next load in ${delaySec}s (${fails} consecutive fails)`);
+  setTimeout(async () => {
+    await loadLive();
+    scheduleNextLoad();
+  }, delaySec * 1000);
+}
+
+if (CONFIG.sheetId) {
+  startSplashSafetyTimer();
+  renderAll();
+  loadLive().then(() => scheduleNextLoad());
+} else if (isDemoMode()) {
+  hideSplash();
+  renderAll();
+} else {
+  hideSplash();
+  renderAll();
+  showSetupScreen();
+}
 </script>
 </body>
 </html>
