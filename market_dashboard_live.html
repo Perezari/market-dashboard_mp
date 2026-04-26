@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Market Dashboard — Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-0:#020B3A; --bg-1:#061540; --bg-2:#0A1A55; --bg-3:#04102E;
+    --line:#173070; --line-soft:#0E2255;
+    --cyan:#00FFFF; --lime:#00FF99; --yellow:#FFEA00; --red:#FF4757;
+    --green:#00FF99; --text:#E8F0FF; --muted:#6F87B8; --dim:#3F567F;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg-0);color:var(--text);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased}
+  body{
+    padding:24px;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(0,255,255,0.06), transparent 60%),
+      radial-gradient(900px 500px at 0% 100%, rgba(0,255,153,0.04), transparent 60%),
+      linear-gradient(180deg, #02092E 0%, #020B3A 60%, #04102E 100%);
+    min-height:100vh;
+  }
+  .dashboard{max-width:1480px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+
+  /* Setup banner */
+  .setup-banner{
+    background:linear-gradient(90deg,#3a2a08,#5a3f0a);
+    border:1px solid var(--yellow);
+    border-radius:6px;padding:14px 18px;
+    color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:12px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .setup-banner.hidden{display:none}
+  .setup-banner code{
+    background:rgba(0,0,0,0.35);padding:3px 8px;border-radius:3px;
+    color:var(--cyan);border:1px solid rgba(0,255,255,0.25);
+  }
+
+  /* Header */
+  .header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;
+    background:linear-gradient(90deg,#061540 0%, #0A1A55 50%, #061540 100%);
+    border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:6px}
+  .header-left{display:flex;align-items:center;gap:18px}
+  .brand{display:flex;align-items:baseline;gap:10px}
+  .brand .logo{width:34px;height:34px;border-radius:4px;
+    background:linear-gradient(135deg,var(--cyan),var(--lime));
+    display:flex;align-items:center;justify-content:center;
+    color:#02092E;font-weight:700;font-size:18px;
+    box-shadow:0 0 18px rgba(0,255,255,0.35)}
+  .brand h1{font-size:20px;letter-spacing:0.18em;font-weight:600}
+  .brand h1 .accent{color:var(--cyan)}
+  .brand .sub{font-family:'IBM Plex Mono',monospace;color:var(--muted);font-size:11px;letter-spacing:0.15em;margin-left:6px}
+  .header-right{display:flex;gap:14px;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px}
+  .pill{padding:6px 12px;border:1px solid var(--line);border-radius:3px;background:#02092E;color:var(--muted);letter-spacing:0.1em}
+  .pill.live{color:var(--lime);border-color:rgba(0,255,153,0.35)}
+  .pill.live::before{content:"●";color:var(--lime);margin-right:6px;animation:blink 1.4s infinite}
+  .pill.demo{color:var(--yellow);border-color:rgba(255,234,0,0.35)}
+  .pill.demo::before{content:"●";color:var(--yellow);margin-right:6px}
+  @keyframes blink{0%,60%{opacity:1}80%{opacity:0.2}100%{opacity:1}}
+  .pill .lbl{color:var(--dim);margin-right:6px}
+
+  /* KPIs */
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .kpi{position:relative;padding:16px 18px;
+    background:linear-gradient(180deg,#0A1A55 0%, #061540 100%);
+    border:1px solid var(--line);border-radius:5px;
+    display:flex;flex-direction:column;gap:6px;overflow:hidden}
+  .kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan)}
+  .kpi.yellow::after{background:var(--yellow)}
+  .kpi.green::after{background:var(--lime)}
+  .kpi.red::after{background:var(--red)}
+  .kpi-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase}
+  .kpi-value{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:600;letter-spacing:-0.01em;line-height:1.1}
+  .kpi.yellow .kpi-value{color:var(--yellow);text-shadow:0 0 16px rgba(255,234,0,0.25)}
+  .kpi.green .kpi-value{color:var(--lime)}
+  .kpi.red .kpi-value{color:var(--red)}
+  .kpi.cyan .kpi-value{color:var(--cyan)}
+  .kpi-meta{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
+  .kpi-bar{height:4px;background:#02092E;border-radius:2px;overflow:hidden;margin-top:4px}
+  .kpi-bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--lime));border-radius:2px;transition:width 0.5s ease}
+
+  /* Section title */
+  .section-title{display:flex;align-items:center;gap:12px;padding:0 4px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase}
+  .section-title .dot{width:8px;height:8px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan)}
+  .section-title .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+  .section-title .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.2em}
+
+  /* Panel & tables */
+  .panel{background:linear-gradient(180deg,#061540 0%, #04102E 100%);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .panel-head{padding:14px 18px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;background:rgba(10,26,85,0.6)}
+  .panel-head h2{font-size:13px;letter-spacing:0.22em;font-weight:600;color:var(--text);text-transform:uppercase}
+  .panel-head .meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em}
+
+  table{width:100%;border-collapse:separate;border-spacing:0;font-family:'IBM Plex Mono',monospace;font-size:12.5px}
+  thead th{background:#02092E;color:var(--muted);font-weight:500;font-size:10.5px;
+    letter-spacing:0.2em;text-transform:uppercase;text-align:right;
+    padding:10px 14px;border-bottom:1px solid var(--line);border-right:1px solid var(--line-soft)}
+  thead th:first-child{text-align:left}
+  thead th:last-child{border-right:0}
+  tbody td{padding:10px 14px;text-align:right;
+    border-bottom:1px solid var(--line-soft);border-right:1px solid var(--line-soft);
+    font-variant-numeric:tabular-nums}
+  tbody td:first-child{text-align:left}
+  tbody td:last-child{border-right:0}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover td{background:rgba(0,255,255,0.04)}
+
+  .sym{color:var(--cyan);font-weight:600;letter-spacing:0.05em}
+  .name{color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px}
+  .price{color:var(--text);font-weight:600}
+  .pos{color:var(--lime)}
+  .neg{color:var(--red)}
+  .pos::before{content:"▲ ";font-size:9px}
+  .neg::before{content:"▼ ";font-size:9px}
+  .nul{color:var(--dim)}
+  .hm{position:relative;font-weight:500}
+
+  .two-col{display:grid;grid-template-columns:1.55fr 1fr;gap:16px}
+
+  /* sentiment */
+  .sent-table td{padding:11px 14px}
+  .sent-tag{display:inline-block;padding:3px 10px;border-radius:3px;
+    font-size:10px;font-weight:600;letter-spacing:0.18em;font-family:'IBM Plex Mono',monospace}
+  .sent-bull{background:rgba(0,255,153,0.12);color:var(--lime);border:1px solid rgba(0,255,153,0.35)}
+  .sent-neut{background:rgba(0,255,255,0.10);color:var(--cyan);border:1px solid rgba(0,255,255,0.30)}
+  .sent-bear{background:rgba(255,71,87,0.12);color:var(--red);border:1px solid rgba(255,71,87,0.35)}
+  .sent-icon{font-size:14px;margin-right:6px;vertical-align:middle}
+
+  .strength{display:inline-flex;gap:2px;align-items:center}
+  .strength i{display:block;width:4px;height:10px;background:var(--dim);border-radius:1px}
+  .strength i.on{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+  .strength.bull i.on{background:var(--lime);box-shadow:0 0 6px var(--lime)}
+  .strength.bear i.on{background:var(--red);box-shadow:0 0 6px var(--red)}
+
+  /* charts */
+  .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .chart-panel{padding:18px}
+  .chart-panel h3{font-size:11px;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;font-weight:500}
+  .chart-panel .sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);margin-bottom:14px}
+  .chart-svg{width:100%;height:auto;display:block}
+
+  .footer{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--dim);letter-spacing:0.18em;
+    border-top:1px solid var(--line-soft);margin-top:4px}
+  .footer .legend{display:flex;gap:18px;align-items:center}
+  .footer .swatch{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+  @media (max-width: 1100px){
+    .two-col{grid-template-columns:1fr}
+    .charts-row{grid-template-columns:1fr}
+    .kpi-row{grid-template-columns:repeat(2,1fr)}
+  }
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+
+  <div id="setup-banner" class="setup-banner hidden"></div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="brand">
+        <div class="logo">M</div>
+        <h1>MARKET<span class="accent">::</span>TERMINAL</h1>
+        <span class="sub">v4.7 · LIVE FEED</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="pill"><span class="lbl">SESSION</span>REGULAR</div>
+      <div class="pill"><span class="lbl">DATE</span><span id="hdr-date">—</span></div>
+      <div class="pill"><span class="lbl">UPDATED</span><span id="hdr-updated">—</span></div>
+      <div class="pill" id="hdr-mode">DEMO</div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row" id="kpi-row"></div>
+
+  <!-- INDICES -->
+  <div class="section-title">
+    <span class="dot"></span><span>MAJOR INDICES</span><span class="line"></span><span class="tag">USD · END OF DAY</span>
+  </div>
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Index Performance Matrix</h2>
+      <div class="meta"><span id="indices-count">0</span> instruments · auto-refresh 60s</div>
+    </div>
+    <table id="indices">
+      <thead><tr>
+        <th>Symbol</th><th>Name</th><th>Price</th>
+        <th>1D %</th><th>1W %</th><th>1M %</th><th>3M %</th>
+        <th>YTD %</th><th>12M %</th><th>52W High</th><th>52W Low</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- SECTORS + SENTIMENT -->
+  <div class="two-col">
+    <div>
+      <div class="section-title">
+        <span class="dot" style="background:var(--lime);box-shadow:0 0 8px var(--lime)"></span>
+        <span>SECTOR PERFORMANCE · HEATMAP</span><span class="line"></span>
+        <span class="tag">SPDR SELECT SECTOR ETFS</span>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Sector ETF Returns</h2>
+          <div class="meta"><span id="sectors-count">0</span> sectors · color-graded</div>
+        </div>
+        <table id="sectors">
+          <thead><tr>
+            <th>Sym</th><th>Sector</th>
+            <th>1D %</th><th>1W %</th><th>1M %</th><th>3M %</th><th>YTD %</th><th>12M %</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">
+        <span class="dot" style="background:var(--yellow);box-shadow:0 0 8px var(--yellow)"></span>
+        <span>SECTOR SENTIMENT</span><span class="line"></span><span class="tag">TREND BIAS</span>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Trend Direction</h2>
+          <div class="meta">composite signal</div>
+        </div>
+        <table class="sent-table" id="sentiment">
+          <thead><tr>
+            <th>Sym</th><th>Bias</th><th>Strength</th><th>Signal</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="section-title">
+    <span class="dot" style="background:var(--red);box-shadow:0 0 8px var(--red)"></span>
+    <span>SECTOR RETURN CHARTS</span><span class="line"></span><span class="tag">BAR · COMPARATIVE</span>
+  </div>
+  <div class="charts-row">
+    <div class="panel chart-panel">
+      <h3>Monthly Sector Performance</h3>
+      <div class="sub">Trailing 30 days · % return</div>
+      <svg class="chart-svg" id="chart-monthly" viewBox="0 0 660 320" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+    <div class="panel chart-panel">
+      <h3>Year-to-Date Sector Performance</h3>
+      <div class="sub">Jan 1 — Today · % return</div>
+      <svg class="chart-svg" id="chart-ytd" viewBox="0 0 660 320" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--lime)"></span>Positive</span>
+      <span><span class="swatch" style="background:var(--red)"></span>Negative</span>
+      <span><span class="swatch" style="background:var(--yellow)"></span>KPI Highlight</span>
+      <span><span class="swatch" style="background:var(--cyan)"></span>Neutral / Symbol</span>
+    </div>
+    <div>SOURCE · GOOGLE FINANCE VIA SHEETS · ~20 MIN DELAY · NOT INVESTMENT ADVICE</div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================
+   Paste your published Google Sheet CSV URL below.
+   In Sheets: File → Share → Publish to web →
+              Sheet1, Comma-separated values (.csv) → Publish.
+   Copy the URL it gives you and paste between the quotes.
+   ============================================================ */
+const CONFIG = {
+  // OPTION A — Published CSV URL (File → Share → Publish to web → CSV).
+  // Works from https:// or localhost. May fail from file:// due to CORS on Google's redirect.
+  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQtFV5_gTO-4CkpKxDnvwe_k8QBw_LWq5Fiwz93I3HmDp0-oHxujIrRJTueFIdcuL78_S93_WlJNeNd/pub?output=csv",   // e.g. "https://docs.google.com/spreadsheets/d/e/.../pub?output=csv"
+
+  // OPTION B — Sheet ID for gviz endpoint (works from file:// too).
+  // Get it from your sheet's edit URL:  /spreadsheets/d/{THIS_PART}/edit
+  // The sheet must be shared as "Anyone with the link can view".
+  // Used as fallback if sheetCsvUrl is empty or fails.
+  sheetId: "1Ro0o9E8iv0TPFQzFBtFqhwJu3P3H7TNWUh7vgQ8X9W8",       // e.g. "1AbcDEFghiJKLmnoPQRstuVWXyz1234567890abcdef"
+  sheetName: "גיליון1",  // tab name (default Google Sheets first-tab name)
+
+  refreshSec: 60
+};
+
+/* ============================================================ */
+
+/* --- DEMO FALLBACK DATA --- */
+const DEMO = {
+  indices: [
+    ["INDEX","SPY","S&P 500",      "557.42",  0.42,  1.18,  2.34,  5.61,  7.82, 14.32, "598.61", "493.55", ""],
+    ["INDEX","DIA","Dow Jones",    "426.81",  0.31,  0.94,  1.87,  4.52,  5.98, 12.04, "432.10", "367.11", ""],
+    ["INDEX","QQQ","Nasdaq 100",   "501.32",  0.62,  1.58,  3.47,  8.21, 10.12, 23.45, "511.04", "393.82", ""],
+    ["INDEX","IWM","Russell 2000", "224.18", -0.18, -0.62,  0.94,  3.21,  4.18,  8.74, "230.04", "184.63", ""],
+    ["INDEX","VTI","Total US Mkt", "291.74",  0.48,  1.32,  2.61,  6.04,  7.21, 13.92, "298.21", "248.55", ""],
+    ["INDEX","EFA","Intl Developed","82.41",  0.18,  0.62,  1.42,  3.18,  4.52, 11.27,  "84.62",  "70.18", ""],
+  ],
+  sectors: [
+    ["SECTOR","XLK", "Technology",          "—",  1.24,  2.81,  4.32,  8.94, 11.32, 24.58, "—","—",""],
+    ["SECTOR","XLC", "Communication Svc.",  "—",  0.84,  1.94,  3.21,  6.42,  8.18, 18.42, "—","—",""],
+    ["SECTOR","XLY", "Consumer Discret.",   "—",  0.62,  1.42,  2.18,  4.84,  6.32, 14.91, "—","—",""],
+    ["SECTOR","XLI", "Industrials",         "—",  0.48,  1.32,  2.41,  5.18,  6.94, 15.32, "—","—",""],
+    ["SECTOR","XLF", "Financials",          "—",  0.42,  1.18,  1.94,  3.62,  5.84, 13.27, "—","—",""],
+    ["SECTOR","XLP", "Consumer Staples",    "—",  0.21,  0.62,  1.18,  1.94,  3.21,  7.42, "—","—",""],
+    ["SECTOR","XLU", "Utilities",           "—",  0.18,  0.84,  1.62,  3.41,  4.18,  9.84, "—","—",""],
+    ["SECTOR","XLV", "Health Care",         "—", -0.18,  0.32,  0.84,  1.62,  2.41,  5.18, "—","—",""],
+    ["SECTOR","XLB", "Materials",           "—", -0.32, -0.81, -1.42, -2.18, -0.94,  3.18, "—","—",""],
+    ["SECTOR","XLRE","Real Estate",         "—", -0.62, -1.18,  0.42,  1.84,  2.91,  8.41, "—","—",""],
+    ["SECTOR","XLE", "Energy",              "—", -0.81, -1.42, -2.31, -4.18,  1.94,  6.41, "—","—",""],
+  ]
+};
+
+/* --- STATE --- */
+const state = {
+  indices: DEMO.indices.slice(),
+  sectors: DEMO.sectors.slice(),
+  live: false,
+  lastUpdate: null
+};
+
+/* --- HELPERS --- */
+function fmtPct(v){
+  if (v === null || v === undefined || v === "" || isNaN(v)) return null;
+  return (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2) + "%";
+}
+function pnCell(v){
+  if (v === null || v === undefined || v === "" || isNaN(v)) return `<td class="nul">—</td>`;
+  const cls = v >= 0 ? "pos" : "neg";
+  return `<td class="${cls}">${Math.abs(v).toFixed(2)}%</td>`;
+}
+function hmStyle(v){
+  if (v === null || v === undefined || v === "" || isNaN(v)) return "color:var(--dim)";
+  const mag = Math.min(Math.abs(v) / 8, 1);
+  const alpha = 0.10 + mag * 0.55;
+  if (v > 0) return `background:rgba(0,255,153,${alpha.toFixed(3)});color:#E8FFF4`;
+  if (v < 0) return `background:rgba(255,71,87,${alpha.toFixed(3)});color:#FFEAEC`;
+  return "color:var(--muted)";
+}
+function num(v){
+  if (v === null || v === undefined || v === "") return null;
+  const n = parseFloat(String(v).replace(/,/g,""));
+  return isNaN(n) ? null : n;
+}
+function fmtPrice(v){
+  if (v === null || v === undefined || v === "") return "—";
+  const n = num(v);
+  if (n === null) return v;
+  return n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function fmtTime(d){
+  return d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
+}
+function fmtDate(d){
+  return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}).toUpperCase();
+}
+
+/* --- CSV PARSER (handles quoted fields w/ commas) --- */
+function parseCSV(text){
+  const lines = [];
+  let cur = "", row = [], inQ = false;
+  for (let i=0; i<text.length; i++){
+    const c = text[i];
+    if (inQ){
+      if (c === '"'){
+        if (text[i+1] === '"'){ cur += '"'; i++; }
+        else inQ = false;
+      } else cur += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ","){ row.push(cur); cur = ""; }
+      else if (c === "\n"){ row.push(cur); lines.push(row); row = []; cur = ""; }
+      else if (c === "\r"){ /* skip */ }
+      else cur += c;
+    }
+  }
+  if (cur.length || row.length){ row.push(cur); lines.push(row); }
+  return lines.filter(r => r.some(c => c && c.trim() !== ""));
+}
+
+/* --- NORMALIZE SHEET URL --- */
+// Accepts the various forms users paste and converts to the CSV publish URL.
+function normalizeSheetUrl(raw){
+  if (!raw) return "";
+  let url = raw.trim();
+
+  // Case 1: pubhtml URL — swap pubhtml → pub and ensure output=csv
+  if (url.includes("/pubhtml")){
+    url = url.replace("/pubhtml", "/pub");
+    if (!/[?&]output=csv\b/.test(url)){
+      url += (url.includes("?") ? "&" : "?") + "output=csv";
+    }
+    return url;
+  }
+
+  // Case 2: pub URL but missing output=csv
+  if (/\/pub(\?|$)/.test(url) && !/[?&]output=csv\b/.test(url)){
+    return url + (url.includes("?") ? "&" : "?") + "output=csv";
+  }
+
+  // Case 3: regular /edit URL — user didn't actually publish
+  if (url.includes("/edit") || url.includes("/d/") && !url.includes("/pub")){
+    console.warn("URL looks like an edit link, not a publish link. Use File → Share → Publish to web.");
+    return url; // try anyway, will likely fail with HTML response
+  }
+
+  return url;
+}
+
+/* --- BUILD GVIZ CSV URL --- */
+// gviz/tq endpoint returns CSV with permissive CORS (works from file://).
+function buildGvizUrl(sheetId, sheetName){
+  const base = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq`;
+  const params = new URLSearchParams({
+    tqx: "out:csv",
+    sheet: sheetName || "Sheet1"
+  });
+  return `${base}?${params.toString()}`;
+}
+
+/* --- LOAD LIVE DATA --- */
+async function loadLive(){
+  // Decide which URL to use. Prefer gviz (works from file://); fall back to pub CSV.
+  let url = "";
+  let usedSource = "";
+  if (CONFIG.sheetId){
+    url = buildGvizUrl(CONFIG.sheetId, CONFIG.sheetName);
+    usedSource = "gviz";
+  } else if (CONFIG.sheetCsvUrl){
+    url = normalizeSheetUrl(CONFIG.sheetCsvUrl);
+    usedSource = "pub";
+  } else {
+    showSetupBanner();
+    setMode(false);
+    return;
+  }
+  hideSetupBanner();
+
+  try {
+    const finalUrl = url + (url.includes("?") ? "&" : "?") + "_t=" + Date.now();
+    const res = await fetch(finalUrl, {cache:"no-store"});
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if (rows.length < 2) throw new Error("Empty sheet");
+
+    // Expected columns: Type, Symbol, Name, Price, 1D, 1W, 1M, 3M, YTD, 12M, H52, L52, Bias
+    const data = rows.slice(1); // skip header
+    const indices = [];
+    const sectors = [];
+    for (const r of data){
+      const type = (r[0] || "").trim().toUpperCase();
+      const row = [
+        type,
+        (r[1] || "").trim(),                    // Symbol
+        (r[2] || "").trim(),                    // Name
+        (r[3] || "").trim(),                    // Price (string)
+        num(r[4]), num(r[5]), num(r[6]),         // 1D, 1W, 1M
+        num(r[7]), num(r[8]), num(r[9]),         // 3M, YTD, 12M
+        (r[10] || "").trim(),                   // H52
+        (r[11] || "").trim(),                   // L52
+        (r[12] || "").trim().toUpperCase()      // Bias (BULL/NEUT/BEAR)
+      ];
+      if (type === "INDEX") indices.push(row);
+      else if (type === "SECTOR") sectors.push(row);
+    }
+    if (sectors.length === 0 && indices.length === 0) throw new Error("No data rows");
+    state.indices = indices.length ? indices : DEMO.indices;
+    state.sectors = sectors.length ? sectors : DEMO.sectors;
+    state.live = true;
+    state.lastUpdate = new Date();
+    setMode(true);
+    renderAll();
+  } catch (e){
+    console.warn("Live fetch failed:", e);
+    state.live = false;
+    state.lastUpdate = new Date();
+    setMode(false, e.message);
+    renderAll();
+  }
+}
+
+/* --- BANNERS / STATUS --- */
+function showSetupBanner(){
+  const el = document.getElementById("setup-banner");
+  el.classList.remove("hidden");
+  el.innerHTML = `
+    <strong style="letter-spacing:0.15em">SETUP REQUIRED</strong>
+    <span>· Configure either</span>
+    <code>CONFIG.sheetId</code>
+    <span>(works from file://) or</span>
+    <code>CONFIG.sheetCsvUrl</code>
+    <span>(needs http server). Showing demo data until configured.</span>
+  `;
+}
+function hideSetupBanner(){
+  document.getElementById("setup-banner").classList.add("hidden");
+}
+function setMode(isLive, errMsg){
+  const pill = document.getElementById("hdr-mode");
+  pill.className = "pill " + (isLive ? "live" : "demo");
+  pill.textContent = isLive ? "LIVE" : "DEMO";
+  pill.title = errMsg || "";
+  document.getElementById("hdr-date").textContent = fmtDate(new Date());
+  document.getElementById("hdr-updated").textContent = state.lastUpdate ? fmtTime(state.lastUpdate) : "—";
+}
+
+/* --- AUTO-DERIVE SENTIMENT FROM PRICE DATA --- */
+function deriveSentiment(row){
+  // row: [type, sym, name, price, 1D, 1W, 1M, 3M, YTD, 12M, H52, L52, Bias]
+  const m1 = row[6], m3 = row[7], ytd = row[8], y1 = row[9];
+  const explicit = row[12]; // user-set bias
+
+  let bias;
+  if (explicit === "BULL" || explicit === "BEAR" || explicit === "NEUT") {
+    bias = explicit;
+  } else {
+    const m1v = m1 ?? 0, m3v = m3 ?? 0, ytdv = ytd ?? 0;
+    const score = (m1v >= 0 ? 1 : -1) + (m3v >= 0 ? 1 : -1) + (ytdv >= 0 ? 1 : -1);
+    if (score >= 2) bias = "BULL";
+    else if (score <= -2) bias = "BEAR";
+    else bias = "NEUT";
+  }
+
+  // strength (0-5) based on magnitudes
+  const mag = Math.min(Math.max(Math.abs(m1 ?? 0) + Math.abs(m3 ?? 0)/2, 0), 10);
+  const strength = Math.max(1, Math.min(5, Math.round(mag * 0.6 + 1)));
+
+  // signal text
+  let signal;
+  if (bias === "BULL") {
+    if ((m1 ?? 0) > 4) signal = "Strong uptrend · momentum";
+    else if ((m3 ?? 0) > 5) signal = "Sustained advance";
+    else signal = "Above key levels";
+  } else if (bias === "BEAR") {
+    if ((m1 ?? 0) < -3) signal = "Sharp downtrend";
+    else if ((m3 ?? 0) < -2) signal = "Below key levels";
+    else signal = "Weakness · caution";
+  } else {
+    signal = "Range-bound · mixed";
+  }
+
+  const icon = bias === "BULL" ? "🔥" : bias === "BEAR" ? "⚠️" : "💧";
+  return { bias, strength, signal, icon };
+}
+
+/* --- RENDER: KPIs --- */
+function renderKPIs(){
+  const all = [...state.indices, ...state.sectors];
+  const sectors = state.sectors;
+  const valid = arr => arr.filter(v => v !== null && !isNaN(v));
+
+  const oneDayVals = valid(all.map(r => r[4]));
+  const oneMVals   = valid(all.map(r => r[6]));
+  const threeMVals = valid(all.map(r => r[7]));
+  const ytdVals    = valid(all.map(r => r[8]));
+
+  const pct = arr => arr.length === 0 ? 0 : (arr.filter(v => v > 0).length / arr.length) * 100;
+  const avg = arr => arr.length === 0 ? 0 : arr.reduce((a,b) => a+b,0) / arr.length;
+
+  const breadth1D  = pct(oneDayVals);
+  const breadth1M  = pct(oneMVals);
+  const breadth3M  = pct(threeMVals);
+  const avg1D      = avg(oneDayVals);
+
+  const adv = oneDayVals.filter(v => v > 0).length;
+  const dec = oneDayVals.filter(v => v < 0).length;
+  const ratio = dec === 0 ? "∞" : (adv / dec).toFixed(2);
+
+  const avgClass = avg1D >= 0 ? "green" : "red";
+  const avgSign  = avg1D >= 0 ? "+" : "−";
+
+  document.getElementById("kpi-row").innerHTML = `
+    <div class="kpi yellow">
+      <div class="kpi-label">Daily Breadth</div>
+      <div class="kpi-value">${breadth1D.toFixed(1)}%</div>
+      <div class="kpi-meta">Adv ${adv} / Dec ${dec} · Ratio ${ratio}</div>
+      <div class="kpi-bar"><span style="width:${breadth1D.toFixed(1)}%;background:linear-gradient(90deg,var(--yellow),var(--lime))"></span></div>
+    </div>
+    <div class="kpi yellow">
+      <div class="kpi-label">% Above 1M Trend</div>
+      <div class="kpi-value">${breadth1M.toFixed(1)}%</div>
+      <div class="kpi-meta">${all.length} symbols · positive 1M return</div>
+      <div class="kpi-bar"><span style="width:${breadth1M.toFixed(1)}%;background:linear-gradient(90deg,var(--yellow),var(--lime))"></span></div>
+    </div>
+    <div class="kpi yellow">
+      <div class="kpi-label">% Above 3M Trend</div>
+      <div class="kpi-value">${breadth3M.toFixed(1)}%</div>
+      <div class="kpi-meta">${all.length} symbols · positive 3M return</div>
+      <div class="kpi-bar"><span style="width:${breadth3M.toFixed(1)}%;background:linear-gradient(90deg,var(--yellow),var(--lime))"></span></div>
+    </div>
+    <div class="kpi ${avgClass}">
+      <div class="kpi-label">Average 1D Move</div>
+      <div class="kpi-value">${avgSign}${Math.abs(avg1D).toFixed(2)}%</div>
+      <div class="kpi-meta">market temperature</div>
+      <div class="kpi-bar"><span style="width:${Math.min(Math.abs(avg1D)*30,100).toFixed(0)}%;background:linear-gradient(90deg,${avg1D>=0?'var(--lime)':'var(--red)'},var(--cyan))"></span></div>
+    </div>
+  `;
+}
+
+/* --- RENDER: INDICES --- */
+function renderIndices(){
+  const tb = document.querySelector("#indices tbody");
+  tb.innerHTML = state.indices.map(r => {
+    const [, sym, name, price, d, w, m, q, ytd, y, hi, lo] = r;
+    return `<tr>
+      <td class="sym">${sym}</td>
+      <td class="name">${name}</td>
+      <td class="price">${fmtPrice(price)}</td>
+      ${pnCell(d)}${pnCell(w)}${pnCell(m)}${pnCell(q)}${pnCell(ytd)}${pnCell(y)}
+      <td style="color:var(--muted)">${fmtPrice(hi)}</td>
+      <td style="color:var(--muted)">${fmtPrice(lo)}</td>
+    </tr>`;
+  }).join("");
+  document.getElementById("indices-count").textContent = state.indices.length;
+}
+
+/* --- RENDER: SECTORS --- */
+function renderSectors(){
+  const tb = document.querySelector("#sectors tbody");
+  tb.innerHTML = state.sectors.map(r => {
+    const [, sym, name, , d, w, m, q, ytd, y] = r;
+    const cells = [d,w,m,q,ytd,y].map(v => {
+      if (v === null || v === undefined || isNaN(v)) return `<td class="nul">—</td>`;
+      return `<td class="hm" style="${hmStyle(v)}">${v>=0?"+":"−"}${Math.abs(v).toFixed(2)}%</td>`;
+    }).join("");
+    return `<tr>
+      <td class="sym">${sym}</td>
+      <td class="name">${name}</td>
+      ${cells}
+    </tr>`;
+  }).join("");
+  document.getElementById("sectors-count").textContent = state.sectors.length;
+}
+
+/* --- RENDER: SENTIMENT --- */
+function renderSentiment(){
+  const tb = document.querySelector("#sentiment tbody");
+  // sort by sentiment: bull first, then neutral, then bear
+  const order = { BULL:0, NEUT:1, BEAR:2 };
+  const rows = state.sectors.map(r => ({ row:r, s:deriveSentiment(r) }))
+    .sort((a,b) => order[a.s.bias] - order[b.s.bias]);
+
+  tb.innerHTML = rows.map(({row, s}) => {
+    const sym = row[1];
+    const tagCls = s.bias === "BULL" ? "sent-bull" : s.bias === "BEAR" ? "sent-bear" : "sent-neut";
+    const strCls = s.bias === "BULL" ? "bull" : s.bias === "BEAR" ? "bear" : "";
+    const label  = s.bias === "BULL" ? "BULLISH" : s.bias === "BEAR" ? "BEARISH" : "NEUTRAL";
+    let bars = "";
+    for (let i=0;i<5;i++) bars += `<i class="${i<s.strength?'on':''}"></i>`;
+    return `<tr>
+      <td class="sym">${sym}</td>
+      <td><span class="sent-tag ${tagCls}"><span class="sent-icon">${s.icon}</span>${label}</span></td>
+      <td><span class="strength ${strCls}">${bars}</span></td>
+      <td class="name" style="color:var(--muted);font-size:12px">${s.signal}</td>
+    </tr>`;
+  }).join("");
+}
+
+/* --- RENDER: BAR CHARTS --- */
+function drawBarChart(svgId, dataIdx){
+  const svg = document.getElementById(svgId);
+  const W = 660, H = 320;
+  const padL = 44, padR = 16, padT = 18, padB = 64;
+  const innerW = W - padL - padR;
+  const innerH = H - padT - padB;
+
+  const data = state.sectors
+    .map(r => ({sym: r[1], val: r[dataIdx]}))
+    .filter(d => d.val !== null && !isNaN(d.val));
+
+  if (data.length === 0){ svg.innerHTML = ""; return; }
+
+  const vals = data.map(d => d.val);
+  const maxV = Math.max(...vals, 0);
+  const minV = Math.min(...vals, 0);
+  const range = (maxV - minV) || 1;
+
+  const yOf = v => padT + innerH * (1 - (v - minV) / range);
+  const y0  = yOf(0);
+
+  const n = data.length;
+  const slot = innerW / n;
+  const barW = Math.min(slot * 0.62, 38);
+
+  let html = "";
+  const ticks = 5;
+  for (let i = 0; i <= ticks; i++){
+    const v = minV + (range * i / ticks);
+    const y = yOf(v);
+    html += `<line x1="${padL}" x2="${W-padR}" y1="${y}" y2="${y}" stroke="#173070" stroke-width="0.5" stroke-dasharray="2 4" opacity="0.6"/>`;
+    html += `<text x="${padL-8}" y="${y+3}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#6F87B8">${v.toFixed(0)}%</text>`;
+  }
+  html += `<line x1="${padL}" x2="${W-padR}" y1="${y0}" y2="${y0}" stroke="#00FFFF" stroke-width="1" opacity="0.5"/>`;
+
+  data.forEach((d, i) => {
+    const cx = padL + slot * i + slot/2;
+    const x  = cx - barW/2;
+    const yTop = d.val >= 0 ? yOf(d.val) : y0;
+    const yBot = d.val >= 0 ? y0 : yOf(d.val);
+    const h   = Math.max(1.5, yBot - yTop);
+    const fillId = d.val >= 0 ? "gradGreen" : "gradRed";
+    const strokeC = d.val >= 0 ? "#00FF99" : "#FF4757";
+    html += `<rect x="${x}" y="${yTop}" width="${barW}" height="${h}" fill="url(#${fillId})" stroke="${strokeC}" stroke-width="0.8" rx="1"/>`;
+    const labelY = d.val >= 0 ? yTop - 6 : yBot + 11;
+    html += `<text x="${cx}" y="${labelY}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" font-weight="600" fill="${strokeC}">${d.val>=0?"+":""}${d.val.toFixed(1)}</text>`;
+    html += `<text x="${cx}" y="${H - padB + 18}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" fill="#E8F0FF" letter-spacing="0.05em">${d.sym}</text>`;
+  });
+  html += `<line x1="${padL}" x2="${W-padR}" y1="${padT+innerH}" y2="${padT+innerH}" stroke="#173070" stroke-width="1"/>`;
+
+  const defs = `
+    <defs>
+      <linearGradient id="gradGreen" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#00FF99" stop-opacity="0.95"/>
+        <stop offset="100%" stop-color="#00FF99" stop-opacity="0.35"/>
+      </linearGradient>
+      <linearGradient id="gradRed" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#FF4757" stop-opacity="0.45"/>
+        <stop offset="100%" stop-color="#FF4757" stop-opacity="0.95"/>
+      </linearGradient>
+    </defs>`;
+  svg.innerHTML = defs + html;
+}
+
+/* --- RENDER ALL --- */
+function renderAll(){
+  renderKPIs();
+  renderIndices();
+  renderSectors();
+  renderSentiment();
+  drawBarChart("chart-monthly", 6); // 1M index
+  drawBarChart("chart-ytd", 8);     // YTD index
+  document.getElementById("hdr-date").textContent = fmtDate(new Date());
+  if (state.lastUpdate) document.getElementById("hdr-updated").textContent = fmtTime(state.lastUpdate);
+}
+
+/* --- INIT --- */
+renderAll();
+loadLive();
+setInterval(loadLive, CONFIG.refreshSec * 1000);
+</script>
+</body>
+</html>
