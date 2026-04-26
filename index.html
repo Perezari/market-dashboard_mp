@@ -92,8 +92,8 @@
   .main-grid{display:grid;grid-template-columns:1fr 2.4fr 1.3fr;gap:12px}
 
   /* gauge */
-  .gauge-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:6px 0 12px}
-  .gauge-svg{width:100%;max-width:220px;height:auto;display:block}
+  .gauge-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:8px 0 14px}
+  .gauge-svg{width:100%;max-width:280px;height:auto;display:block}
   .gauge-meta{text-align:center;font-family:'IBM Plex Mono',monospace}
   .gauge-meta .lbl{font-size:10px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase}
   .gauge-meta .val{font-size:30px;font-weight:600;letter-spacing:-0.01em;line-height:1.05}
@@ -364,8 +364,8 @@
    It needs THREE tabs: data, history, stocks (defaults below).
    ============================================================ */
 const CONFIG = {
-  sheetId: "1Ro0o9E8iv0TPFQzFBtFqhwJu3P3H7TNWUh7vgQ8X9W8",            // ← paste sheet ID here (the long /d/ID/edit part)
-  dataTab:    "sectors",   // tab with indices+sectors (your existing tab)
+  sheetId: "",            // ← paste sheet ID here (the long /d/ID/edit part)
+  dataTab:    "Sheet1",   // tab with indices+sectors (your existing tab)
   historyTab: "history",  // tab with daily closes for SPY/DIA/QQQ/IWM
   stocksTab:  "stocks",   // tab with 30 stocks for the heatmap
   refreshSec: 60
@@ -828,58 +828,154 @@ function gaugeColor(score){
 }
 function renderGauge(){
   const score = computeSentimentScore();
-  const W = 220, H = 140, cx = W/2, cy = H - 18, r = 88;
-  // Semicircle: 180° = left, 0° = right; we want 180°=fear (left), 0°=greed (right)
-  const angleDeg = 180 - (score / 100) * 180;
-  const angle = angleDeg * Math.PI / 180;
-  const nx = cx + (r - 14) * Math.cos(angle);
-  const ny = cy - (r - 14) * Math.sin(angle);
+  let active;
+  if (score < 25) active = "extreme-fear";
+  else if (score < 45) active = "fear";
+  else if (score < 55) active = "neutral";
+  else if (score < 75) active = "greed";
+  else active = "extreme-greed";
 
-  // Build colored arc segments
-  const segments = [
-    {start:0,   end:25,  color:"#FF4757"},
-    {start:25,  end:45,  color:"#FF9F40"},
-    {start:45,  end:55,  color:"#FFEA00"},
-    {start:55,  end:75,  color:"#A0E060"},
-    {start:75,  end:100, color:"#00FF99"},
+  const colors = {
+    "extreme-fear":  "#FF4757",
+    "fear":          "#FF9F40",
+    "neutral":       "#FFEA00",
+    "greed":         "#A0E060",
+    "extreme-greed": "#00FF99"
+  };
+  const labels = {
+    "extreme-fear":  "EXTREME FEAR",
+    "fear":          "FEAR",
+    "neutral":       "NEUTRAL",
+    "greed":         "GREED",
+    "extreme-greed": "EXTREME GREED"
+  };
+
+  // Arc segment paths (CNN-style dial — viewBox 0 0 338 173, half-donut)
+  const paths = {
+    "extreme-fear":  "M46.5,53.4l45.6,44.2c-17.8,18.9-28.7,44.3-28.7,72.2H0C0,124.7,17.7,83.7,46.5,53.4L46.5,53.4z",
+    "fear":          "M132.8,4.9c-32.6,7.1-61.6,23.5-84.2,46.4l45.6,44.2c14.6-14.7,33.5-25,54.7-29.1L132.8,4.9z",
+    "neutral":       "M201.9,4.3C191.2,2.1,180.1,1,168.8,1c-11.3,0-22.4,1.1-33.1,3.2l16.1,61.6c5.5-0.9,11.2-1.4,17-1.4c5.8,0,11.5,0.5,17,1.4L201.9,4.3z",
+    "greed":         "M204.9,4.9l-16.1,61.5c21.1,4.1,40,14.4,54.6,29.1L289,51.3C266.4,28.4,237.4,12,204.9,4.9L204.9,4.9z",
+    "extreme-greed": "M291.1,53.4l-45.6,44.2c17.8,18.9,28.7,44.3,28.7,72.2h63.4C337.6,124.7,319.9,83.7,291.1,53.4L291.1,53.4z"
+  };
+
+  // Decorative dots ring (from original CNN SVG)
+  const dotsPath = "M263,153.1c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4s1.1,0.1,1.4-0.4C263.6,154,263.5,153.4,263,153.1 M259.5,138.6c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C260.2,139.5,260,138.9,259.5,138.6 M253.7,124.9c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C254.3,125.8,254.2,125.2,253.7,124.9 M246,112.2c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C246.6,113.1,246.5,112.5,246,112.2 M224.8,91.1c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C225.5,92,225.3,91.3,224.8,91.1 M212.3,83.5c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C213,84.4,212.8,83.8,212.3,83.5 M198.6,77.8c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C199.2,78.7,199.1,78.1,198.6,77.8 M184.1,74.5c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C184.7,75.4,184.6,74.8,184.1,74.5 M154.8,74.5c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C155.4,75.4,155.3,74.8,154.8,74.5 M140,77.8c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C140.7,78.7,140.5,78.1,140,77.8 M126.3,83.5c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C126.9,84.4,126.8,83.8,126.3,83.5 M113.8,91.5c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C114.4,92.4,114.3,91.8,113.8,91.5 M92.8,112.3c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C93.4,113.2,93.3,112.6,92.8,112.3 M84.7,124.9c-0.5-0.3-1.1-0.1-1.4,0.4c-0.3,0.5-0.1,1.1,0.4,1.4c0.5,0.3,1.1,0.1,1.4-0.4C85.4,125.7,85.2,125.1,84.7,124.9 M78.9,138.6c-0.6,0-1,0.4-1,1c0,0.6,0.4,1,1,1c0.6,0,1-0.4,1-1C79.9,139,79.4,138.6,78.9,138.6 M76.2,154c0,0.6-0.4,1-1,1c-0.6,0-1-0.4-1-1c0-0.6,0.4-1,1-1C75.7,153,76.2,153.4,76.2,154";
+
+  // Number-tick labels (0/25/50/75/100), positioned inside dial near inner edge
+  const numbers = [
+    {val: "0",   x: 73,  y: 168},
+    {val: "25",  x: 102, y: 105},
+    {val: "50",  x: 169, y: 78},
+    {val: "75",  x: 235, y: 105},
+    {val: "100", x: 263, y: 168}
   ];
-  function arcPath(p0, p1){
-    const a0 = (180 - p0/100*180) * Math.PI/180;
-    const a1 = (180 - p1/100*180) * Math.PI/180;
-    const x0 = cx + r*Math.cos(a0), y0 = cy - r*Math.sin(a0);
-    const x1 = cx + r*Math.cos(a1), y1 = cy - r*Math.sin(a1);
-    const xi0 = cx + (r-16)*Math.cos(a0), yi0 = cy - (r-16)*Math.sin(a0);
-    const xi1 = cx + (r-16)*Math.cos(a1), yi1 = cy - (r-16)*Math.sin(a1);
-    return `M${x0},${y0} A${r},${r} 0 0 1 ${x1},${y1} L${xi1},${yi1} A${r-16},${r-16} 0 0 0 ${xi0},${yi0} Z`;
-  }
-  const segHtml = segments.map(s => `<path d="${arcPath(s.start,s.end)}" fill="${s.color}" opacity="0.85"/>`).join("");
 
-  // ticks
-  let ticks = "";
-  for (let p = 0; p <= 100; p += 25){
-    const a = (180 - p/100*180) * Math.PI/180;
-    const x1 = cx + (r+2)*Math.cos(a), y1 = cy - (r+2)*Math.sin(a);
-    const x2 = cx + (r+10)*Math.cos(a), y2 = cy - (r+10)*Math.sin(a);
-    ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#6F87B8" stroke-width="1"/>`;
-    const xt = cx + (r+22)*Math.cos(a), yt = cy - (r+22)*Math.sin(a);
-    ticks += `<text x="${xt}" y="${yt+3}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#6F87B8">${p}</text>`;
+  const dimColor   = "#0E2255";
+  const dimStroke  = "#1A2D5C";
+  const activeColor = colors[active];
+
+  // Build segments
+  let segs = "";
+  for (const id of Object.keys(paths)) {
+    const isActive = id === active;
+    const fill = isActive ? activeColor : dimColor;
+    const stroke = isActive ? activeColor : dimStroke;
+    segs += `<path d="${paths[id]}" fill="${fill}" stroke="${stroke}" stroke-width="${isActive ? 1 : 0.5}"/>`;
   }
 
-  const label = gaugeLabel(score);
-  const color = gaugeColor(score);
+  // --- Curved label paths (textPath targets) ---
+  // Segment angle ranges measured from the actual SVG path geometry.
+  // Segments are unequal: Extreme Fear/Greed are wider (43.6°), Neutral is narrower (22.6°).
+  // EXTREME labels split into two arcs (outer + inner) so they fit at a readable size.
+  const cxL = 168.8, cyL = 169.8;
+  const segmentArcs = {
+    "extreme-fear":  { from: 180,    to: 136.4 },
+    "fear":          { from: 135.4,  to: 101.3 },
+    "neutral":       { from: 101.3,  to: 78.7  },
+    "greed":         { from: 77.6,   to: 44.6  },
+    "extreme-greed": { from: 43.6,   to: 0     }
+  };
+  const labelLines = {
+    "extreme-fear":  ["EXTREME", "FEAR"],
+    "fear":          ["FEAR"],
+    "neutral":       ["NEUTRAL"],
+    "greed":         ["GREED"],
+    "extreme-greed": ["EXTREME", "GREED"]
+  };
+  // Radii: outer line (e.g. "EXTREME") closer to outer edge, inner line ("FEAR"/"GREED") closer to inside
+  const R_OUT = 148, R_IN = 122, R_MID = 134;
+
+  function arcPt(deg, r){
+    const rad = deg * Math.PI / 180;
+    return [
+      (cxL + r * Math.cos(rad)).toFixed(2),
+      (cyL - r * Math.sin(rad)).toFixed(2)
+    ];
+  }
+
+  let labelDefs = "<defs>";
+  for (const [id, range] of Object.entries(segmentArcs)){
+    const lines = labelLines[id];
+    const radii = lines.length === 1 ? [R_MID] : [R_OUT, R_IN];
+    for (let i = 0; i < lines.length; i++){
+      const r = radii[i];
+      const [x1, y1] = arcPt(range.from, r);
+      const [x2, y2] = arcPt(range.to, r);
+      labelDefs += `<path id="lblp-${id}-${i}" d="M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2}" fill="none"/>`;
+    }
+  }
+  labelDefs += "</defs>";
+
+  // Curved labels
+  let lbls = "";
+  for (const id of Object.keys(segmentArcs)){
+    const isActive = id === active;
+    const fill = isActive ? "#02092E" : "#7991BD";
+    const fw   = isActive ? 700 : 500;
+    const lines = labelLines[id];
+    // Tighter letter-spacing for the smaller NEUTRAL segment
+    const ls = (id === "neutral") ? "0.2" : "0.6";
+    for (let i = 0; i < lines.length; i++){
+      lbls += `<text font-family="IBM Plex Mono, monospace" font-size="11" font-weight="${fw}" fill="${fill}" letter-spacing="${ls}">
+        <textPath href="#lblp-${id}-${i}" startOffset="50%" text-anchor="middle">${lines[i]}</textPath>
+      </text>`;
+    }
+  }
+
+  // Build needle (pointing to current score)
+  // Center: (168.8, 169.8). Score 0 = 180° (left), 100 = 0° (right). Needle length 146.
+  const cx = 168.8, cy = 169.8, needleLen = 142;
+  const needleAngleRad = (180 - score * 1.8) * Math.PI / 180;
+  const nx = cx + needleLen * Math.cos(needleAngleRad);
+  const ny = cy - needleLen * Math.sin(needleAngleRad);
+  const needle = `
+    <line x1="${cx}" y1="${cy}" x2="${nx.toFixed(2)}" y2="${ny.toFixed(2)}"
+          stroke="#E8F0FF" stroke-width="2.2" stroke-linecap="round"
+          style="filter:drop-shadow(0 0 4px rgba(0,0,0,0.6))"/>
+    <circle cx="${nx.toFixed(2)}" cy="${ny.toFixed(2)}" r="3.5" fill="${activeColor}" stroke="#02092E" stroke-width="1.2"/>
+    <circle cx="${cx}" cy="${cy}" r="7.5" fill="#02092E" stroke="${activeColor}" stroke-width="2"/>
+    <circle cx="${cx}" cy="${cy}" r="2.5" fill="${activeColor}"/>
+  `;
+
+  // Build numbers
+  let nums = "";
+  for (const n of numbers) {
+    nums += `<text x="${n.x}" y="${n.y}" text-anchor="middle" dominant-baseline="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="500" fill="#6F87B8">${n.val}</text>`;
+  }
 
   document.getElementById("gauge-wrap").innerHTML = `
-    <svg class="gauge-svg" viewBox="0 0 ${W} ${H+30}">
-      ${segHtml}
-      ${ticks}
-      <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
-      <circle cx="${cx}" cy="${cy}" r="6" fill="#02092E" stroke="${color}" stroke-width="2"/>
-      <circle cx="${cx}" cy="${cy}" r="2" fill="${color}"/>
+    <svg viewBox="-4 -4 346 182" class="gauge-svg" aria-label="Fear and Greed gauge">
+      ${labelDefs}
+      ${segs}
+      <path d="${dotsPath}" fill="#3F567F" stroke="none"/>
+      ${lbls}
+      ${nums}
+      ${needle}
     </svg>
     <div class="gauge-meta">
-      <div class="lbl">Sentiment Index</div>
-      <div class="val" style="color:${color}">${score}</div>
-      <div class="sub" style="color:${color};font-weight:600;letter-spacing:0.15em;text-transform:uppercase;font-size:10.5px;margin-top:6px">${label}</div>
+      <div class="val" style="color:${activeColor};text-shadow:0 0 18px ${activeColor}55">${score}</div>
+      <div class="sub" style="color:${activeColor};font-weight:600;letter-spacing:0.18em;text-transform:uppercase;font-size:10.5px;margin-top:4px">${labels[active]}</div>
     </div>
   `;
 }
