@@ -5,252 +5,446 @@
 <title>Market Terminal — Live</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  /* === THEME: TradingView Dark (default) === */
+  :root, [data-theme="tradingview"]{
+    --bg-app:#0E1117;
+    --bg-panel:#131722;
+    --bg-panel-hover:#1A1F2E;
+    --bg-input:#1E222D;
+    --bg-deep:#0A0D14;
+    --border:#2A2E39;
+    --border-soft:#1E222D;
+    --border-strong:#363A45;
+    --text:#D1D4DC;
+    --text-bright:#F0F3FA;
+    --text-muted:#787B86;
+    --text-dim:#4A4E5A;
+    --accent:#2962FF;
+    --accent-soft:rgba(41,98,255,0.12);
+    --accent-bright:#5A88FF;
+    --pos:#26A69A;
+    --pos-bright:#4DDDCD;
+    --pos-soft:rgba(38,166,154,0.12);
+    --pos-rgb:38,166,154;
+    --neg:#EF5350;
+    --neg-bright:#FF6B6B;
+    --neg-soft:rgba(239,83,80,0.12);
+    --neg-rgb:239,83,80;
+    --warn:#FF9800;
+    --warn-soft:rgba(255,152,0,0.12);
+    --gauge-text-on-active:#0A0D14;
+    --shadow:0 4px 12px rgba(0,0,0,0.4);
+  }
+
+  /* === THEME: Bloomberg Classic (neon nostalgia) === */
+  [data-theme="bloomberg"]{
+    --bg-app:#020B3A;
+    --bg-panel:#061540;
+    --bg-panel-hover:#0A1A55;
+    --bg-input:#04102E;
+    --bg-deep:#02092E;
+    --border:#173070;
+    --border-soft:#0E2255;
+    --border-strong:#234899;
+    --text:#E8F0FF;
+    --text-bright:#FFFFFF;
+    --text-muted:#6F87B8;
+    --text-dim:#3F567F;
+    --accent:#00FFFF;
+    --accent-soft:rgba(0,255,255,0.10);
+    --accent-bright:#5DFEFF;
+    --pos:#00FF99;
+    --pos-bright:#7DFFC4;
+    --pos-soft:rgba(0,255,153,0.12);
+    --pos-rgb:0,255,153;
+    --neg:#FF4757;
+    --neg-bright:#FF7A85;
+    --neg-soft:rgba(255,71,87,0.12);
+    --neg-rgb:255,71,87;
+    --warn:#FFEA00;
+    --warn-soft:rgba(255,234,0,0.10);
+    --gauge-text-on-active:#02092E;
+    --shadow:0 0 20px rgba(0,255,255,0.08);
+  }
+
+  /* === THEME: Midnight (deep purple-navy, regal) === */
+  [data-theme="midnight"]{
+    --bg-app:#0A0612;
+    --bg-panel:#15101F;
+    --bg-panel-hover:#1F1830;
+    --bg-input:#1A1428;
+    --bg-deep:#06030E;
+    --border:#2D2241;
+    --border-soft:#1F1830;
+    --border-strong:#3D2E58;
+    --text:#D8D2E5;
+    --text-bright:#F4EFFF;
+    --text-muted:#8678A8;
+    --text-dim:#4D416B;
+    --accent:#A06CFF;
+    --accent-soft:rgba(160,108,255,0.12);
+    --accent-bright:#C49AFF;
+    --pos:#3DDC97;
+    --pos-bright:#6EEAB0;
+    --pos-soft:rgba(61,220,151,0.12);
+    --pos-rgb:61,220,151;
+    --neg:#FF5C8A;
+    --neg-bright:#FF85AB;
+    --neg-soft:rgba(255,92,138,0.12);
+    --neg-rgb:255,92,138;
+    --warn:#FFB547;
+    --warn-soft:rgba(255,181,71,0.12);
+    --gauge-text-on-active:#06030E;
+    --shadow:0 4px 16px rgba(0,0,0,0.6);
+  }
+
+  /* === THEME: Carbon (charcoal minimal, GitHub-style) === */
+  [data-theme="carbon"]{
+    --bg-app:#161616;
+    --bg-panel:#1F1F1F;
+    --bg-panel-hover:#2A2A2A;
+    --bg-input:#262626;
+    --bg-deep:#0D0D0D;
+    --border:#383838;
+    --border-soft:#262626;
+    --border-strong:#4D4D4D;
+    --text:#C9C9C9;
+    --text-bright:#F2F2F2;
+    --text-muted:#7D7D7D;
+    --text-dim:#525252;
+    --accent:#4493F8;
+    --accent-soft:rgba(68,147,248,0.12);
+    --accent-bright:#7AB1FA;
+    --pos:#3FB950;
+    --pos-bright:#56D364;
+    --pos-soft:rgba(63,185,80,0.12);
+    --pos-rgb:63,185,80;
+    --neg:#F85149;
+    --neg-bright:#FF7B72;
+    --neg-soft:rgba(248,81,73,0.12);
+    --neg-rgb:248,81,73;
+    --warn:#D29922;
+    --warn-soft:rgba(210,153,34,0.12);
+    --gauge-text-on-active:#0D0D0D;
+    --shadow:0 4px 12px rgba(0,0,0,0.4);
+  }
+
+  /* === THEME: Light (day mode) === */
+  [data-theme="light"]{
+    --bg-app:#F8F9FB;
+    --bg-panel:#FFFFFF;
+    --bg-panel-hover:#F1F3F6;
+    --bg-input:#F1F3F6;
+    --bg-deep:#EAEDF1;
+    --border:#E1E4EA;
+    --border-soft:#EDEFF3;
+    --border-strong:#C9CDD4;
+    --text:#1F2937;
+    --text-bright:#0B0F19;
+    --text-muted:#6B7280;
+    --text-dim:#9CA3AF;
+    --accent:#2962FF;
+    --accent-soft:rgba(41,98,255,0.10);
+    --accent-bright:#1E50E0;
+    --pos:#0E9F6E;
+    --pos-bright:#06724D;
+    --pos-soft:rgba(14,159,110,0.10);
+    --pos-rgb:14,159,110;
+    --neg:#E02424;
+    --neg-bright:#B81717;
+    --neg-soft:rgba(224,36,36,0.10);
+    --neg-rgb:224,36,36;
+    --warn:#D97706;
+    --warn-soft:rgba(217,119,6,0.10);
+    --gauge-text-on-active:#FFFFFF;
+    --shadow:0 2px 8px rgba(15,23,42,0.06);
+  }
+
+  /* legacy aliases (used in code below — apply universally) */
   :root{
-    --bg-0:#020B3A; --bg-1:#061540; --bg-2:#0A1A55; --bg-3:#04102E;
-    --line:#173070; --line-soft:#0E2255;
-    --cyan:#00FFFF; --lime:#00FF99; --yellow:#FFEA00; --red:#FF4757; --orange:#FF9F40;
-    --green:#00FF99; --text:#E8F0FF; --muted:#6F87B8; --dim:#3F567F;
+    --bg-0:var(--bg-app);
+    --bg-1:var(--bg-panel);
+    --bg-2:var(--bg-panel-hover);
+    --bg-3:var(--bg-deep);
+    --line:var(--border);
+    --line-soft:var(--border-soft);
+    --cyan:var(--accent);
+    --lime:var(--pos);
+    --yellow:var(--warn);
+    --red:var(--neg);
+    --orange:var(--warn);
+    --green:var(--pos);
+    --muted:var(--text-muted);
+    --dim:var(--text-dim);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:var(--bg-0);color:var(--text);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased}
+  html,body{background:var(--bg-app);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;font-feature-settings:"cv02","cv03","cv04","cv11"}
   body{
     padding:20px;
-    background:
-      radial-gradient(1200px 600px at 80% -10%, rgba(0,255,255,0.06), transparent 60%),
-      radial-gradient(900px 500px at 0% 100%, rgba(0,255,153,0.04), transparent 60%),
-      linear-gradient(180deg, #02092E 0%, #020B3A 60%, #04102E 100%);
     min-height:100vh;
+    background:var(--bg-app);
   }
-  .terminal{max-width:1640px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+  .terminal{max-width:1640px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
 
   /* setup banner */
-  .setup-banner{background:linear-gradient(90deg,#3a2a08,#5a3f0a);
-    border:1px solid var(--yellow);border-radius:6px;padding:14px 18px;
-    color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:12px;
-    display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .setup-banner{background:rgba(255,152,0,0.08);
+    border:1px solid rgba(255,152,0,0.3);border-radius:8px;padding:12px 16px;
+    color:var(--warn);font-family:'JetBrains Mono',monospace;font-size:12px;
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .setup-banner.hidden{display:none}
-  .setup-banner code{background:rgba(0,0,0,0.35);padding:3px 8px;border-radius:3px;
-    color:var(--cyan);border:1px solid rgba(0,255,255,0.25)}
+  .setup-banner code{background:rgba(0,0,0,0.4);padding:2px 7px;border-radius:3px;
+    color:var(--accent-bright);border:1px solid rgba(41,98,255,0.25)}
 
   /* header */
-  .header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;
-    background:linear-gradient(90deg,#061540 0%, #0A1A55 50%, #061540 100%);
-    border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:6px}
-  .brand{display:flex;align-items:baseline;gap:10px}
-  .brand .logo{width:34px;height:34px;border-radius:4px;
-    background:linear-gradient(135deg,var(--cyan),var(--lime));
+  .header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;
+    background:var(--bg-panel);
+    border:1px solid var(--border);border-radius:8px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .logo{width:32px;height:32px;border-radius:7px;
+    background:linear-gradient(135deg,var(--accent) 0%,var(--accent-bright) 100%);
     display:flex;align-items:center;justify-content:center;
-    color:#02092E;font-weight:700;font-size:18px;
-    box-shadow:0 0 18px rgba(0,255,255,0.35)}
-  .brand h1{font-size:18px;letter-spacing:0.18em;font-weight:600}
-  .brand h1 .accent{color:var(--cyan)}
-  .brand .sub{font-family:'IBM Plex Mono',monospace;color:var(--muted);font-size:10.5px;letter-spacing:0.15em;margin-left:6px}
-  .header-right{display:flex;gap:10px;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
-  .pill{padding:5px 11px;border:1px solid var(--line);border-radius:3px;background:#02092E;color:var(--muted);letter-spacing:0.1em}
-  .pill.live{color:var(--lime);border-color:rgba(0,255,153,0.35)}
-  .pill.live::before{content:"●";color:var(--lime);margin-right:6px;animation:blink 1.4s infinite}
-  .pill.demo{color:var(--yellow);border-color:rgba(255,234,0,0.35)}
-  .pill.demo::before{content:"●";color:var(--yellow);margin-right:6px}
-  @keyframes blink{0%,60%{opacity:1}80%{opacity:0.2}100%{opacity:1}}
-  .pill .lbl{color:var(--dim);margin-right:5px}
+    color:#fff;font-weight:700;font-size:16px;letter-spacing:-0.02em}
+  .brand h1{font-size:15px;letter-spacing:0.02em;font-weight:600;color:var(--text-bright)}
+  .brand h1 .accent{color:var(--accent-bright);font-weight:500}
+  .brand .sub{font-family:'JetBrains Mono',monospace;color:var(--text-muted);font-size:10.5px;letter-spacing:0.05em;margin-left:4px;font-weight:500}
+  .header-right{display:flex;gap:8px;align-items:center;font-family:'JetBrains Mono',monospace;font-size:11px}
+  .pill{padding:5px 11px;border:1px solid var(--border);border-radius:6px;background:var(--bg-input);color:var(--text-muted);letter-spacing:0.02em;font-weight:500}
+  .pill.live{color:var(--pos);border-color:rgba(38,166,154,0.35);background:var(--pos-soft)}
+  .pill.live::before{content:"●";color:var(--pos);margin-right:5px;animation:blink 2s infinite}
+  .pill.demo{color:var(--warn);border-color:rgba(255,152,0,0.35);background:var(--warn-soft)}
+  .pill.demo::before{content:"●";color:var(--warn);margin-right:5px}
+  @keyframes blink{0%,60%{opacity:1}80%{opacity:0.3}100%{opacity:1}}
+  .pill .lbl{color:var(--text-dim);margin-right:4px;font-weight:400}
+
+  /* theme picker */
+  .theme-picker{position:relative;display:inline-block}
+  .theme-btn{display:flex;align-items:center;gap:7px;padding:5px 10px;
+    background:var(--bg-input);border:1px solid var(--border);border-radius:6px;
+    color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-size:11px;
+    cursor:pointer;transition:all 0.15s;font-weight:500;letter-spacing:0.02em}
+  .theme-btn:hover{color:var(--text-bright);border-color:var(--border-strong)}
+  .theme-btn .swatch-dot{width:10px;height:10px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--pos))}
+  .theme-btn::after{content:"▾";font-size:9px;color:var(--text-dim);margin-left:2px}
+  .theme-menu{position:absolute;top:calc(100% + 6px);right:0;
+    background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;
+    padding:6px;min-width:200px;z-index:100;display:none;
+    box-shadow:var(--shadow)}
+  .theme-menu.open{display:block}
+  .theme-option{display:flex;align-items:center;gap:10px;padding:8px 10px;
+    border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;
+    color:var(--text);transition:background 0.12s;font-weight:500}
+  .theme-option:hover{background:var(--bg-panel-hover)}
+  .theme-option.active{background:var(--accent-soft);color:var(--accent-bright);font-weight:600}
+  .theme-option .preview{display:flex;gap:2px}
+  .theme-option .preview span{width:8px;height:14px;border-radius:2px;display:block}
+  .theme-option .check{margin-left:auto;font-size:11px;color:var(--accent-bright);opacity:0}
+  .theme-option.active .check{opacity:1}
+  .theme-menu-divider{height:1px;background:var(--border-soft);margin:4px 6px}
+  .theme-menu-label{font-family:'Inter',sans-serif;font-size:10px;color:var(--text-muted);
+    padding:8px 10px 4px;letter-spacing:0.04em;font-weight:600;text-transform:uppercase}
+
+  /* tab nav */
+  .tabs{display:flex;gap:2px;background:var(--bg-panel);border:1px solid var(--border);
+    border-radius:8px;padding:4px;font-family:'Inter',sans-serif}
+  .tab{flex:0 0 auto;padding:8px 18px;font-size:12px;letter-spacing:0.01em;
+    color:var(--text-muted);background:transparent;border:0;border-radius:5px;
+    cursor:pointer;font-family:inherit;
+    transition:all 0.12s;font-weight:500}
+  .tab:hover{color:var(--text-bright);background:var(--bg-panel-hover)}
+  .tab.active{background:var(--accent-soft);color:var(--accent-bright);font-weight:600}
+  .tab-icon{margin-right:7px;font-size:13px;vertical-align:-1px;opacity:0.85}
+
+  /* views */
+  .view{display:none;flex-direction:column;gap:18px}
+  .view.active{display:flex}
 
   /* panels */
-  .panel{background:linear-gradient(180deg,#061540 0%, #04102E 100%);
-    border:1px solid var(--line);border-radius:6px;overflow:hidden}
-  .panel-head{padding:12px 16px;border-bottom:1px solid var(--line);
-    display:flex;align-items:center;justify-content:space-between;background:rgba(10,26,85,0.6)}
-  .panel-head h2{font-size:11.5px;letter-spacing:0.22em;font-weight:600;color:var(--text);text-transform:uppercase}
-  .panel-head .meta{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:0.1em}
+  .panel{background:var(--bg-panel);
+    border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .panel-head{padding:12px 16px;border-bottom:1px solid var(--border-soft);
+    display:flex;align-items:center;justify-content:space-between}
+  .panel-head h2{font-size:13px;font-weight:600;color:var(--text-bright);letter-spacing:-0.005em}
+  .panel-head .meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);font-weight:400}
   .panel-body{padding:14px 16px}
 
   /* index cards */
-  .index-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .index-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
   .idx-card{position:relative;padding:14px 16px;
-    background:linear-gradient(180deg,#0A1A55 0%, #04102E 100%);
-    border:1px solid var(--line);border-radius:6px;
-    overflow:hidden;display:flex;flex-direction:column;gap:8px;min-height:160px}
-  .idx-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan)}
-  .idx-card.up::before{background:var(--lime)}
-  .idx-card.down::before{background:var(--red)}
+    background:var(--bg-panel);
+    border:1px solid var(--border);border-radius:8px;
+    overflow:hidden;display:flex;flex-direction:column;gap:6px;min-height:148px;
+    transition:border-color 0.15s, transform 0.15s}
+  .idx-card:hover{border-color:var(--border-strong)}
   .idx-card .top{display:flex;justify-content:space-between;align-items:flex-start}
-  .idx-card .title{font-size:12px;font-weight:600;letter-spacing:0.1em;color:var(--text)}
-  .idx-card .sym{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;
-    color:var(--cyan);background:rgba(0,255,255,0.08);padding:2px 7px;border-radius:3px;
-    border:1px solid rgba(0,255,255,0.25)}
-  .idx-card .price{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;
-    color:var(--text);letter-spacing:-0.01em;line-height:1}
-  .idx-card .chg{font-family:'IBM Plex Mono',monospace;font-size:11.5px;
-    display:flex;align-items:center;gap:8px}
-  .idx-card .chg.pos{color:var(--lime)}
-  .idx-card .chg.neg{color:var(--red)}
-  .idx-card .spark{margin-top:auto;height:54px}
+  .idx-card .title{font-size:13px;font-weight:600;color:var(--text-bright);letter-spacing:-0.005em}
+  .idx-card .sym{font-family:'JetBrains Mono',monospace;font-size:10px;
+    color:var(--text-muted);background:var(--bg-input);padding:2px 7px;border-radius:4px;
+    border:1px solid var(--border);letter-spacing:0.02em;font-weight:500}
+  .idx-card .price{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;
+    color:var(--text-bright);letter-spacing:-0.02em;line-height:1;margin-top:2px}
+  .idx-card .chg{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;
+    display:flex;align-items:center;gap:6px}
+  .idx-card .chg.pos{color:var(--pos)}
+  .idx-card .chg.neg{color:var(--neg)}
+  .idx-card .spark{margin-top:auto;height:50px;margin-left:-4px;margin-right:-4px}
   .idx-card .spark svg{width:100%;height:100%;display:block}
 
   /* main grid: gauge | chart | sector bars */
-  .main-grid{display:grid;grid-template-columns:1fr 2.4fr 1.3fr;gap:12px}
+  .main-grid{display:grid;grid-template-columns:1fr 2.4fr 1.3fr;gap:10px}
 
   /* gauge */
   .gauge-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:8px 0 14px}
   .gauge-svg{width:100%;max-width:280px;height:auto;display:block}
-  .gauge-meta{text-align:center;font-family:'IBM Plex Mono',monospace}
-  .gauge-meta .lbl{font-size:10px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase}
-  .gauge-meta .val{font-size:30px;font-weight:600;letter-spacing:-0.01em;line-height:1.05}
-  .gauge-meta .sub{font-size:11px;color:var(--muted);margin-top:4px}
+  .gauge-meta{text-align:center;font-family:'JetBrains Mono',monospace}
+  .gauge-meta .lbl{font-size:10px;letter-spacing:0.05em;color:var(--text-muted);text-transform:uppercase;font-weight:500}
+  .gauge-meta .val{font-size:32px;font-weight:600;letter-spacing:-0.02em;line-height:1.05;color:var(--text-bright);font-family:'JetBrains Mono',monospace}
+  .gauge-meta .sub{font-size:11px;margin-top:4px;font-weight:600;letter-spacing:0.05em}
 
   /* perf chart */
-  .perf-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(10,26,85,0.6)}
-  .perf-head h2{font-size:11.5px;letter-spacing:0.22em;font-weight:600;text-transform:uppercase}
-  .tf-btns{display:flex;gap:4px;font-family:'IBM Plex Mono',monospace}
-  .tf-btn{padding:4px 9px;font-size:10px;letter-spacing:0.1em;border:1px solid var(--line);
-    background:transparent;color:var(--muted);border-radius:3px;cursor:pointer;
-    transition:all 0.15s;font-family:inherit}
-  .tf-btn:hover{color:var(--text);border-color:var(--cyan)}
-  .tf-btn.active{background:rgba(0,255,255,0.10);color:var(--cyan);border-color:var(--cyan)}
+  .perf-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border-soft)}
+  .perf-head h2{font-size:13px;font-weight:600;color:var(--text-bright);letter-spacing:-0.005em}
+  .tf-btns{display:flex;gap:2px;background:var(--bg-input);padding:3px;border-radius:6px}
+  .tf-btn{padding:4px 10px;font-size:11px;border:0;
+    background:transparent;color:var(--text-muted);border-radius:4px;cursor:pointer;
+    transition:all 0.12s;font-family:'Inter',sans-serif;font-weight:500}
+  .tf-btn:hover{color:var(--text-bright);background:var(--bg-panel-hover)}
+  .tf-btn.active{background:var(--bg-panel);color:var(--accent-bright);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,0.2)}
   .perf-body{padding:14px 14px 8px}
   .perf-svg{width:100%;height:auto;display:block}
   .perf-legend{display:flex;gap:14px;justify-content:center;padding:6px 0 8px;
-    font-family:'IBM Plex Mono',monospace;font-size:11px}
-  .perf-legend .item{display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--muted);transition:color 0.15s}
-  .perf-legend .item:hover{color:var(--text)}
-  .perf-legend .item.dim{opacity:0.35}
-  .perf-legend .swatch{width:14px;height:3px;border-radius:1px}
-  .perf-tooltip{position:absolute;pointer-events:none;background:#02092E;
-    border:1px solid var(--cyan);border-radius:4px;padding:8px 10px;
-    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);
-    box-shadow:0 4px 16px rgba(0,0,0,0.5);opacity:0;transition:opacity 0.1s;z-index:50;
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500}
+  .perf-legend .item{display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--text-muted);transition:color 0.15s;
+    padding:3px 8px;border-radius:4px}
+  .perf-legend .item:hover{color:var(--text-bright);background:var(--bg-panel-hover)}
+  .perf-legend .item.dim{opacity:0.4}
+  .perf-legend .swatch{width:12px;height:3px;border-radius:1px}
+  .perf-tooltip{position:absolute;pointer-events:none;background:var(--bg-deep);
+    border:1px solid var(--border-strong);border-radius:6px;padding:8px 10px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-bright);
+    box-shadow:0 4px 12px rgba(0,0,0,0.4);opacity:0;transition:opacity 0.1s;z-index:50;
     white-space:nowrap}
 
   /* sector bars */
-  .sec-bars{padding:8px 14px 14px;display:flex;flex-direction:column;gap:6px}
-  .sec-bar{display:grid;grid-template-columns:42px 1fr 70px;align-items:center;gap:10px;
-    font-family:'IBM Plex Mono',monospace;font-size:11.5px;height:26px}
-  .sec-bar .sym{color:var(--cyan);font-weight:600;letter-spacing:0.05em}
-  .sec-bar .track{position:relative;height:8px;background:#02092E;border-radius:2px;overflow:hidden}
-  .sec-bar .track .center{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--line);z-index:2}
-  .sec-bar .fill{position:absolute;top:0;bottom:0;border-radius:2px}
-  .sec-bar .pct{text-align:right;font-variant-numeric:tabular-nums}
-  .sec-bar .pct.pos{color:var(--lime)}
-  .sec-bar .pct.neg{color:var(--red)}
+  .sec-bars{padding:10px 14px 14px;display:flex;flex-direction:column;gap:6px}
+  .sec-bar{display:grid;grid-template-columns:46px 1fr 70px;align-items:center;gap:10px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;height:26px}
+  .sec-bar .sym{color:var(--text-bright);font-weight:600;font-size:11.5px}
+  .sec-bar .track{position:relative;height:6px;background:var(--bg-input);border-radius:3px;overflow:hidden}
+  .sec-bar .track .center{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--border-strong);z-index:2}
+  .sec-bar .fill{position:absolute;top:0;bottom:0;border-radius:3px}
+  .sec-bar .pct{text-align:right;font-variant-numeric:tabular-nums;font-weight:500;font-size:11.5px}
+  .sec-bar .pct.pos{color:var(--pos)}
+  .sec-bar .pct.neg{color:var(--neg)}
 
   /* heatmap */
-  .heatmap-svg{width:100%;height:auto;display:block;background:#02092E}
+  .heatmap-svg{width:100%;height:auto;display:block;background:var(--bg-deep)}
   .hm-cell{cursor:default;transition:opacity 0.1s}
   .hm-cell:hover{opacity:0.85}
 
   /* tables */
-  table{width:100%;border-collapse:separate;border-spacing:0;font-family:'IBM Plex Mono',monospace;font-size:12px}
-  thead th{background:#02092E;color:var(--muted);font-weight:500;font-size:10px;
-    letter-spacing:0.18em;text-transform:uppercase;text-align:right;
-    padding:9px 13px;border-bottom:1px solid var(--line);border-right:1px solid var(--line-soft)}
+  table{width:100%;border-collapse:separate;border-spacing:0;font-family:'JetBrains Mono',monospace;font-size:12px}
+  thead th{background:var(--bg-deep);color:var(--text-muted);font-weight:500;font-size:10.5px;
+    letter-spacing:0.02em;text-transform:none;text-align:right;
+    padding:10px 14px;border-bottom:1px solid var(--border);
+    font-family:'Inter',sans-serif}
   thead th:first-child{text-align:left}
-  thead th:last-child{border-right:0}
-  tbody td{padding:9px 13px;text-align:right;
-    border-bottom:1px solid var(--line-soft);border-right:1px solid var(--line-soft);
-    font-variant-numeric:tabular-nums}
+  tbody td{padding:10px 14px;text-align:right;
+    border-bottom:1px solid var(--border-soft);
+    font-variant-numeric:tabular-nums;color:var(--text)}
   tbody td:first-child{text-align:left}
-  tbody td:last-child{border-right:0}
   tbody tr:last-child td{border-bottom:0}
-  tbody tr:hover td{background:rgba(0,255,255,0.04)}
-  .sym{color:var(--cyan);font-weight:600;letter-spacing:0.05em}
-  .name{color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12.5px}
-  .price{color:var(--text);font-weight:600}
-  .pos{color:var(--lime)}
-  .neg{color:var(--red)}
-  .pos::before{content:"▲ ";font-size:9px}
-  .neg::before{content:"▼ ";font-size:9px}
-  .nul{color:var(--dim)}
+  tbody tr:hover td{background:var(--bg-panel-hover)}
+  .sym{color:var(--text-bright);font-weight:600;font-size:12px}
+  .name{color:var(--text);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500}
+  .price{color:var(--text-bright);font-weight:600}
+  .pos{color:var(--pos)}
+  .neg{color:var(--neg)}
+  .pos::before{content:"";display:none}
+  .neg::before{content:"";display:none}
+  .nul{color:var(--text-dim)}
 
-  /* section title */
-  .stitle{display:flex;align-items:center;gap:11px;padding:0 4px;
-    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase}
-  .stitle .dot{width:7px;height:7px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan)}
-  .stitle .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
-  .stitle .tag{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--dim);letter-spacing:0.2em}
-
-  /* footer */
-  .footer{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;
-    font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.18em}
-  .footer .legend{display:flex;gap:14px;align-items:center}
-  .footer .swatch{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
-
-  /* tab nav */
-  .tabs{display:flex;gap:2px;background:#02092E;border:1px solid var(--line);
-    border-radius:6px;padding:4px;font-family:'IBM Plex Mono',monospace}
-  .tab{flex:1;padding:9px 16px;font-size:11px;letter-spacing:0.18em;
-    color:var(--muted);background:transparent;border:0;border-radius:4px;
-    cursor:pointer;text-transform:uppercase;font-family:inherit;
-    transition:all 0.15s;font-weight:500}
-  .tab:hover{color:var(--text);background:rgba(0,255,255,0.05)}
-  .tab.active{background:linear-gradient(180deg,rgba(0,255,255,0.15),rgba(0,255,255,0.05));
-    color:var(--cyan);border:1px solid rgba(0,255,255,0.3);box-shadow:0 0 12px rgba(0,255,255,0.2)}
-  .tab-icon{margin-right:8px;font-size:13px;vertical-align:-1px;letter-spacing:0}
-
-  /* views */
-  .view{display:none;flex-direction:column;gap:14px}
-  .view.active{display:flex}
-
-  /* watchlist row */
-  .wl-table{width:100%}
-  .wl-table thead th{background:#02092E;color:var(--muted);font-weight:500;font-size:9.5px;
-    letter-spacing:0.18em;text-transform:uppercase;text-align:right;
-    padding:10px 12px;border-bottom:1px solid var(--line);border-right:1px solid var(--line-soft);
-    font-family:'IBM Plex Mono',monospace}
-  .wl-table thead th:first-child,
-  .wl-table thead th:nth-child(2),
-  .wl-table thead th:nth-child(8){text-align:left}
-  .wl-table thead th:last-child{border-right:0}
-  .wl-table tbody td{padding:10px 12px;text-align:right;
-    border-bottom:1px solid var(--line-soft);border-right:1px solid var(--line-soft);
-    font-variant-numeric:tabular-nums;font-family:'IBM Plex Mono',monospace;font-size:12px}
-  .wl-table tbody td:first-child,
-  .wl-table tbody td:nth-child(2){text-align:left}
-  .wl-table tbody td:last-child{border-right:0}
-  .wl-table tbody tr:last-child td{border-bottom:0}
-  .wl-table tbody tr:hover td{background:rgba(0,255,255,0.04)}
-
-  .wl-spark{width:90px;height:30px;display:block}
-  .wl-progress{position:relative;width:90px;height:5px;background:#02092E;border-radius:2px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px}
-  .wl-progress > span{position:absolute;left:0;top:0;bottom:0;border-radius:2px}
-  .wl-progress.from-right > span{left:auto;right:0}
-  .wl-cross{display:inline-block;padding:2px 7px;border-radius:3px;
-    font-size:9.5px;font-weight:600;letter-spacing:0.12em;font-family:'IBM Plex Mono',monospace}
-  .wl-cross.golden{background:rgba(255,234,0,0.12);color:var(--yellow);border:1px solid rgba(255,234,0,0.4)}
-  .wl-cross.death{background:rgba(255,71,87,0.12);color:var(--red);border:1px solid rgba(255,71,87,0.35)}
-  .wl-cross.neutral{background:rgba(111,135,184,0.10);color:var(--muted);border:1px solid rgba(111,135,184,0.25)}
-  .wl-vol{display:inline-block;padding:2px 7px;border-radius:3px;font-size:9.5px;
-    letter-spacing:0.1em;font-family:'IBM Plex Mono',monospace;font-weight:500}
-  .wl-vol.high{background:rgba(0,255,153,0.12);color:var(--lime);border:1px solid rgba(0,255,153,0.3)}
-  .wl-vol.norm{background:rgba(111,135,184,0.10);color:var(--muted);border:1px solid rgba(111,135,184,0.25)}
-
-  /* KPI strip for watchlist */
-  .wl-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  .wl-kpi{padding:12px 14px;background:linear-gradient(180deg,#0A1A55 0%, #061540 100%);
-    border:1px solid var(--line);border-radius:5px;position:relative;overflow:hidden}
-  .wl-kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan)}
-  .wl-kpi.green::after{background:var(--lime)}
-  .wl-kpi.red::after{background:var(--red)}
-  .wl-kpi-lbl{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase}
-  .wl-kpi-val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;margin-top:4px;line-height:1.1}
-  .wl-kpi-sub{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-top:3px}
+  /* sector heatmap table cells */
+  .hm{position:relative;font-weight:500}
 
   /* two-column layout for sector + sentiment */
-  .two-col{display:grid;grid-template-columns:1.55fr 1fr;gap:14px}
+  .two-col{display:grid;grid-template-columns:1.55fr 1fr;gap:12px}
+  .two-col > div{display:flex;flex-direction:column;gap:18px}
 
   /* sentiment table */
   .sent-table td{padding:10px 13px}
-  .sent-tag{display:inline-block;padding:3px 9px;border-radius:3px;
-    font-size:9.5px;font-weight:600;letter-spacing:0.18em;font-family:'IBM Plex Mono',monospace}
-  .sent-bull{background:rgba(0,255,153,0.12);color:var(--lime);border:1px solid rgba(0,255,153,0.35)}
-  .sent-neut{background:rgba(0,255,255,0.10);color:var(--cyan);border:1px solid rgba(0,255,255,0.30)}
-  .sent-bear{background:rgba(255,71,87,0.12);color:var(--red);border:1px solid rgba(255,71,87,0.35)}
-  .sent-icon{font-size:13px;margin-right:5px;vertical-align:middle}
+  .sent-tag{display:inline-block;padding:3px 9px;border-radius:4px;
+    font-size:10px;font-weight:600;font-family:'Inter',sans-serif}
+  .sent-bull{background:var(--pos-soft);color:var(--pos);border:1px solid rgba(38,166,154,0.3)}
+  .sent-neut{background:var(--accent-soft);color:var(--accent-bright);border:1px solid rgba(41,98,255,0.3)}
+  .sent-bear{background:var(--neg-soft);color:var(--neg);border:1px solid rgba(239,83,80,0.3)}
+  .sent-icon{font-size:12px;margin-right:5px;vertical-align:middle}
   .strength{display:inline-flex;gap:2px;align-items:center}
-  .strength i{display:block;width:4px;height:10px;background:var(--dim);border-radius:1px}
-  .strength i.on{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
-  .strength.bull i.on{background:var(--lime);box-shadow:0 0 6px var(--lime)}
-  .strength.bear i.on{background:var(--red);box-shadow:0 0 6px var(--red)}
+  .strength i{display:block;width:4px;height:10px;background:var(--border-strong);border-radius:1px}
+  .strength i.on{background:var(--accent-bright)}
+  .strength.bull i.on{background:var(--pos)}
+  .strength.bear i.on{background:var(--neg)}
+
+  /* watchlist row */
+  .wl-table{width:100%}
+  .wl-table thead th{background:var(--bg-deep);color:var(--text-muted);font-weight:500;font-size:10.5px;
+    letter-spacing:0.02em;text-transform:none;text-align:right;
+    padding:10px 12px;border-bottom:1px solid var(--border);
+    font-family:'Inter',sans-serif;cursor:default}
+  .wl-table thead th:first-child,
+  .wl-table thead th:nth-child(2),
+  .wl-table thead th:nth-child(8){text-align:left}
+  .wl-table tbody td{padding:10px 12px;text-align:right;
+    border-bottom:1px solid var(--border-soft);
+    font-variant-numeric:tabular-nums;font-family:'JetBrains Mono',monospace;font-size:12px}
+  .wl-table tbody td:first-child,
+  .wl-table tbody td:nth-child(2){text-align:left}
+  .wl-table tbody tr:last-child td{border-bottom:0}
+  .wl-table tbody tr:hover td{background:var(--bg-panel-hover)}
+
+  .wl-spark{width:90px;height:30px;display:block}
+  .wl-progress{position:relative;width:90px;height:5px;background:var(--bg-input);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px}
+  .wl-progress > span{position:absolute;left:0;top:0;bottom:0;border-radius:3px}
+  .wl-progress.from-right > span{left:auto;right:0}
+  .wl-cross{display:inline-block;padding:2px 8px;border-radius:4px;
+    font-size:10px;font-weight:600;font-family:'Inter',sans-serif}
+  .wl-cross.golden{background:var(--warn-soft);color:var(--warn);border:1px solid rgba(255,152,0,0.35)}
+  .wl-cross.death{background:var(--neg-soft);color:var(--neg);border:1px solid rgba(239,83,80,0.3)}
+  .wl-cross.neutral{background:rgba(120,123,134,0.10);color:var(--text-muted);border:1px solid rgba(120,123,134,0.2)}
+  .wl-vol{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;
+    font-family:'Inter',sans-serif;font-weight:500}
+  .wl-vol.high{background:var(--pos-soft);color:var(--pos);border:1px solid rgba(38,166,154,0.3)}
+  .wl-vol.norm{background:rgba(120,123,134,0.10);color:var(--text-muted);border:1px solid rgba(120,123,134,0.2)}
+
+  /* KPI strip for watchlist */
+  .wl-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .wl-kpi{padding:14px 16px;background:var(--bg-panel);
+    border:1px solid var(--border);border-radius:8px;position:relative;overflow:hidden;
+    transition:border-color 0.15s}
+  .wl-kpi:hover{border-color:var(--border-strong)}
+  .wl-kpi-lbl{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);font-weight:500}
+  .wl-kpi-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;margin-top:4px;line-height:1.1;letter-spacing:-0.02em;color:var(--text-bright)}
+  .wl-kpi-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);margin-top:3px}
+
+  /* section title */
+  .stitle{display:flex;align-items:center;gap:10px;padding:0 4px;
+    font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);font-weight:500;letter-spacing:0.02em}
+  .stitle .dot{width:6px;height:6px;background:var(--accent);border-radius:50%}
+  .stitle .line{flex:1;height:1px;background:var(--border-soft)}
+  .stitle .tag{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:0.02em}
+
+  /* footer */
+  .footer{display:flex;flex-direction:column;align-items:center;gap:8px;
+    padding:18px 16px 8px;margin-top:8px;
+    font-family:'Inter',sans-serif;font-size:10.5px;color:var(--text-dim);font-weight:400;
+    border-top:1px solid var(--border-soft)}
+  .footer .legend{display:flex;gap:14px;align-items:center;font-size:10px}
+  .footer .legend .item{display:flex;align-items:center;color:var(--text-muted);font-weight:500}
+  .footer .swatch{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  .footer .source{color:var(--text-dim);font-size:10px;letter-spacing:0.02em}
+  .footer .source span.sep{color:var(--border-strong);margin:0 8px}
 
   @media (max-width: 1240px){
     .main-grid{grid-template-columns:1fr 2fr;}
@@ -260,6 +454,7 @@
   @media (max-width: 900px){
     .index-cards{grid-template-columns:repeat(2,1fr)}
     .main-grid{grid-template-columns:1fr}
+    .wl-kpis{grid-template-columns:repeat(2,1fr)}
   }
 </style>
 </head>
@@ -281,6 +476,65 @@
       <div class="pill"><span class="lbl">DATE</span><span id="hdr-date">—</span></div>
       <div class="pill"><span class="lbl">UPDATED</span><span id="hdr-updated">—</span></div>
       <div class="pill" id="hdr-mode">DEMO</div>
+      <div class="theme-picker" id="theme-picker">
+        <button class="theme-btn" id="theme-btn">
+          <span class="swatch-dot" id="theme-swatch"></span>
+          <span id="theme-name">TradingView</span>
+        </button>
+        <div class="theme-menu" id="theme-menu">
+          <div class="theme-menu-label">Color Theme</div>
+          <div class="theme-option" data-theme="tradingview">
+            <div class="preview">
+              <span style="background:#0E1117"></span>
+              <span style="background:#2962FF"></span>
+              <span style="background:#26A69A"></span>
+              <span style="background:#EF5350"></span>
+            </div>
+            <span>TradingView</span>
+            <span class="check">✓</span>
+          </div>
+          <div class="theme-option" data-theme="bloomberg">
+            <div class="preview">
+              <span style="background:#020B3A"></span>
+              <span style="background:#00FFFF"></span>
+              <span style="background:#00FF99"></span>
+              <span style="background:#FF4757"></span>
+            </div>
+            <span>Bloomberg</span>
+            <span class="check">✓</span>
+          </div>
+          <div class="theme-option" data-theme="midnight">
+            <div class="preview">
+              <span style="background:#0A0612"></span>
+              <span style="background:#A06CFF"></span>
+              <span style="background:#3DDC97"></span>
+              <span style="background:#FF5C8A"></span>
+            </div>
+            <span>Midnight</span>
+            <span class="check">✓</span>
+          </div>
+          <div class="theme-option" data-theme="carbon">
+            <div class="preview">
+              <span style="background:#161616"></span>
+              <span style="background:#4493F8"></span>
+              <span style="background:#3FB950"></span>
+              <span style="background:#F85149"></span>
+            </div>
+            <span>Carbon</span>
+            <span class="check">✓</span>
+          </div>
+          <div class="theme-option" data-theme="light">
+            <div class="preview">
+              <span style="background:#F8F9FB;border:1px solid #E1E4EA"></span>
+              <span style="background:#2962FF"></span>
+              <span style="background:#0E9F6E"></span>
+              <span style="background:#E02424"></span>
+            </div>
+            <span>Light</span>
+            <span class="check">✓</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -452,21 +706,70 @@
     </div>
 
   </div> <!-- /view-watchlist -->
+
+  <div class="footer">
     <div class="legend">
-      <span><span class="swatch" style="background:var(--lime)"></span>Positive</span>
-      <span><span class="swatch" style="background:var(--red)"></span>Negative</span>
-      <span><span class="swatch" style="background:var(--cyan)"></span>Symbol</span>
+      <span class="item"><span class="swatch" style="background:var(--pos)"></span>Positive</span>
+      <span class="item"><span class="swatch" style="background:var(--neg)"></span>Negative</span>
+      <span class="item"><span class="swatch" style="background:var(--accent)"></span>Symbol</span>
     </div>
-    <div>SOURCE · GOOGLE FINANCE VIA SHEETS · ~20 MIN DELAY · NOT INVESTMENT ADVICE</div>
+    <div class="source">
+      <span>Source: Google Finance via Sheets</span>
+      <span class="sep">·</span>
+      <span>~20 min delay</span>
+      <span class="sep">·</span>
+      <span>Not investment advice</span>
+    </div>
   </div>
 
 </div>
 
 <script>
 /* ============================================================
+   THEME SYSTEM
+   ============================================================ */
+const THEMES = {
+  tradingview: { name: "TradingView", swatch: "linear-gradient(135deg,#2962FF,#26A69A)" },
+  bloomberg:   { name: "Bloomberg",   swatch: "linear-gradient(135deg,#00FFFF,#00FF99)" },
+  midnight:    { name: "Midnight",    swatch: "linear-gradient(135deg,#A06CFF,#3DDC97)" },
+  carbon:      { name: "Carbon",      swatch: "linear-gradient(135deg,#4493F8,#3FB950)" },
+  light:       { name: "Light",       swatch: "linear-gradient(135deg,#2962FF,#0E9F6E)" }
+};
+
+function applyTheme(themeKey){
+  if (!THEMES[themeKey]) themeKey = "tradingview";
+  document.documentElement.setAttribute("data-theme", themeKey);
+  try { localStorage.setItem("mt-theme", themeKey); } catch(e){}
+  // update button
+  const t = THEMES[themeKey];
+  const nameEl = document.getElementById("theme-name");
+  const swEl   = document.getElementById("theme-swatch");
+  if (nameEl) nameEl.textContent = t.name;
+  if (swEl)   swEl.style.background = t.swatch;
+  // update active option
+  document.querySelectorAll(".theme-option").forEach(el => {
+    el.classList.toggle("active", el.dataset.theme === themeKey);
+  });
+  // re-render charts/SVGs that read CSS vars at draw time
+  if (typeof renderAll === "function" && state && state.indices) renderAll();
+}
+
+function readThemeColor(varName, fallback){
+  const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  return v || fallback;
+}
+
+// Initialize theme before anything else renders
+(function initTheme(){
+  let saved = "tradingview";
+  try { saved = localStorage.getItem("mt-theme") || "tradingview"; } catch(e){}
+  document.documentElement.setAttribute("data-theme", saved);
+})();
+
+
+/* ============================================================
    CONFIG — paste your sheet ID below.
    The sheet must be shared as "Anyone with the link can view".
-   It needs THREE tabs: data, history, stocks (defaults below).
    ============================================================ */
 const CONFIG = {
   sheetId: "1Ro0o9E8iv0TPFQzFBtFqhwJu3P3H7TNWUh7vgQ8X9W8",            // ← paste sheet ID here (the long /d/ID/edit part)
@@ -490,7 +793,14 @@ const SECTOR_NAMES = {
   XLU:"Utilities", XLV:"Health Care", XLB:"Materials",
   XLRE:"Real Estate", XLE:"Energy"
 };
-const INDEX_COLORS = { SPY:"#FF4757", DIA:"#00FF99", QQQ:"#00BFFF", IWM:"#FFEA00" };
+function getIndexColors(){
+  return {
+    SPY: readThemeColor("--accent",       "#2962FF"),
+    DIA: readThemeColor("--pos",          "#26A69A"),
+    QQQ: readThemeColor("--accent-bright","#5A88FF"),
+    IWM: readThemeColor("--warn",         "#FF9800")
+  };
+}
 
 /* --- DEMO DATA --- */
 const DEMO = {
@@ -664,10 +974,12 @@ function pnCell(v){
   return `<td class="${cls}">${Math.abs(v).toFixed(2)}%</td>`;
 }
 function changeColor(v){
-  if (v === null || v === undefined || isNaN(v)) return "#3F567F";
+  if (v === null || v === undefined || isNaN(v)) return readThemeColor("--text-dim","#4A4E5A");
   const a = Math.min(Math.abs(v)/4, 1);
-  if (v >= 0) return `rgba(0,255,153,${0.30+a*0.55})`;
-  return `rgba(255,71,87,${0.30+a*0.55})`;
+  const posRgb = readThemeColor("--pos-rgb","38,166,154");
+  const negRgb = readThemeColor("--neg-rgb","239,83,80");
+  if (v >= 0) return `rgba(${posRgb},${(0.25+a*0.55).toFixed(3)})`;
+  return `rgba(${negRgb},${(0.25+a*0.55).toFixed(3)})`;
 }
 
 /* --- CSV PARSER --- */
@@ -982,7 +1294,9 @@ function renderIndexCards(){
     const dirClass = chg1d == null ? "" : chg1d >= 0 ? "up" : "down";
     const chgClass = chg1d == null ? "" : chg1d >= 0 ? "pos" : "neg";
     const chgArrow = chg1d == null ? "" : chg1d >= 0 ? "▲" : "▼";
-    const lineColor = chg1d == null ? "#6F87B8" : chg1d >= 0 ? "#00FF99" : "#FF4757";
+    const lineColor = chg1d == null ? readThemeColor("--text-muted","#787B86")
+                    : chg1d >= 0 ? readThemeColor("--pos","#26A69A")
+                    : readThemeColor("--neg","#EF5350");
 
     const card = document.createElement("div");
     card.className = `idx-card ${dirClass}`;
@@ -990,7 +1304,7 @@ function renderIndexCards(){
       <div class="top">
         <div>
           <div class="title">${name}</div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.15em;margin-top:3px">MARKET CLOSED</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.15em;margin-top:3px">MARKET CLOSED</div>
         </div>
         <span class="sym">${sym}</span>
       </div>
@@ -1030,11 +1344,11 @@ function gaugeLabel(score){
   return "Extreme Greed";
 }
 function gaugeColor(score){
-  if (score < 25)  return "#FF4757";
-  if (score < 45)  return "#FF9F40";
-  if (score < 55)  return "#FFEA00";
-  if (score < 75)  return "#A0E060";
-  return "#00FF99";
+  if (score < 25)  return readThemeColor("--neg","#EF5350");
+  if (score < 45)  return readThemeColor("--warn","#FF9800");
+  if (score < 55)  return readThemeColor("--accent-bright","#5A88FF");
+  if (score < 75)  return readThemeColor("--pos-bright","#4DDDCD");
+  return readThemeColor("--pos","#26A69A");
 }
 function renderGauge(){
   const score = computeSentimentScore();
@@ -1046,11 +1360,11 @@ function renderGauge(){
   else active = "extreme-greed";
 
   const colors = {
-    "extreme-fear":  "#FF4757",
-    "fear":          "#FF9F40",
-    "neutral":       "#FFEA00",
-    "greed":         "#A0E060",
-    "extreme-greed": "#00FF99"
+    "extreme-fear":  readThemeColor("--neg",          "#EF5350"),
+    "fear":          readThemeColor("--warn",         "#FF9800"),
+    "neutral":       readThemeColor("--accent-bright","#5A88FF"),
+    "greed":         readThemeColor("--pos-bright",   "#4DDDCD"),
+    "extreme-greed": readThemeColor("--pos",          "#26A69A")
   };
   const labels = {
     "extreme-fear":  "EXTREME FEAR",
@@ -1081,8 +1395,13 @@ function renderGauge(){
     {val: "100", x: 263, y: 168}
   ];
 
-  const dimColor   = "#0E2255";
-  const dimStroke  = "#1A2D5C";
+  const dimColor   = readThemeColor("--bg-input","#1E222D");
+  const dimStroke  = readThemeColor("--border","#2A2E39");
+  const tcOnActive = readThemeColor("--gauge-text-on-active","#0A0D14");
+  const tcMuted    = readThemeColor("--text-muted","#787B86");
+  const tcDim      = readThemeColor("--text-dim","#4A4E5A");
+  const tcBright   = readThemeColor("--text-bright","#F0F3FA");
+  const tcDeep     = readThemeColor("--bg-deep","#0A0D14");
   const activeColor = colors[active];
 
   // Build segments
@@ -1141,13 +1460,13 @@ function renderGauge(){
   let lbls = "";
   for (const id of Object.keys(segmentArcs)){
     const isActive = id === active;
-    const fill = isActive ? "#02092E" : "#7991BD";
+    const fill = isActive ? tcOnActive : tcMuted;
     const fw   = isActive ? 700 : 500;
     const lines = labelLines[id];
     // Tighter letter-spacing for the smaller NEUTRAL segment
     const ls = (id === "neutral") ? "0.2" : "0.6";
     for (let i = 0; i < lines.length; i++){
-      lbls += `<text font-family="IBM Plex Mono, monospace" font-size="11" font-weight="${fw}" fill="${fill}" letter-spacing="${ls}">
+      lbls += `<text font-family="JetBrains Mono, monospace" font-size="11" font-weight="${fw}" fill="${fill}" letter-spacing="${ls}">
         <textPath href="#lblp-${id}-${i}" startOffset="50%" text-anchor="middle">${lines[i]}</textPath>
       </text>`;
     }
@@ -1161,24 +1480,24 @@ function renderGauge(){
   const ny = cy - needleLen * Math.sin(needleAngleRad);
   const needle = `
     <line x1="${cx}" y1="${cy}" x2="${nx.toFixed(2)}" y2="${ny.toFixed(2)}"
-          stroke="#E8F0FF" stroke-width="2.2" stroke-linecap="round"
-          style="filter:drop-shadow(0 0 4px rgba(0,0,0,0.6))"/>
-    <circle cx="${nx.toFixed(2)}" cy="${ny.toFixed(2)}" r="3.5" fill="${activeColor}" stroke="#02092E" stroke-width="1.2"/>
-    <circle cx="${cx}" cy="${cy}" r="7.5" fill="#02092E" stroke="${activeColor}" stroke-width="2"/>
+          stroke="${tcBright}" stroke-width="2.2" stroke-linecap="round"
+          style="filter:drop-shadow(0 0 4px rgba(0,0,0,0.4))"/>
+    <circle cx="${nx.toFixed(2)}" cy="${ny.toFixed(2)}" r="3.5" fill="${activeColor}" stroke="${tcDeep}" stroke-width="1.2"/>
+    <circle cx="${cx}" cy="${cy}" r="7.5" fill="${tcDeep}" stroke="${activeColor}" stroke-width="2"/>
     <circle cx="${cx}" cy="${cy}" r="2.5" fill="${activeColor}"/>
   `;
 
   // Build numbers
   let nums = "";
   for (const n of numbers) {
-    nums += `<text x="${n.x}" y="${n.y}" text-anchor="middle" dominant-baseline="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="500" fill="#6F87B8">${n.val}</text>`;
+    nums += `<text x="${n.x}" y="${n.y}" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="500" fill="${tcMuted}">${n.val}</text>`;
   }
 
   document.getElementById("gauge-wrap").innerHTML = `
     <svg viewBox="-4 -4 346 182" class="gauge-svg" aria-label="Fear and Greed gauge">
       ${labelDefs}
       ${segs}
-      <path d="${dotsPath}" fill="#3F567F" stroke="none"/>
+      <path d="${dotsPath}" fill="${tcDim}" stroke="none"/>
       ${lbls}
       ${nums}
       ${needle}
@@ -1214,6 +1533,10 @@ function renderPerfChart(){
   const padL = 50, padR = 70, padT = 14, padB = 32;
   const innerW = W - padL - padR, innerH = H - padT - padB;
   const symbols = ["SPY","DIA","QQQ","IWM"];
+  const INDEX_COLORS = getIndexColors();
+  const tcMuted   = readThemeColor("--text-muted",  "#787B86");
+  const tcBorder  = readThemeColor("--border",      "#2A2E39");
+  const tcBgPanel = readThemeColor("--bg-panel",    "#131722");
 
   // Build normalized series
   const series = {};
@@ -1230,7 +1553,7 @@ function renderPerfChart(){
     sliced.forEach(d => allDates.add(d.date.getTime()));
   }
   if (Object.keys(series).length === 0){
-    svg.innerHTML = `<text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="#6F87B8">— history data unavailable —</text>`;
+    svg.innerHTML = `<text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="${tcMuted}">— history data unavailable —</text>`;
     return;
   }
 
@@ -1252,13 +1575,14 @@ function renderPerfChart(){
   for (let i = 0; i <= yTicks; i++){
     const v = yMin + (yMax - yMin) * i / yTicks;
     const y = yOf(v);
-    html += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#173070" stroke-width="0.5" stroke-dasharray="2 4" opacity="0.6"/>`;
-    html += `<text x="${padL-7}" y="${y+3}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#6F87B8">${v.toFixed(1)}%</text>`;
+    html += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="${tcBorder}" stroke-width="0.5" stroke-dasharray="2 4" opacity="0.6"/>`;
+    html += `<text x="${padL-7}" y="${y+3}" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="9.5" fill="${tcMuted}">${v.toFixed(1)}%</text>`;
   }
   // zero line
   if (yMin <= 0 && yMax >= 0){
     const y0 = yOf(0);
-    html += `<line x1="${padL}" y1="${y0}" x2="${W-padR}" y2="${y0}" stroke="#00FFFF" stroke-width="1" opacity="0.4"/>`;
+    const tcStrong = readThemeColor("--border-strong","#363A45");
+    html += `<line x1="${padL}" y1="${y0}" x2="${W-padR}" y2="${y0}" stroke="${tcStrong}" stroke-width="1" opacity="0.6"/>`;
   }
 
   // x labels (4-5 dates)
@@ -1268,7 +1592,7 @@ function renderPerfChart(){
     const d = new Date(t);
     const x = padL + i * innerW / xTicks;
     const label = d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
-    html += `<text x="${x}" y="${H - padB + 16}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#6F87B8">${label}</text>`;
+    html += `<text x="${x}" y="${H - padB + 16}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="${tcMuted}">${label}</text>`;
   }
 
   // line per symbol
@@ -1284,7 +1608,7 @@ function renderPerfChart(){
     const lx = xOf(last.date.getTime()), ly = yOf(last.val);
     const lbl = `${sym}  ${last.val>=0?"+":""}${last.val.toFixed(1)}%`;
     html += `<rect x="${lx+4}" y="${ly-9}" width="68" height="18" rx="2" fill="${color}" opacity="0.92"/>`;
-    html += `<text x="${lx+38}" y="${ly+3}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600" fill="#02092E">${lbl}</text>`;
+    html += `<text x="${lx+38}" y="${ly+3}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" fill="${tcBgPanel}">${lbl}</text>`;
   }
 
   svg.innerHTML = html;
@@ -1323,8 +1647,8 @@ function renderSectorBars(){
   const html = data.map(d => {
     const pctW = Math.abs(d.val) / maxAbs * 50;
     const fill = d.val >= 0
-      ? `<div class="fill" style="left:50%;width:${pctW}%;background:linear-gradient(90deg,rgba(0,255,153,0.4),var(--lime))"></div>`
-      : `<div class="fill" style="right:50%;width:${pctW}%;background:linear-gradient(90deg,var(--red),rgba(255,71,87,0.4))"></div>`;
+      ? `<div class="fill" style="left:50%;width:${pctW}%;background:linear-gradient(90deg,rgba(38,166,154,0.4),var(--lime))"></div>`
+      : `<div class="fill" style="right:50%;width:${pctW}%;background:linear-gradient(90deg,var(--red),rgba(239,83,80,0.4))"></div>`;
     return `<div class="sec-bar">
       <div class="sym">${d.sym}</div>
       <div class="track"><div class="center"></div>${fill}</div>
@@ -1397,9 +1721,15 @@ function renderHeatmap(){
   const svg = document.getElementById("heatmap");
   const W = 1600, H = 540;
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const tcMuted  = readThemeColor("--text-muted","#787B86");
+  const tcDeep   = readThemeColor("--bg-deep","#0A0D14");
+  const tcBorder = readThemeColor("--border","#2A2E39");
+  const tcBright = readThemeColor("--text-bright","#F0F3FA");
+  const tcOnTile = readThemeColor("--gauge-text-on-active","#0A0D14");
+
   const stocks = state.stocks.filter(s => s.mcap > 0);
   if (stocks.length === 0){
-    svg.innerHTML = `<text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="#6F87B8">— stocks data unavailable —</text>`;
+    svg.innerHTML = `<text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="${tcMuted}">— stocks data unavailable —</text>`;
     return;
   }
 
@@ -1422,10 +1752,10 @@ function renderHeatmap(){
     const headerH = Math.min(22, sr.h * 0.10);
     const innerY = sr.y + headerH;
     const innerH = sr.h - headerH;
-    // header strip
-    html += `<rect x="${sr.x}" y="${sr.y}" width="${sr.w}" height="${headerH}" fill="rgba(0,0,0,0.55)"/>`;
+    // header strip — semi-transparent dark overlay
+    html += `<rect x="${sr.x}" y="${sr.y}" width="${sr.w}" height="${headerH}" fill="rgba(0,0,0,0.45)"/>`;
     if (sr.w > 60 && headerH > 10){
-      html += `<text x="${sr.x+8}" y="${sr.y+headerH-6}" font-family="IBM Plex Mono, monospace" font-size="${Math.min(11, headerH*0.65).toFixed(1)}" font-weight="600" fill="#E8F0FF" letter-spacing="0.08em">${sr.sec} · ${SECTOR_NAMES[sr.sec] || ""}</text>`;
+      html += `<text x="${sr.x+8}" y="${sr.y+headerH-6}" font-family="JetBrains Mono, monospace" font-size="${Math.min(11, headerH*0.65).toFixed(1)}" font-weight="600" fill="${tcBright}" letter-spacing="0.08em">${sr.sec} · ${SECTOR_NAMES[sr.sec] || ""}</text>`;
     }
     // inner treemap: stocks
     const stockItems = sr.stocks.map(s => ({...s, weight: s.mcap}));
@@ -1433,22 +1763,22 @@ function renderHeatmap(){
     for (const st of stockRects){
       const fill = changeColor(st.chg);
       html += `<g class="hm-cell">
-        <rect x="${st.x+1}" y="${st.y+1}" width="${Math.max(0,st.w-2)}" height="${Math.max(0,st.h-2)}" fill="${fill}" stroke="#02092E" stroke-width="1"/>`;
+        <rect x="${st.x+1}" y="${st.y+1}" width="${Math.max(0,st.w-2)}" height="${Math.max(0,st.h-2)}" fill="${fill}" stroke="${tcDeep}" stroke-width="1"/>`;
       // label if room
       const minSide = Math.min(st.w, st.h);
       if (minSide > 40){
         const fsSym = Math.min(18, minSide * 0.22);
         const fsPct = Math.min(13, minSide * 0.16);
-        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2-fsPct*0.15}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="${fsSym.toFixed(1)}" font-weight="700" fill="#02092E" stroke="#02092E" stroke-width="0.3">${st.sym}</text>`;
-        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2+fsPct*1.0}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="${fsPct.toFixed(1)}" font-weight="600" fill="#02092E" opacity="0.85">${st.chg!=null ? (st.chg>=0?"+":"")+st.chg.toFixed(2)+"%" : "—"}</text>`;
+        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2-fsPct*0.15}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="${fsSym.toFixed(1)}" font-weight="700" fill="${tcOnTile}" stroke="${tcOnTile}" stroke-width="0.3">${st.sym}</text>`;
+        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2+fsPct*1.0}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="${fsPct.toFixed(1)}" font-weight="600" fill="${tcOnTile}" opacity="0.85">${st.chg!=null ? (st.chg>=0?"+":"")+st.chg.toFixed(2)+"%" : "—"}</text>`;
       } else if (minSide > 22){
         const fsSym = Math.min(11, minSide * 0.32);
-        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2+fsSym*0.35}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="${fsSym.toFixed(1)}" font-weight="700" fill="#02092E">${st.sym}</text>`;
+        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2+fsSym*0.35}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="${fsSym.toFixed(1)}" font-weight="700" fill="${tcOnTile}">${st.sym}</text>`;
       }
       html += `<title>${st.sym} · ${st.name}\n${st.chg!=null?(st.chg>=0?"+":"")+st.chg.toFixed(2)+"%":""}\nMcap: ${fmtCap(st.mcap)}</title></g>`;
     }
     // sector outline
-    html += `<rect x="${sr.x}" y="${sr.y}" width="${sr.w}" height="${sr.h}" fill="none" stroke="#173070" stroke-width="1.5"/>`;
+    html += `<rect x="${sr.x}" y="${sr.y}" width="${sr.w}" height="${sr.h}" fill="none" stroke="${tcBorder}" stroke-width="1.5"/>`;
   }
 
   svg.innerHTML = html;
@@ -1475,8 +1805,24 @@ function hmStyle(v){
   if (v === null || v === undefined || isNaN(v)) return "color:var(--dim)";
   const mag = Math.min(Math.abs(v) / 8, 1);
   const alpha = 0.10 + mag * 0.55;
-  if (v > 0) return `background:rgba(0,255,153,${alpha.toFixed(3)});color:#E8FFF4`;
-  if (v < 0) return `background:rgba(255,71,87,${alpha.toFixed(3)});color:#FFEAEC`;
+  // Detect light theme by checking if background is light
+  const bg = readThemeColor("--bg-app", "#0E1117").trim();
+  // Quick lightness check: parse hex to brightness
+  let isLight = false;
+  if (bg.startsWith("#")) {
+    const hex = bg.slice(1);
+    if (hex.length === 6) {
+      const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+      isLight = (r*0.299 + g*0.587 + b*0.114) > 160;
+    }
+  }
+  const posRgb = readThemeColor("--pos-rgb","38,166,154");
+  const negRgb = readThemeColor("--neg-rgb","239,83,80");
+  // On light themes, use solid theme colors for text; on dark, use bright pastels
+  const posText = isLight ? readThemeColor("--pos-bright","#06724D") : "#E8FFF4";
+  const negText = isLight ? readThemeColor("--neg-bright","#B81717") : "#FFEAEC";
+  if (v > 0) return `background:rgba(${posRgb},${alpha.toFixed(3)});color:${posText};font-weight:600`;
+  if (v < 0) return `background:rgba(${negRgb},${alpha.toFixed(3)});color:${negText};font-weight:600`;
   return "color:var(--muted)";
 }
 function renderSectorTable(){
@@ -1601,7 +1947,7 @@ function makeTrendSparkline(closes, width=90, height=30){
     path += (i===0?"M":"L") + (2 + i*step).toFixed(1) + "," + yOf(c).toFixed(1) + " ";
   });
   const isUp = closes[closes.length-1] >= closes[0];
-  const color = isUp ? "#00FF99" : "#FF4757";
+  const color = isUp ? readThemeColor("--pos","#26A69A") : readThemeColor("--neg","#EF5350");
   // area fill
   let area = `M2,${height-2} `;
   closes.forEach((c, i) => {
@@ -1762,6 +2108,33 @@ document.querySelectorAll("#sec-tf-btns .tf-btn").forEach(btn => {
     renderSectorBars();
   };
 });
+
+/* --- THEME PICKER --- */
+(function setupThemePicker(){
+  const btn = document.getElementById("theme-btn");
+  const menu = document.getElementById("theme-menu");
+  if (!btn || !menu) return;
+
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    menu.classList.toggle("open");
+  };
+  document.addEventListener("click", (e) => {
+    if (!menu.contains(e.target) && !btn.contains(e.target)) {
+      menu.classList.remove("open");
+    }
+  });
+  document.querySelectorAll(".theme-option").forEach(opt => {
+    opt.onclick = () => {
+      applyTheme(opt.dataset.theme);
+      menu.classList.remove("open");
+    };
+  });
+
+  // sync UI to currently-applied theme
+  const cur = document.documentElement.getAttribute("data-theme") || "tradingview";
+  applyTheme(cur);
+})();
 
 /* --- INIT --- */
 renderAll();
