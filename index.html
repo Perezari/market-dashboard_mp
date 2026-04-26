@@ -966,11 +966,11 @@
         <div class="splash-step" data-step="indices"><span class="icon"></span>Indices &amp; sectors</div>
         <div class="splash-step" data-step="history"><span class="icon"></span>Historical price data</div>
         <div class="splash-step" data-step="stocks"><span class="icon"></span>S&amp;P 500 components</div>
+        <div class="splash-step" data-step="israel"><span class="icon"></span>Israeli market</div>
         <div class="splash-step" data-step="watchlist"><span class="icon"></span>Personal watchlist</div>
         <div class="splash-step" data-step="watchlist-history"><span class="icon"></span>Watchlist sparklines</div>
-        <div class="splash-step" data-step="alerts"><span class="icon"></span>Price alerts</div>
         <div class="splash-step" data-step="portfolio"><span class="icon"></span>Portfolio positions</div>
-        <div class="splash-step" data-step="israel"><span class="icon"></span>Israeli market</div>
+        <div class="splash-step" data-step="alerts"><span class="icon"></span>Price alerts</div>
       </div>
       <div class="splash-status" id="splash-status">Connecting to data source…</div>
     </div>
@@ -1064,10 +1064,10 @@
   <!-- TABS -->
   <div class="tabs" id="tabs">
     <button class="tab active" data-view="markets"><span class="tab-icon">▣</span>MARKETS</button>
-    <button class="tab" data-view="watchlist"><span class="tab-icon">★</span>WATCHLIST</button>
-    <button class="tab" data-view="scanner"><span class="tab-icon">⌕</span>SCANNER</button>
-    <button class="tab" data-view="portfolio"><span class="tab-icon">◉</span>PORTFOLIO</button>
     <button class="tab" data-view="israel"><span class="tab-icon">✡</span>ISRAEL</button>
+    <button class="tab" data-view="watchlist"><span class="tab-icon">★</span>WATCHLIST</button>
+    <button class="tab" data-view="portfolio"><span class="tab-icon">◉</span>PORTFOLIO</button>
+    <button class="tab" data-view="scanner"><span class="tab-icon">⌕</span>SCANNER</button>
     <button class="tab" data-view="alerts"><span class="tab-icon">⚑</span>ALERTS<span class="tab-badge" id="alerts-badge"></span></button>
   </div>
 
@@ -1461,7 +1461,7 @@
 /* ============================================================
    SPLASH LOADER
    ============================================================ */
-const SPLASH_STEPS = ["indices","history","stocks","watchlist","watchlist-history","alerts","portfolio","israel"];
+const SPLASH_STEPS = ["indices","history","stocks","israel","watchlist","watchlist-history","portfolio","alerts"];
 let splashFirstRun = true;
 let splashTimeout = null;
 
@@ -2077,20 +2077,20 @@ async function loadLive(){
   const r3 = await fetchWithStep(CONFIG.stocksTab, "stocks", "S&P 500 components");
   stockRows = r3.rows; if (r3.ok) anySuccess = true;
 
-  const r4 = await fetchWithStep(CONFIG.watchlistTab, "watchlist", "personal watchlist");
-  wlRows = r4.rows; if (r4.ok) anySuccess = true;
+  const r4 = await fetchWithStep(CONFIG.israelTab, "israel", "Israeli market data");
+  israelRows = r4.rows; if (r4.ok) anySuccess = true;
 
-  const r5 = await fetchWithStep(CONFIG.watchlistHistoryTab, "watchlist-history", "watchlist sparklines");
-  wlHistRows = r5.rows; if (r5.ok) anySuccess = true;
+  const r5 = await fetchWithStep(CONFIG.watchlistTab, "watchlist", "personal watchlist");
+  wlRows = r5.rows; if (r5.ok) anySuccess = true;
 
-  const r6 = await fetchWithStep(CONFIG.alertsTab, "alerts", "price alerts");
-  alertsRows = r6.rows; if (r6.ok) anySuccess = true;
+  const r6 = await fetchWithStep(CONFIG.watchlistHistoryTab, "watchlist-history", "watchlist sparklines");
+  wlHistRows = r6.rows; if (r6.ok) anySuccess = true;
 
   const r7 = await fetchWithStep(CONFIG.portfolioTab, "portfolio", "portfolio positions");
   portfolioRows = r7.rows; if (r7.ok) anySuccess = true;
 
-  const r8 = await fetchWithStep(CONFIG.israelTab, "israel", "Israeli market data");
-  israelRows = r8.rows; if (r8.ok) anySuccess = true;
+  const r8 = await fetchWithStep(CONFIG.alertsTab, "alerts", "price alerts");
+  alertsRows = r8.rows; if (r8.ok) anySuccess = true;
 
   if (!anySuccess){
     state.consecutiveFails++;
