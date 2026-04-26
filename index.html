@@ -257,7 +257,156 @@
   .tab.active{background:var(--accent-soft);color:var(--accent-bright);font-weight:600}
   .tab-icon{margin-right:7px;font-size:13px;vertical-align:-1px;opacity:0.85}
 
-  /* views */
+  /* tab badge */
+  .tab-badge{display:none;margin-left:7px;padding:1px 6px;font-size:9px;
+    background:var(--neg);color:#fff;border-radius:9px;font-weight:700;
+    font-family:'JetBrains Mono',monospace;letter-spacing:0;line-height:1.4}
+  .tab-badge.show{display:inline-block}
+
+  /* === SPLASH LOADER === */
+  .splash{position:fixed;inset:0;background:var(--bg-app);z-index:9999;
+    display:flex;align-items:center;justify-content:center;
+    transition:opacity 0.5s ease, visibility 0.5s ease}
+  .splash.fade{opacity:0;visibility:hidden;pointer-events:none}
+  .splash-inner{display:flex;flex-direction:column;align-items:center;gap:32px;max-width:520px;padding:40px}
+  .splash-brand{display:flex;align-items:center;gap:14px}
+  .splash-logo{width:48px;height:48px;border-radius:10px;
+    background:linear-gradient(135deg,var(--accent) 0%,var(--accent-bright) 100%);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:700;font-size:24px;letter-spacing:-0.02em;
+    box-shadow:0 8px 24px rgba(41,98,255,0.25);
+    animation:splashPulse 2s ease-in-out infinite}
+  @keyframes splashPulse{
+    0%,100%{transform:scale(1);box-shadow:0 8px 24px rgba(41,98,255,0.25)}
+    50%{transform:scale(1.05);box-shadow:0 12px 32px rgba(41,98,255,0.4)}
+  }
+  .splash-title{font-family:'Inter',sans-serif;font-size:22px;font-weight:600;letter-spacing:-0.01em;color:var(--text-bright);line-height:1.2}
+  .splash-title .accent{color:var(--accent-bright);font-weight:500}
+  .splash-sub{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted);letter-spacing:0.1em;margin-top:4px;font-weight:500}
+
+  .splash-progress{width:100%;display:flex;flex-direction:column;gap:14px;margin-top:8px}
+  .splash-bar{width:100%;height:3px;background:var(--bg-input);border-radius:2px;overflow:hidden;position:relative}
+  .splash-bar-fill{position:absolute;left:0;top:0;bottom:0;
+    background:linear-gradient(90deg,var(--accent),var(--accent-bright));
+    border-radius:2px;width:0%;transition:width 0.4s ease}
+
+  .splash-steps{display:flex;flex-direction:column;gap:7px;font-family:'JetBrains Mono',monospace;font-size:11px;width:100%}
+  .splash-step{display:flex;align-items:center;gap:10px;color:var(--text-dim);transition:color 0.2s}
+  .splash-step.active{color:var(--accent-bright)}
+  .splash-step.done{color:var(--pos)}
+  .splash-step.failed{color:var(--neg)}
+  .splash-step .icon{width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:11px}
+  .splash-step.active .icon::before{content:"";display:block;width:10px;height:10px;border:1.5px solid var(--accent-bright);border-top-color:transparent;border-radius:50%;animation:splashSpin 0.7s linear infinite}
+  .splash-step.done .icon::before{content:"✓";color:var(--pos);font-weight:700}
+  .splash-step.failed .icon::before{content:"!";color:var(--neg);font-weight:700}
+  .splash-step:not(.active):not(.done):not(.failed) .icon::before{content:"○";color:var(--text-dim);font-size:10px}
+  @keyframes splashSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+  .splash-status{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);text-align:center;letter-spacing:0.05em;min-height:16px}
+  .splash-error{margin-top:14px;padding:14px 18px;background:var(--neg-soft);border:1px solid rgba(239,83,80,0.3);
+    border-radius:7px;color:var(--neg);font-family:'Inter',sans-serif;font-size:12px;
+    display:none;flex-direction:column;gap:10px;align-items:center;text-align:center}
+  .splash-error.show{display:flex}
+  .splash-skip-btn{padding:8px 18px;background:var(--accent);color:#fff;border:0;border-radius:6px;
+    font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;
+    transition:background 0.12s}
+  .splash-skip-btn:hover{background:var(--accent-bright)}
+  .scanner-controls{display:flex;flex-wrap:wrap;gap:8px;padding:14px;background:var(--bg-panel);
+    border:1px solid var(--border);border-radius:8px}
+  .scan-chip{padding:8px 14px;background:var(--bg-input);border:1px solid var(--border);
+    border-radius:6px;color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;
+    font-size:12px;font-weight:500;transition:all 0.12s;display:flex;align-items:center;gap:8px}
+  .scan-chip:hover{color:var(--text-bright);border-color:var(--border-strong)}
+  .scan-chip.active{background:var(--accent-soft);color:var(--accent-bright);border-color:var(--accent);font-weight:600}
+  .scan-chip .count{background:rgba(255,255,255,0.08);padding:1px 7px;border-radius:9px;
+    font-size:10px;font-family:'JetBrains Mono',monospace;color:inherit;font-weight:600}
+  .scan-chip.active .count{background:var(--accent);color:#fff}
+
+  .scan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+  .scan-result{padding:12px 14px;background:var(--bg-panel);border:1px solid var(--border);
+    border-radius:7px;display:flex;align-items:center;gap:12px;
+    transition:all 0.12s}
+  .scan-result:hover{border-color:var(--border-strong);background:var(--bg-panel-hover)}
+  .scan-result .sym-block{min-width:70px}
+  .scan-result .sym-name{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+  .scan-result .sym-line{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--text-bright)}
+  .scan-result .name-line{font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .scan-result .price-line{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text)}
+  .scan-result .chg-line{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-align:right;min-width:64px}
+  .scan-result .chg-line.pos{color:var(--pos)}
+  .scan-result .chg-line.neg{color:var(--neg)}
+  .scan-result .chg-line .sub{font-size:10px;font-weight:500;color:var(--text-muted);display:block}
+  .scan-result .badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9.5px;
+    font-weight:600;font-family:'Inter',sans-serif;margin-top:2px;letter-spacing:0.02em}
+  .scan-result .badge.gold{background:var(--warn-soft);color:var(--warn);border:1px solid rgba(255,152,0,0.35)}
+  .scan-result .badge.death{background:var(--neg-soft);color:var(--neg);border:1px solid rgba(239,83,80,0.35)}
+  .scan-result .badge.high{background:var(--pos-soft);color:var(--pos);border:1px solid rgba(38,166,154,0.35)}
+  .scan-result .badge.low{background:var(--neg-soft);color:var(--neg);border:1px solid rgba(239,83,80,0.35)}
+  .scan-result .badge.vol{background:var(--accent-soft);color:var(--accent-bright);border:1px solid rgba(41,98,255,0.35)}
+
+  .scan-empty{padding:40px;text-align:center;color:var(--text-muted);font-size:13px;
+    font-family:'Inter',sans-serif;background:var(--bg-panel);border:1px dashed var(--border);border-radius:8px}
+
+  /* === ALERTS === */
+  .alerts-info{display:flex;gap:14px;padding:14px 18px;background:var(--bg-panel);
+    border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;
+    align-items:flex-start}
+  .alerts-info-icon{font-size:22px;color:var(--accent-bright);line-height:1;margin-top:2px}
+  .alerts-info-body{flex:1;display:flex;flex-direction:column;gap:6px}
+  .alerts-info-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--text-bright)}
+  .alerts-info-desc{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-muted);line-height:1.5}
+  .alerts-info-desc code{background:var(--bg-input);color:var(--accent-bright);
+    padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;
+    border:1px solid var(--border)}
+  .alerts-info-cols{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:4px;
+    font-family:'Inter',sans-serif;font-size:11.5px;color:var(--text-muted)}
+  .alerts-info-cols span{display:inline-flex;align-items:center;gap:4px}
+  .alerts-info-cols strong{color:var(--text);font-weight:600}
+  .alerts-info-cols code{background:var(--bg-input);color:var(--accent-bright);
+    padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10.5px}
+
+  .alerts-list{display:flex;flex-direction:column;gap:6px}
+  .alert-item{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;
+    padding:12px 14px;background:var(--bg-panel);border:1px solid var(--border);border-radius:7px;
+    transition:all 0.12s}
+  .alert-item:hover{border-color:var(--border-strong)}
+  .alert-item.triggered{border-color:var(--neg);background:var(--neg-soft)}
+  .alert-item .alert-cond{display:flex;align-items:baseline;gap:8px;font-family:'JetBrains Mono',monospace;flex-wrap:wrap}
+  .alert-item .alert-sym{font-weight:700;color:var(--text-bright);font-size:13px;letter-spacing:0.05em}
+  .alert-item .alert-op{color:var(--text-muted);font-size:13px}
+  .alert-item .alert-val{color:var(--accent-bright);font-weight:600;font-size:13px}
+  .alert-item .alert-cur{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);font-weight:500}
+  .alert-item .alert-note{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted);font-style:italic;margin-left:6px}
+  .alert-item .alert-status{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.02em;
+    padding:3px 8px;border-radius:4px}
+  .alert-item .alert-status.armed{background:var(--accent-soft);color:var(--accent-bright);border:1px solid rgba(41,98,255,0.3)}
+  .alert-item .alert-status.fired{background:var(--neg-soft);color:var(--neg);border:1px solid rgba(239,83,80,0.4)}
+  #alerts-reset-all-btn{padding:5px 10px;background:transparent;border:1px solid var(--border);
+    border-radius:5px;color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;
+    font-size:10.5px;font-weight:500;letter-spacing:0.02em;transition:all 0.12s}
+  #alerts-reset-all-btn:hover{color:var(--text-bright);border-color:var(--border-strong)}
+  .alert-item .alert-status.inactive{background:rgba(120,123,134,0.10);color:var(--text-muted);border:1px solid rgba(120,123,134,0.25)}
+  .alert-item.inactive{opacity:0.55}
+  .alert-item .alert-actions{display:flex;gap:6px}
+  .alert-btn{padding:5px 9px;background:transparent;border:1px solid var(--border);border-radius:5px;
+    color:var(--text-muted);cursor:pointer;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:500;
+    transition:all 0.12s}
+  .alert-btn:hover{color:var(--text-bright);border-color:var(--border-strong)}
+  .alert-btn.danger:hover{color:var(--neg);border-color:var(--neg)}
+
+  /* toast */
+  .toast-stack{position:fixed;top:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:1000;pointer-events:none}
+  .toast{background:var(--bg-panel);border:1px solid var(--neg);border-left:3px solid var(--neg);border-radius:7px;
+    padding:12px 16px;min-width:280px;max-width:380px;
+    font-family:'Inter',sans-serif;font-size:12.5px;color:var(--text-bright);
+    box-shadow:var(--shadow);
+    pointer-events:auto;cursor:pointer;
+    animation:toastIn 0.25s ease-out;display:flex;align-items:flex-start;gap:10px}
+  .toast .icon{font-size:16px;line-height:1}
+  .toast .body{flex:1}
+  .toast .body .title{font-weight:600;color:var(--neg);font-size:11px;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:3px}
+  .toast .body .msg{color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px}
+  @keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
   .view{display:none;flex-direction:column;gap:18px}
   .view.active{display:flex}
 
@@ -460,6 +609,37 @@
 </head>
 <body>
 
+<!-- SPLASH LOADER -->
+<div class="splash" id="splash">
+  <div class="splash-inner">
+    <div class="splash-brand">
+      <div class="splash-logo">M</div>
+      <div>
+        <div class="splash-title">Market<span class="accent">::</span>Terminal</div>
+        <div class="splash-sub">PRO · INITIALIZING</div>
+      </div>
+    </div>
+
+    <div class="splash-progress">
+      <div class="splash-bar"><div class="splash-bar-fill" id="splash-bar-fill"></div></div>
+      <div class="splash-steps" id="splash-steps">
+        <div class="splash-step" data-step="indices"><span class="icon"></span>Indices &amp; sectors</div>
+        <div class="splash-step" data-step="history"><span class="icon"></span>Historical price data</div>
+        <div class="splash-step" data-step="stocks"><span class="icon"></span>S&amp;P 500 components</div>
+        <div class="splash-step" data-step="watchlist"><span class="icon"></span>Personal watchlist</div>
+        <div class="splash-step" data-step="watchlist-history"><span class="icon"></span>Watchlist sparklines</div>
+        <div class="splash-step" data-step="alerts"><span class="icon"></span>Price alerts</div>
+      </div>
+      <div class="splash-status" id="splash-status">Connecting to data source…</div>
+    </div>
+
+    <div class="splash-error" id="splash-error">
+      <div id="splash-error-msg">Some data sources couldn't be loaded.</div>
+      <button class="splash-skip-btn" id="splash-skip-btn">Continue with available data</button>
+    </div>
+  </div>
+</div>
+
 <div class="terminal">
 
   <div id="setup-banner" class="setup-banner hidden"></div>
@@ -542,6 +722,8 @@
   <div class="tabs" id="tabs">
     <button class="tab active" data-view="markets"><span class="tab-icon">▣</span>MARKETS</button>
     <button class="tab" data-view="watchlist"><span class="tab-icon">★</span>WATCHLIST</button>
+    <button class="tab" data-view="scanner"><span class="tab-icon">⌕</span>SCANNER</button>
+    <button class="tab" data-view="alerts"><span class="tab-icon">⚑</span>ALERTS<span class="tab-badge" id="alerts-badge"></span></button>
   </div>
 
   <!-- ========== VIEW: MARKETS ========== -->
@@ -707,6 +889,58 @@
 
   </div> <!-- /view-watchlist -->
 
+  <!-- ========== VIEW: SCANNER ========== -->
+  <div class="view" id="view-scanner">
+
+    <div class="stitle">
+      <span class="dot" style="background:var(--accent)"></span>
+      <span>MARKET SCANNER</span>
+      <span class="line"></span>
+      <span class="tag" id="scan-source-tag">— SCANNING POOL</span>
+    </div>
+
+    <div class="scanner-controls" id="scan-chips"></div>
+
+    <div class="stitle">
+      <span class="dot" style="background:var(--pos)"></span>
+      <span id="scan-result-title">RESULTS</span>
+      <span class="line"></span>
+      <span class="tag" id="scan-result-meta">—</span>
+    </div>
+
+    <div id="scan-results"></div>
+
+  </div> <!-- /view-scanner -->
+
+  <!-- ========== VIEW: ALERTS ========== -->
+  <div class="view" id="view-alerts">
+
+    <div class="alerts-info">
+      <div class="alerts-info-icon">⚑</div>
+      <div class="alerts-info-body">
+        <div class="alerts-info-title">Alerts are managed in your Google Sheet</div>
+        <div class="alerts-info-desc">Edit the <code>alerts</code> tab to add, remove, or modify triggers. Changes appear here on next refresh (~60s).</div>
+        <div class="alerts-info-cols">
+          <span><strong>Symbol</strong> — ticker (e.g. NVDA, SPY, VIX)</span>
+          <span><strong>Condition</strong> — <code>gt</code>, <code>lt</code>, <code>chg-gt</code>, <code>chg-lt</code></span>
+          <span><strong>Value</strong> — the threshold number</span>
+          <span><strong>Active</strong> — TRUE or FALSE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stitle">
+      <span class="dot" style="background:var(--accent)"></span>
+      <span>ACTIVE ALERTS</span>
+      <span class="line"></span>
+      <span class="tag" id="alerts-count-tag">0 ALERTS</span>
+      <button class="alert-btn" id="alerts-reset-all-btn" style="margin-left:8px">Reset All Triggered</button>
+    </div>
+
+    <div id="alerts-list" class="alerts-list"></div>
+
+  </div> <!-- /view-alerts -->
+
   <div class="footer">
     <div class="legend">
       <span class="item"><span class="swatch" style="background:var(--pos)"></span>Positive</span>
@@ -724,10 +958,77 @@
 
 </div>
 
+<!-- toast stack for alerts -->
+<div class="toast-stack" id="toast-stack"></div>
+
 <script>
 /* ============================================================
-   THEME SYSTEM
+   SPLASH LOADER
    ============================================================ */
+const SPLASH_STEPS = ["indices","history","stocks","watchlist","watchlist-history","alerts"];
+let splashFirstRun = true;
+let splashTimeout = null;
+
+function setSplashStep(step, status){
+  // status: 'active' | 'done' | 'failed'
+  const el = document.querySelector(`.splash-step[data-step="${step}"]`);
+  if (!el) return;
+  el.classList.remove("active","done","failed");
+  el.classList.add(status);
+  // update progress bar based on done/failed steps
+  const total = SPLASH_STEPS.length;
+  let completed = 0;
+  for (const s of SPLASH_STEPS){
+    const e = document.querySelector(`.splash-step[data-step="${s}"]`);
+    if (e && (e.classList.contains("done") || e.classList.contains("failed"))) completed++;
+  }
+  const pct = (completed / total) * 100;
+  const bar = document.getElementById("splash-bar-fill");
+  if (bar) bar.style.width = pct + "%";
+}
+
+function setSplashStatus(text){
+  const el = document.getElementById("splash-status");
+  if (el) el.textContent = text;
+}
+
+function hideSplash(){
+  if (splashTimeout) { clearTimeout(splashTimeout); splashTimeout = null; }
+  const sp = document.getElementById("splash");
+  if (sp) sp.classList.add("fade");
+  splashFirstRun = false;
+}
+
+function showSplashError(msg){
+  const err = document.getElementById("splash-error");
+  const msgEl = document.getElementById("splash-error-msg");
+  if (err && msgEl){
+    msgEl.textContent = msg;
+    err.classList.add("show");
+  }
+  setSplashStatus("Setup incomplete — see details below");
+}
+
+// Safety: show "Skip" option if loading hangs
+function startSplashSafetyTimer(){
+  splashTimeout = setTimeout(() => {
+    if (splashFirstRun){
+      const err = document.getElementById("splash-error");
+      const msgEl = document.getElementById("splash-error-msg");
+      if (err && msgEl && !err.classList.contains("show")){
+        msgEl.textContent = "Loading is taking longer than expected. You can continue with whatever has loaded so far.";
+        err.classList.add("show");
+      }
+    }
+  }, 10000);
+}
+
+(function setupSplashSkip(){
+  const btn = document.getElementById("splash-skip-btn");
+  if (btn) btn.onclick = hideSplash;
+})();
+
+
 const THEMES = {
   tradingview: { name: "TradingView", swatch: "linear-gradient(135deg,#2962FF,#26A69A)" },
   bloomberg:   { name: "Bloomberg",   swatch: "linear-gradient(135deg,#00FFFF,#00FF99)" },
@@ -778,6 +1079,7 @@ const CONFIG = {
   stocksTab:  "stocks",   // tab with 30 stocks for the heatmap
   watchlistTab:        "watchlist",         // tab with personal watchlist
   watchlistHistoryTab: "watchlist_history", // tab with sparkline history
+  alertsTab:           "alerts",            // tab with price alerts
   refreshSec: 60
 };
 /* ============================================================ */
@@ -938,7 +1240,9 @@ const state = {
   secTimeframe:  "1M",
   hiddenSeries:  new Set(),
   view: "markets",
-  wlSort: { col: "ytd", dir: "desc" }
+  wlSort: { col: "ytd", dir: "desc" },
+  scanType: "top-gainers",
+  alerts: []  // {id, sym, cond, val, note, triggered, triggeredAt, lastValue}
 };
 
 /* --- HELPERS --- */
@@ -1055,36 +1359,65 @@ async function loadLive(){
   if (!CONFIG.sheetId){
     showSetupBanner();
     setMode(false);
+    if (splashFirstRun) setTimeout(hideSplash, 600);
     return;
   }
   hideSetupBanner();
+
+  // Show splash status only on first run
+  if (splashFirstRun) setSplashStatus("Connecting to Google Sheets…");
+
   const fetchTab = async (tab) => {
     const url = buildGvizUrl(CONFIG.sheetId, tab) + "&_t=" + Date.now();
     const res = await fetch(url, {cache:"no-store"});
     if (!res.ok) throw new Error(`HTTP ${res.status} on ${tab}`);
     return parseCSV(await res.text());
   };
+
+  // Helper: run a fetch and update splash step
+  const fetchWithStep = async (tab, stepId, label) => {
+    if (splashFirstRun){
+      setSplashStep(stepId, "active");
+      setSplashStatus(`Loading ${label}…`);
+    }
+    try {
+      const result = await fetchTab(tab);
+      if (splashFirstRun) setSplashStep(stepId, "done");
+      return { rows: result, ok: true };
+    } catch(e) {
+      console.warn(`${tab} tab failed:`, e);
+      if (splashFirstRun) setSplashStep(stepId, "failed");
+      return { rows: null, ok: false, error: e };
+    }
+  };
+
   let dataRows = null, histRows = null, stockRows = null;
-  let wlRows = null, wlHistRows = null;
+  let wlRows = null, wlHistRows = null, alertsRows = null;
   let anySuccess = false;
 
-  try { dataRows  = await fetchTab(CONFIG.dataTab);    anySuccess = true; }
-  catch(e){ console.warn("data tab failed:", e); }
+  const r1 = await fetchWithStep(CONFIG.dataTab, "indices", "indices & sectors");
+  dataRows = r1.rows; if (r1.ok) anySuccess = true;
 
-  try { histRows  = await fetchTab(CONFIG.historyTab); anySuccess = true; }
-  catch(e){ console.warn("history tab failed (sparklines & chart will use demo):", e); }
+  const r2 = await fetchWithStep(CONFIG.historyTab, "history", "historical price data");
+  histRows = r2.rows; if (r2.ok) anySuccess = true;
 
-  try { stockRows = await fetchTab(CONFIG.stocksTab);  anySuccess = true; }
-  catch(e){ console.warn("stocks tab failed (heatmap will use demo):", e); }
+  const r3 = await fetchWithStep(CONFIG.stocksTab, "stocks", "S&P 500 components");
+  stockRows = r3.rows; if (r3.ok) anySuccess = true;
 
-  try { wlRows = await fetchTab(CONFIG.watchlistTab); anySuccess = true; }
-  catch(e){ console.warn("watchlist tab failed (will use demo):", e); }
+  const r4 = await fetchWithStep(CONFIG.watchlistTab, "watchlist", "personal watchlist");
+  wlRows = r4.rows; if (r4.ok) anySuccess = true;
 
-  try { wlHistRows = await fetchTab(CONFIG.watchlistHistoryTab); anySuccess = true; }
-  catch(e){ console.warn("watchlist_history tab failed (sparklines will use demo):", e); }
+  const r5 = await fetchWithStep(CONFIG.watchlistHistoryTab, "watchlist-history", "watchlist sparklines");
+  wlHistRows = r5.rows; if (r5.ok) anySuccess = true;
+
+  const r6 = await fetchWithStep(CONFIG.alertsTab, "alerts", "price alerts");
+  alertsRows = r6.rows; if (r6.ok) anySuccess = true;
 
   if (!anySuccess){
     setMode(false, "All fetches failed");
+    if (splashFirstRun){
+      showSplashError("Could not load any data from your Google Sheet. Check that the sheet ID is correct and that the sheet is shared as 'Anyone with the link'.");
+    }
     renderAll();
     return;
   }
@@ -1215,10 +1548,44 @@ async function loadLive(){
     if (Object.keys(series).length) state.watchlistHistory = series;
   }
 
+  // --- parse alerts tab ---
+  // Columns: Symbol, Condition (gt/lt/chg-gt/chg-lt), Value, Note, Active (TRUE/FALSE)
+  if (alertsRows && alertsRows.length > 1){
+    const alerts = [];
+    for (const r of alertsRows.slice(1)){
+      const sym = (r[0]||"").trim().toUpperCase();
+      const cond = (r[1]||"").trim().toLowerCase();
+      const valNum = num(r[2]);
+      const note = (r[3]||"").trim();
+      const activeStr = (r[4]||"").trim().toUpperCase();
+      // Skip blank rows
+      if (!sym) continue;
+      // Validate condition
+      const validConds = ["gt","lt","chg-gt","chg-lt"];
+      if (!validConds.includes(cond)) continue;
+      if (valNum == null || isNaN(valNum)) continue;
+      const active = activeStr === "" || activeStr === "TRUE" || activeStr === "1" || activeStr === "YES";
+      alerts.push({
+        sym, cond, val: valNum, note, active,
+        triggered: false, triggeredAt: null, lastValue: null
+      });
+    }
+    state.alerts = alerts;
+  } else if (alertsRows === null) {
+    // fetch failed completely — keep current state.alerts (could be demo or empty)
+  } else {
+    state.alerts = []; // sheet exists but empty
+  }
+
   state.live = true;
   state.lastUpdate = new Date();
   setMode(true);
   renderAll();
+  // Hide splash after first successful render (with small delay so user sees 100%)
+  if (splashFirstRun){
+    setSplashStatus("Ready");
+    setTimeout(hideSplash, 400);
+  }
 }
 
 /* --- BANNERS --- */
@@ -2059,6 +2426,348 @@ function renderWatchlist(){
   const meta = document.getElementById("wl-meta");
   if (meta) meta.textContent = `${state.watchlist.length} SYMBOLS`;
 }
+
+/* ============================================================
+   SCANNER
+   ============================================================ */
+
+const SCAN_DEFS = [
+  { id: "top-gainers",   label: "Top Gainers",      desc: "Largest 1D % gains" },
+  { id: "top-losers",    label: "Top Losers",       desc: "Largest 1D % losses" },
+  { id: "high-vol",      label: "Volume Anomalies", desc: "Volume > 1.5× avg" },
+  { id: "near-high",     label: "Near 52W High",    desc: "Within 3% of high" },
+  { id: "near-low",      label: "Near 52W Low",     desc: "Within 5% of low" },
+  { id: "golden-cross",  label: "Golden Cross",     desc: "MA50 above MA200" },
+  { id: "death-cross",   label: "Death Cross",      desc: "MA50 below MA200" },
+  { id: "ytd-leaders",   label: "YTD Leaders",      desc: "Best YTD performance" },
+  { id: "ytd-laggards",  label: "YTD Laggards",     desc: "Worst YTD performance" }
+];
+
+function getScanPool(){
+  const wlBySym = {};
+  for (const w of state.watchlist) wlBySym[w.sym] = w;
+  const pool = [];
+  for (const s of state.stocks){
+    const w = wlBySym[s.sym];
+    pool.push({
+      sym: s.sym, name: s.name, sector: s.sector,
+      price: s.price, d1: s.chg, mcap: s.mcap,
+      vol: w?.vol ?? null, avgVol: w?.avgVol ?? null,
+      ma50: w?.ma50 ?? null, ma200: w?.ma200 ?? null,
+      ytd: w?.ytd ?? null, hi52: w?.hi52 ?? null, lo52: w?.lo52 ?? null,
+      m1: w?.m1 ?? null
+    });
+  }
+  const stockSyms = new Set(state.stocks.map(s => s.sym));
+  for (const w of state.watchlist){
+    if (!stockSyms.has(w.sym)){
+      pool.push({
+        sym: w.sym, name: w.name, sector: "—",
+        price: w.price, d1: w.d1, mcap: null,
+        vol: w.vol, avgVol: w.avgVol,
+        ma50: w.ma50, ma200: w.ma200,
+        ytd: w.ytd, hi52: w.hi52, lo52: w.lo52, m1: w.m1
+      });
+    }
+  }
+  return pool;
+}
+
+function runScan(scanId){
+  const pool = getScanPool();
+  let result = []; let badge = null;
+  switch(scanId){
+    case "top-gainers":
+      result = pool.filter(s => s.d1 != null && s.d1 > 0).sort((a,b) => b.d1 - a.d1).slice(0, 30); break;
+    case "top-losers":
+      result = pool.filter(s => s.d1 != null && s.d1 < 0).sort((a,b) => a.d1 - b.d1).slice(0, 30); break;
+    case "high-vol":
+      result = pool.filter(s => s.vol != null && s.avgVol != null && s.avgVol > 0 && (s.vol/s.avgVol) > 1.5)
+                   .sort((a,b) => (b.vol/b.avgVol) - (a.vol/a.avgVol));
+      badge = "vol"; break;
+    case "near-high":
+      result = pool.filter(s => s.price != null && s.hi52 != null && (s.price/s.hi52) > 0.97)
+                   .sort((a,b) => (b.price/b.hi52) - (a.price/a.hi52));
+      badge = "high"; break;
+    case "near-low":
+      result = pool.filter(s => s.price != null && s.lo52 != null && s.lo52 > 0 && (s.price/s.lo52) < 1.05)
+                   .sort((a,b) => (a.price/a.lo52) - (b.price/b.lo52));
+      badge = "low"; break;
+    case "golden-cross":
+      result = pool.filter(s => s.ma50 != null && s.ma200 != null && s.ma50 > s.ma200 * 1.005)
+                   .sort((a,b) => (b.ma50/b.ma200) - (a.ma50/a.ma200));
+      badge = "gold"; break;
+    case "death-cross":
+      result = pool.filter(s => s.ma50 != null && s.ma200 != null && s.ma50 < s.ma200 * 0.995)
+                   .sort((a,b) => (a.ma50/a.ma200) - (b.ma50/b.ma200));
+      badge = "death"; break;
+    case "ytd-leaders":
+      result = pool.filter(s => s.ytd != null).sort((a,b) => b.ytd - a.ytd).slice(0, 30); break;
+    case "ytd-laggards":
+      result = pool.filter(s => s.ytd != null).sort((a,b) => a.ytd - b.ytd).slice(0, 30); break;
+  }
+  return { result, badge };
+}
+
+function countScan(scanId){ return runScan(scanId).result.length; }
+
+function renderScannerChips(){
+  const wrap = document.getElementById("scan-chips");
+  if (!wrap) return;
+  wrap.innerHTML = SCAN_DEFS.map(d => {
+    const c = countScan(d.id);
+    const active = state.scanType === d.id ? "active" : "";
+    return `<div class="scan-chip ${active}" data-scan="${d.id}">${d.label}<span class="count">${c}</span></div>`;
+  }).join("");
+  wrap.querySelectorAll(".scan-chip").forEach(el => {
+    el.onclick = () => { state.scanType = el.dataset.scan; renderScanner(); };
+  });
+}
+
+function renderScannerResults(){
+  const wrap = document.getElementById("scan-results");
+  const titleEl = document.getElementById("scan-result-title");
+  const metaEl  = document.getElementById("scan-result-meta");
+  const sourceTag = document.getElementById("scan-source-tag");
+  if (!wrap) return;
+  if (sourceTag) sourceTag.textContent = `${getScanPool().length} SYMBOLS`;
+
+  const def = SCAN_DEFS.find(d => d.id === state.scanType) || SCAN_DEFS[0];
+  const { result, badge } = runScan(state.scanType);
+  if (titleEl) titleEl.textContent = def.label.toUpperCase();
+  if (metaEl) metaEl.textContent = `${result.length} matches · ${def.desc}`;
+
+  if (result.length === 0){
+    wrap.innerHTML = `<div class="scan-empty">No matches found. Some scans (volume, MA crosses, YTD) require Watchlist data — make sure the watchlist tab is populated.</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `<div class="scan-grid">${
+    result.map(s => {
+      let badgeHtml = "";
+      if (badge === "vol" && s.vol && s.avgVol) {
+        badgeHtml = `<span class="badge vol">${(s.vol/s.avgVol).toFixed(1)}× VOL</span>`;
+      } else if (badge === "high" && s.price && s.hi52) {
+        badgeHtml = `<span class="badge high">${((s.price/s.hi52 - 1) * 100).toFixed(1)}% from high</span>`;
+      } else if (badge === "low" && s.price && s.lo52) {
+        badgeHtml = `<span class="badge low">+${((s.price/s.lo52 - 1) * 100).toFixed(1)}% from low</span>`;
+      } else if (badge === "gold") {
+        badgeHtml = `<span class="badge gold">MA50 +${((s.ma50/s.ma200 - 1) * 100).toFixed(1)}%</span>`;
+      } else if (badge === "death") {
+        badgeHtml = `<span class="badge death">MA50 ${((s.ma50/s.ma200 - 1) * 100).toFixed(1)}%</span>`;
+      }
+      const isYtd = state.scanType === "ytd-leaders" || state.scanType === "ytd-laggards";
+      const chgVal = isYtd ? (s.ytd ?? 0) : (s.d1 ?? 0);
+      const chgArrow = chgVal >= 0 ? "▲" : "▼";
+      const subVal = isYtd
+        ? `<span class="sub">${fmt2(s.price)}</span>`
+        : (s.d1 != null ? `<span class="sub">${fmt2(s.price)}</span>` : '');
+      return `<div class="scan-result">
+        <div class="sym-name">
+          <div class="sym-line">${s.sym}</div>
+          <div class="name-line">${s.name || s.sector}</div>
+          ${badgeHtml}
+        </div>
+        <div class="chg-line ${chgVal >= 0 ? 'pos' : 'neg'}">
+          ${chgArrow} ${Math.abs(chgVal).toFixed(2)}%
+          ${subVal}
+        </div>
+      </div>`;
+    }).join("")
+  }</div>`;
+}
+
+function renderScanner(){ renderScannerChips(); renderScannerResults(); }
+
+/* ============================================================
+   ALERTS — managed via Google Sheet "alerts" tab
+   localStorage stores ONLY the triggered state (per alert hash)
+   ============================================================ */
+
+// Hash an alert into a stable ID based on its config
+function alertKey(a){
+  return `${a.sym}|${a.cond}|${a.val}|${a.note||''}`;
+}
+
+function loadTriggeredState(){
+  try {
+    const raw = localStorage.getItem("mt-alerts-triggered");
+    return raw ? JSON.parse(raw) : {};
+  } catch(e){ return {}; }
+}
+function saveTriggeredState(map){
+  try { localStorage.setItem("mt-alerts-triggered", JSON.stringify(map)); } catch(e){}
+}
+
+function getCurrentValue(sym, cond){
+  const inStocks = state.stocks.find(s => s.sym === sym);
+  const inWl     = state.watchlist.find(w => w.sym === sym);
+  const inIdx    = state.indices.find(r => r[1] === sym);
+  if (cond === "gt" || cond === "lt"){
+    return inStocks?.price ?? inWl?.price ?? (inIdx ? inIdx[3] : null);
+  }
+  if (cond === "chg-gt" || cond === "chg-lt"){
+    return inStocks?.chg ?? inWl?.d1 ?? (inIdx ? inIdx[4] : null);
+  }
+  return null;
+}
+
+function evaluateAlert(a){
+  const cur = getCurrentValue(a.sym, a.cond);
+  if (cur == null || isNaN(cur)) return { current: null, hit: false };
+  let hit = false;
+  if (a.cond === "gt" || a.cond === "chg-gt") hit = cur > a.val;
+  else if (a.cond === "lt" || a.cond === "chg-lt") hit = cur < a.val;
+  return { current: cur, hit };
+}
+
+function checkAlerts(){
+  const triggeredMap = loadTriggeredState();
+  const newlyTriggered = [];
+  let changed = false;
+
+  for (const a of state.alerts){
+    if (!a.active) continue;
+    const key = alertKey(a);
+    const { current, hit } = evaluateAlert(a);
+    a.lastValue = current;
+    const wasTriggered = !!triggeredMap[key];
+    if (hit && !wasTriggered){
+      triggeredMap[key] = { triggeredAt: new Date().toISOString() };
+      newlyTriggered.push(a);
+      changed = true;
+    }
+    a.triggered = !!triggeredMap[key];
+    a.triggeredAt = triggeredMap[key]?.triggeredAt || null;
+  }
+  if (changed){
+    saveTriggeredState(triggeredMap);
+    for (const a of newlyTriggered) showToast(a);
+  }
+  // badge count
+  const triggered = state.alerts.filter(a => a.active && a.triggered).length;
+  const badge = document.getElementById("alerts-badge");
+  if (badge){
+    if (triggered > 0){ badge.textContent = triggered; badge.classList.add("show"); }
+    else badge.classList.remove("show");
+  }
+}
+
+function showToast(a){
+  const stack = document.getElementById("toast-stack");
+  if (!stack) return;
+  const condLabel = formatAlertCond(a.cond, a.val);
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.innerHTML = `<div class="icon">⚑</div><div class="body"><div class="title">Alert Triggered</div><div class="msg">${a.sym} ${condLabel}${a.note ? ' · ' + a.note : ''}</div></div>`;
+  toast.onclick = () => toast.remove();
+  stack.appendChild(toast);
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = 880; o.type = "sine";
+    g.gain.setValueAtTime(0.0001, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
+    o.start(); o.stop(ctx.currentTime + 0.4);
+  } catch(e){}
+  setTimeout(() => { if (toast.parentNode) toast.remove(); }, 8000);
+}
+
+function formatAlertCond(cond, val){
+  switch(cond){
+    case "gt":     return `> $${val.toFixed(2)}`;
+    case "lt":     return `< $${val.toFixed(2)}`;
+    case "chg-gt": return `1D > ${val.toFixed(2)}%`;
+    case "chg-lt": return `1D < ${val.toFixed(2)}%`;
+  }
+  return "";
+}
+
+function resetAlert(key){
+  const map = loadTriggeredState();
+  delete map[key];
+  saveTriggeredState(map);
+  // refresh state on alerts
+  for (const a of state.alerts){
+    if (alertKey(a) === key){
+      a.triggered = false;
+      a.triggeredAt = null;
+    }
+  }
+  renderAlerts();
+  checkAlerts();
+}
+function resetAllAlerts(){
+  saveTriggeredState({});
+  for (const a of state.alerts){
+    a.triggered = false;
+    a.triggeredAt = null;
+  }
+  renderAlerts();
+  checkAlerts();
+}
+
+function renderAlerts(){
+  const list = document.getElementById("alerts-list");
+  const tag = document.getElementById("alerts-count-tag");
+  if (!list) return;
+
+  const active = state.alerts.filter(a => a.active);
+  const inactive = state.alerts.filter(a => !a.active);
+
+  if (tag) tag.textContent = `${active.length} ACTIVE${inactive.length ? ' · ' + inactive.length + ' INACTIVE' : ''}`;
+
+  if (state.alerts.length === 0){
+    list.innerHTML = `<div class="scan-empty">No alerts in your sheet yet. Add rows to the <code style="background:var(--bg-input);padding:1px 6px;border-radius:3px;color:var(--accent-bright);font-family:JetBrains Mono,monospace">alerts</code> tab to start.</div>`;
+    return;
+  }
+
+  // Sort: triggered & active first, then armed & active, then inactive
+  const sorted = state.alerts.slice().sort((a,b) => {
+    const aRank = a.active ? (a.triggered ? 0 : 1) : 2;
+    const bRank = b.active ? (b.triggered ? 0 : 1) : 2;
+    if (aRank !== bRank) return aRank - bRank;
+    return 0;
+  });
+
+  list.innerHTML = sorted.map(a => {
+    const condLbl = formatAlertCond(a.cond, a.val);
+    const cur = a.lastValue;
+    const curLbl = cur != null
+      ? `now: ${a.cond.startsWith("chg") ? (cur>=0?'+':'')+cur.toFixed(2)+'%' : '$'+cur.toFixed(2)}`
+      : 'no data yet';
+    let statusCls = 'armed';
+    let statusTxt = 'ARMED';
+    if (!a.active) { statusCls = 'inactive'; statusTxt = 'INACTIVE'; }
+    else if (a.triggered) { statusCls = 'fired'; statusTxt = 'TRIGGERED'; }
+
+    const key = alertKey(a);
+    return `<div class="alert-item ${a.active && a.triggered ? 'triggered' : ''} ${!a.active ? 'inactive' : ''}">
+      <div>
+        <div class="alert-cond">
+          <span class="alert-sym">${a.sym}</span>
+          <span class="alert-op">${condLbl}</span>
+          ${a.note ? `<span class="alert-note">— ${a.note}</span>` : ''}
+        </div>
+        <div style="margin-top:5px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <span class="alert-status ${statusCls}">${statusTxt}</span>
+          <span class="alert-cur">${curLbl}</span>
+          ${a.triggeredAt ? `<span class="alert-cur">at ${new Date(a.triggeredAt).toLocaleString()}</span>` : ''}
+        </div>
+      </div>
+      <div class="alert-actions">
+        ${a.active && a.triggered ? `<button class="alert-btn" data-action="reset" data-key="${key}">Reset</button>` : ''}
+      </div>
+    </div>`;
+  }).join("");
+
+  list.querySelectorAll(".alert-btn[data-action='reset']").forEach(btn => {
+    btn.onclick = () => resetAlert(btn.dataset.key);
+  });
+}
+
 function renderAll(){
   renderIndexCards();
   renderGauge();
@@ -2070,6 +2779,9 @@ function renderAll(){
   renderSentimentTable();
   renderWatchlistKPIs();
   renderWatchlist();
+  renderScanner();
+  renderAlerts();
+  checkAlerts();
   document.getElementById("hdr-date").textContent = fmtDate(new Date());
   if (state.lastUpdate) document.getElementById("hdr-updated").textContent = fmtTime(state.lastUpdate);
 }
@@ -2145,7 +2857,19 @@ document.querySelectorAll("#sec-tf-btns .tf-btn").forEach(btn => {
   applyTheme(cur);
 })();
 
+/* --- ALERTS RESET ALL BUTTON --- */
+(function setupAlertResetAll(){
+  const btn = document.getElementById("alerts-reset-all-btn");
+  if (btn) btn.onclick = () => {
+    if (state.alerts.filter(a => a.triggered).length === 0) return;
+    if (confirm("Reset all triggered alerts? They will start firing again when conditions are met.")) {
+      resetAllAlerts();
+    }
+  };
+})();
+
 /* --- INIT --- */
+startSplashSafetyTimer();
 renderAll();
 loadLive();
 setInterval(loadLive, CONFIG.refreshSec * 1000);
