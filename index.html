@@ -365,7 +365,7 @@
    ============================================================ */
 const CONFIG = {
   sheetId: "1Ro0o9E8iv0TPFQzFBtFqhwJu3P3H7TNWUh7vgQ8X9W8",            // ← paste sheet ID here (the long /d/ID/edit part)
-  dataTab:    "sectors",   // tab with indices+sectors (your existing tab)
+  dataTab:    "Sheet1",   // tab with indices+sectors (your existing tab)
   historyTab: "history",  // tab with daily closes for SPY/DIA/QQQ/IWM
   stocksTab:  "stocks",   // tab with 30 stocks for the heatmap
   refreshSec: 60
@@ -545,6 +545,46 @@ function parseCSV(text){
   return lines;
 }
 
+/* --- ROBUST DATE PARSER --- */
+// Handles ISO (2026-04-26), DD/MM/YYYY (Israeli), MM/DD/YYYY (US),
+// with auto-detection from unambiguous samples (any date with day > 12).
+function parseHistDate(s, isDDMM){
+  s = String(s||"").trim();
+  if (!s) return null;
+  // ISO format
+  if (/^\d{4}-\d{1,2}-\d{1,2}/.test(s)){
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  // Slash/dash format
+  const m = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/);
+  if (m){
+    const a = parseInt(m[1]), b = parseInt(m[2]), y = parseInt(m[3]);
+    // Unambiguous overrides
+    if (a > 12) return new Date(y, b-1, a);  // DD/MM
+    if (b > 12) return new Date(y, a-1, b);  // MM/DD
+    // Ambiguous: use detected format
+    return isDDMM ? new Date(y, b-1, a) : new Date(y, a-1, b);
+  }
+  // Last resort
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+function detectDDMM(rows, col, startRow){
+  // Scan for any unambiguous date (a or b > 12) to detect format
+  for (let i=startRow; i<rows.length; i++){
+    const s = (rows[i] && rows[i][col] || "").trim();
+    const m = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/);
+    if (m){
+      const a = parseInt(m[1]), b = parseInt(m[2]);
+      if (a > 12) return true;   // DD/MM confirmed
+      if (b > 12) return false;  // MM/DD confirmed
+    }
+  }
+  // Fallback: assume locale-aware (DD/MM is more common worldwide outside US)
+  return true;
+}
+
 /* --- BUILD GVIZ URL --- */
 function buildGvizUrl(sheetId, sheetName){
   const base = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq`;
@@ -612,6 +652,11 @@ async function loadLive(){
   if (histRows && histRows.length > 2){
     const series = {};
     const blocks = [{sym:"SPY",col:0},{sym:"DIA",col:3},{sym:"QQQ",col:6},{sym:"IWM",col:9}];
+
+    // Auto-detect date format from SPY column
+    const isDDMM = detectDDMM(histRows, 0, 2);
+    console.log("Date format detected:", isDDMM ? "DD/MM/YYYY" : "MM/DD/YYYY");
+
     for (const blk of blocks){
       const arr = [];
       for (let i=2; i<histRows.length; i++){
@@ -620,14 +665,8 @@ async function loadLive(){
         const cStr = (r[blk.col+1]||"").trim();
         if (!dStr || !cStr) continue;
         const close = num(cStr);
-        // GOOGLEFINANCE returns dates in various locale formats; try a few
-        let d = new Date(dStr);
-        if (isNaN(d.getTime())){
-          // try DD/MM/YYYY HH:MM:SS or M/D/YYYY
-          const m = dStr.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-          if (m){ d = new Date(parseInt(m[3]), parseInt(m[1])-1, parseInt(m[2])); }
-        }
-        if (!isNaN(d.getTime()) && close !== null){
+        const d = parseHistDate(dStr, isDDMM);
+        if (d && close !== null){
           arr.push({date:d, close});
         }
       }
