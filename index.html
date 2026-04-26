@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Market Dashboard — Live</title>
+<title>Market Terminal — Live</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -10,167 +10,214 @@
   :root{
     --bg-0:#020B3A; --bg-1:#061540; --bg-2:#0A1A55; --bg-3:#04102E;
     --line:#173070; --line-soft:#0E2255;
-    --cyan:#00FFFF; --lime:#00FF99; --yellow:#FFEA00; --red:#FF4757;
+    --cyan:#00FFFF; --lime:#00FF99; --yellow:#FFEA00; --red:#FF4757; --orange:#FF9F40;
     --green:#00FF99; --text:#E8F0FF; --muted:#6F87B8; --dim:#3F567F;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:var(--bg-0);color:var(--text);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased}
   body{
-    padding:24px;
+    padding:20px;
     background:
       radial-gradient(1200px 600px at 80% -10%, rgba(0,255,255,0.06), transparent 60%),
       radial-gradient(900px 500px at 0% 100%, rgba(0,255,153,0.04), transparent 60%),
       linear-gradient(180deg, #02092E 0%, #020B3A 60%, #04102E 100%);
     min-height:100vh;
   }
-  .dashboard{max-width:1480px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+  .terminal{max-width:1640px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 
-  /* Setup banner */
-  .setup-banner{
-    background:linear-gradient(90deg,#3a2a08,#5a3f0a);
-    border:1px solid var(--yellow);
-    border-radius:6px;padding:14px 18px;
+  /* setup banner */
+  .setup-banner{background:linear-gradient(90deg,#3a2a08,#5a3f0a);
+    border:1px solid var(--yellow);border-radius:6px;padding:14px 18px;
     color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:12px;
-    display:flex;align-items:center;gap:14px;
-  }
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .setup-banner.hidden{display:none}
-  .setup-banner code{
-    background:rgba(0,0,0,0.35);padding:3px 8px;border-radius:3px;
-    color:var(--cyan);border:1px solid rgba(0,255,255,0.25);
-  }
+  .setup-banner code{background:rgba(0,0,0,0.35);padding:3px 8px;border-radius:3px;
+    color:var(--cyan);border:1px solid rgba(0,255,255,0.25)}
 
-  /* Header */
-  .header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;
+  /* header */
+  .header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;
     background:linear-gradient(90deg,#061540 0%, #0A1A55 50%, #061540 100%);
     border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:6px}
-  .header-left{display:flex;align-items:center;gap:18px}
   .brand{display:flex;align-items:baseline;gap:10px}
   .brand .logo{width:34px;height:34px;border-radius:4px;
     background:linear-gradient(135deg,var(--cyan),var(--lime));
     display:flex;align-items:center;justify-content:center;
     color:#02092E;font-weight:700;font-size:18px;
     box-shadow:0 0 18px rgba(0,255,255,0.35)}
-  .brand h1{font-size:20px;letter-spacing:0.18em;font-weight:600}
+  .brand h1{font-size:18px;letter-spacing:0.18em;font-weight:600}
   .brand h1 .accent{color:var(--cyan)}
-  .brand .sub{font-family:'IBM Plex Mono',monospace;color:var(--muted);font-size:11px;letter-spacing:0.15em;margin-left:6px}
-  .header-right{display:flex;gap:14px;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:12px}
-  .pill{padding:6px 12px;border:1px solid var(--line);border-radius:3px;background:#02092E;color:var(--muted);letter-spacing:0.1em}
+  .brand .sub{font-family:'IBM Plex Mono',monospace;color:var(--muted);font-size:10.5px;letter-spacing:0.15em;margin-left:6px}
+  .header-right{display:flex;gap:10px;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+  .pill{padding:5px 11px;border:1px solid var(--line);border-radius:3px;background:#02092E;color:var(--muted);letter-spacing:0.1em}
   .pill.live{color:var(--lime);border-color:rgba(0,255,153,0.35)}
   .pill.live::before{content:"●";color:var(--lime);margin-right:6px;animation:blink 1.4s infinite}
   .pill.demo{color:var(--yellow);border-color:rgba(255,234,0,0.35)}
   .pill.demo::before{content:"●";color:var(--yellow);margin-right:6px}
   @keyframes blink{0%,60%{opacity:1}80%{opacity:0.2}100%{opacity:1}}
-  .pill .lbl{color:var(--dim);margin-right:6px}
+  .pill .lbl{color:var(--dim);margin-right:5px}
 
-  /* KPIs */
-  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  .kpi{position:relative;padding:16px 18px;
-    background:linear-gradient(180deg,#0A1A55 0%, #061540 100%);
-    border:1px solid var(--line);border-radius:5px;
-    display:flex;flex-direction:column;gap:6px;overflow:hidden}
-  .kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan)}
-  .kpi.yellow::after{background:var(--yellow)}
-  .kpi.green::after{background:var(--lime)}
-  .kpi.red::after{background:var(--red)}
-  .kpi-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase}
-  .kpi-value{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:600;letter-spacing:-0.01em;line-height:1.1}
-  .kpi.yellow .kpi-value{color:var(--yellow);text-shadow:0 0 16px rgba(255,234,0,0.25)}
-  .kpi.green .kpi-value{color:var(--lime)}
-  .kpi.red .kpi-value{color:var(--red)}
-  .kpi.cyan .kpi-value{color:var(--cyan)}
-  .kpi-meta{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
-  .kpi-bar{height:4px;background:#02092E;border-radius:2px;overflow:hidden;margin-top:4px}
-  .kpi-bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--lime));border-radius:2px;transition:width 0.5s ease}
-
-  /* Section title */
-  .section-title{display:flex;align-items:center;gap:12px;padding:0 4px;
-    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase}
-  .section-title .dot{width:8px;height:8px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan)}
-  .section-title .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
-  .section-title .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.2em}
-
-  /* Panel & tables */
-  .panel{background:linear-gradient(180deg,#061540 0%, #04102E 100%);border:1px solid var(--line);border-radius:6px;overflow:hidden}
-  .panel-head{padding:14px 18px;border-bottom:1px solid var(--line);
+  /* panels */
+  .panel{background:linear-gradient(180deg,#061540 0%, #04102E 100%);
+    border:1px solid var(--line);border-radius:6px;overflow:hidden}
+  .panel-head{padding:12px 16px;border-bottom:1px solid var(--line);
     display:flex;align-items:center;justify-content:space-between;background:rgba(10,26,85,0.6)}
-  .panel-head h2{font-size:13px;letter-spacing:0.22em;font-weight:600;color:var(--text);text-transform:uppercase}
-  .panel-head .meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em}
+  .panel-head h2{font-size:11.5px;letter-spacing:0.22em;font-weight:600;color:var(--text);text-transform:uppercase}
+  .panel-head .meta{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);letter-spacing:0.1em}
+  .panel-body{padding:14px 16px}
 
-  table{width:100%;border-collapse:separate;border-spacing:0;font-family:'IBM Plex Mono',monospace;font-size:12.5px}
-  thead th{background:#02092E;color:var(--muted);font-weight:500;font-size:10.5px;
-    letter-spacing:0.2em;text-transform:uppercase;text-align:right;
-    padding:10px 14px;border-bottom:1px solid var(--line);border-right:1px solid var(--line-soft)}
+  /* index cards */
+  .index-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .idx-card{position:relative;padding:14px 16px;
+    background:linear-gradient(180deg,#0A1A55 0%, #04102E 100%);
+    border:1px solid var(--line);border-radius:6px;
+    overflow:hidden;display:flex;flex-direction:column;gap:8px;min-height:160px}
+  .idx-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan)}
+  .idx-card.up::before{background:var(--lime)}
+  .idx-card.down::before{background:var(--red)}
+  .idx-card .top{display:flex;justify-content:space-between;align-items:flex-start}
+  .idx-card .title{font-size:12px;font-weight:600;letter-spacing:0.1em;color:var(--text)}
+  .idx-card .sym{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;
+    color:var(--cyan);background:rgba(0,255,255,0.08);padding:2px 7px;border-radius:3px;
+    border:1px solid rgba(0,255,255,0.25)}
+  .idx-card .price{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;
+    color:var(--text);letter-spacing:-0.01em;line-height:1}
+  .idx-card .chg{font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+    display:flex;align-items:center;gap:8px}
+  .idx-card .chg.pos{color:var(--lime)}
+  .idx-card .chg.neg{color:var(--red)}
+  .idx-card .spark{margin-top:auto;height:54px}
+  .idx-card .spark svg{width:100%;height:100%;display:block}
+
+  /* main grid: gauge | chart | sector bars */
+  .main-grid{display:grid;grid-template-columns:1fr 2.4fr 1.3fr;gap:12px}
+
+  /* gauge */
+  .gauge-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:6px 0 12px}
+  .gauge-svg{width:100%;max-width:220px;height:auto;display:block}
+  .gauge-meta{text-align:center;font-family:'IBM Plex Mono',monospace}
+  .gauge-meta .lbl{font-size:10px;letter-spacing:0.2em;color:var(--muted);text-transform:uppercase}
+  .gauge-meta .val{font-size:30px;font-weight:600;letter-spacing:-0.01em;line-height:1.05}
+  .gauge-meta .sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+  /* perf chart */
+  .perf-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(10,26,85,0.6)}
+  .perf-head h2{font-size:11.5px;letter-spacing:0.22em;font-weight:600;text-transform:uppercase}
+  .tf-btns{display:flex;gap:4px;font-family:'IBM Plex Mono',monospace}
+  .tf-btn{padding:4px 9px;font-size:10px;letter-spacing:0.1em;border:1px solid var(--line);
+    background:transparent;color:var(--muted);border-radius:3px;cursor:pointer;
+    transition:all 0.15s;font-family:inherit}
+  .tf-btn:hover{color:var(--text);border-color:var(--cyan)}
+  .tf-btn.active{background:rgba(0,255,255,0.10);color:var(--cyan);border-color:var(--cyan)}
+  .perf-body{padding:14px 14px 8px}
+  .perf-svg{width:100%;height:auto;display:block}
+  .perf-legend{display:flex;gap:14px;justify-content:center;padding:6px 0 8px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px}
+  .perf-legend .item{display:flex;align-items:center;gap:6px;cursor:pointer;color:var(--muted);transition:color 0.15s}
+  .perf-legend .item:hover{color:var(--text)}
+  .perf-legend .item.dim{opacity:0.35}
+  .perf-legend .swatch{width:14px;height:3px;border-radius:1px}
+  .perf-tooltip{position:absolute;pointer-events:none;background:#02092E;
+    border:1px solid var(--cyan);border-radius:4px;padding:8px 10px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);
+    box-shadow:0 4px 16px rgba(0,0,0,0.5);opacity:0;transition:opacity 0.1s;z-index:50;
+    white-space:nowrap}
+
+  /* sector bars */
+  .sec-bars{padding:8px 14px 14px;display:flex;flex-direction:column;gap:6px}
+  .sec-bar{display:grid;grid-template-columns:42px 1fr 70px;align-items:center;gap:10px;
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;height:26px}
+  .sec-bar .sym{color:var(--cyan);font-weight:600;letter-spacing:0.05em}
+  .sec-bar .track{position:relative;height:8px;background:#02092E;border-radius:2px;overflow:hidden}
+  .sec-bar .track .center{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--line);z-index:2}
+  .sec-bar .fill{position:absolute;top:0;bottom:0;border-radius:2px}
+  .sec-bar .pct{text-align:right;font-variant-numeric:tabular-nums}
+  .sec-bar .pct.pos{color:var(--lime)}
+  .sec-bar .pct.neg{color:var(--red)}
+
+  /* heatmap */
+  .heatmap-svg{width:100%;height:auto;display:block;background:#02092E}
+  .hm-cell{cursor:default;transition:opacity 0.1s}
+  .hm-cell:hover{opacity:0.85}
+
+  /* tables */
+  table{width:100%;border-collapse:separate;border-spacing:0;font-family:'IBM Plex Mono',monospace;font-size:12px}
+  thead th{background:#02092E;color:var(--muted);font-weight:500;font-size:10px;
+    letter-spacing:0.18em;text-transform:uppercase;text-align:right;
+    padding:9px 13px;border-bottom:1px solid var(--line);border-right:1px solid var(--line-soft)}
   thead th:first-child{text-align:left}
   thead th:last-child{border-right:0}
-  tbody td{padding:10px 14px;text-align:right;
+  tbody td{padding:9px 13px;text-align:right;
     border-bottom:1px solid var(--line-soft);border-right:1px solid var(--line-soft);
     font-variant-numeric:tabular-nums}
   tbody td:first-child{text-align:left}
   tbody td:last-child{border-right:0}
   tbody tr:last-child td{border-bottom:0}
   tbody tr:hover td{background:rgba(0,255,255,0.04)}
-
   .sym{color:var(--cyan);font-weight:600;letter-spacing:0.05em}
-  .name{color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px}
+  .name{color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:12.5px}
   .price{color:var(--text);font-weight:600}
   .pos{color:var(--lime)}
   .neg{color:var(--red)}
   .pos::before{content:"▲ ";font-size:9px}
   .neg::before{content:"▼ ";font-size:9px}
   .nul{color:var(--dim)}
+
+  /* section title */
+  .stitle{display:flex;align-items:center;gap:11px;padding:0 4px;
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase}
+  .stitle .dot{width:7px;height:7px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan)}
+  .stitle .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+  .stitle .tag{font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--dim);letter-spacing:0.2em}
+
+  /* footer */
+  .footer{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:0.18em}
+  .footer .legend{display:flex;gap:14px;align-items:center}
+  .footer .swatch{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+  /* sector heatmap table cells */
   .hm{position:relative;font-weight:500}
 
-  .two-col{display:grid;grid-template-columns:1.55fr 1fr;gap:16px}
+  /* two-column layout for sector + sentiment */
+  .two-col{display:grid;grid-template-columns:1.55fr 1fr;gap:14px}
 
-  /* sentiment */
-  .sent-table td{padding:11px 14px}
-  .sent-tag{display:inline-block;padding:3px 10px;border-radius:3px;
-    font-size:10px;font-weight:600;letter-spacing:0.18em;font-family:'IBM Plex Mono',monospace}
+  /* sentiment table */
+  .sent-table td{padding:10px 13px}
+  .sent-tag{display:inline-block;padding:3px 9px;border-radius:3px;
+    font-size:9.5px;font-weight:600;letter-spacing:0.18em;font-family:'IBM Plex Mono',monospace}
   .sent-bull{background:rgba(0,255,153,0.12);color:var(--lime);border:1px solid rgba(0,255,153,0.35)}
   .sent-neut{background:rgba(0,255,255,0.10);color:var(--cyan);border:1px solid rgba(0,255,255,0.30)}
   .sent-bear{background:rgba(255,71,87,0.12);color:var(--red);border:1px solid rgba(255,71,87,0.35)}
-  .sent-icon{font-size:14px;margin-right:6px;vertical-align:middle}
-
+  .sent-icon{font-size:13px;margin-right:5px;vertical-align:middle}
   .strength{display:inline-flex;gap:2px;align-items:center}
   .strength i{display:block;width:4px;height:10px;background:var(--dim);border-radius:1px}
   .strength i.on{background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
   .strength.bull i.on{background:var(--lime);box-shadow:0 0 6px var(--lime)}
   .strength.bear i.on{background:var(--red);box-shadow:0 0 6px var(--red)}
 
-  /* charts */
-  .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .chart-panel{padding:18px}
-  .chart-panel h3{font-size:11px;letter-spacing:0.25em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;font-weight:500}
-  .chart-panel .sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);margin-bottom:14px}
-  .chart-svg{width:100%;height:auto;display:block}
-
-  .footer{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;
-    font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--dim);letter-spacing:0.18em;
-    border-top:1px solid var(--line-soft);margin-top:4px}
-  .footer .legend{display:flex;gap:18px;align-items:center}
-  .footer .swatch{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
-
-  @media (max-width: 1100px){
+  @media (max-width: 1240px){
+    .main-grid{grid-template-columns:1fr 2fr;}
+    .main-grid > .panel.sectors{grid-column:1/-1}
     .two-col{grid-template-columns:1fr}
-    .charts-row{grid-template-columns:1fr}
-    .kpi-row{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width: 900px){
+    .index-cards{grid-template-columns:repeat(2,1fr)}
+    .main-grid{grid-template-columns:1fr}
   }
 </style>
 </head>
 <body>
 
-<div class="dashboard">
+<div class="terminal">
 
   <div id="setup-banner" class="setup-banner hidden"></div>
 
   <!-- HEADER -->
   <div class="header">
-    <div class="header-left">
-      <div class="brand">
-        <div class="logo">M</div>
-        <h1>MARKET<span class="accent">::</span>TERMINAL</h1>
-        <span class="sub">v4.7 · LIVE FEED</span>
-      </div>
+    <div class="brand">
+      <div class="logo">M</div>
+      <h1>MARKET<span class="accent">::</span>TERMINAL</h1>
+      <span class="sub">PRO · LIVE FEED</span>
     </div>
     <div class="header-right">
       <div class="pill"><span class="lbl">SESSION</span>REGULAR</div>
@@ -180,18 +227,77 @@
     </div>
   </div>
 
-  <!-- KPIs -->
-  <div class="kpi-row" id="kpi-row"></div>
+  <!-- INDEX CARDS -->
+  <div class="index-cards" id="index-cards"></div>
 
-  <!-- INDICES -->
-  <div class="section-title">
-    <span class="dot"></span><span>MAJOR INDICES</span><span class="line"></span><span class="tag">USD · END OF DAY</span>
+  <!-- MAIN GRID: GAUGE | CHART | SECTORS -->
+  <div class="main-grid">
+
+    <!-- Sentiment Gauge -->
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Market Sentiment</h2>
+        <div class="meta">computed</div>
+      </div>
+      <div class="panel-body">
+        <div class="gauge-wrap" id="gauge-wrap"></div>
+      </div>
+    </div>
+
+    <!-- Performance chart -->
+    <div class="panel" style="position:relative">
+      <div class="perf-head">
+        <h2>Normalized Index Performance</h2>
+        <div class="tf-btns" id="tf-btns">
+          <button class="tf-btn" data-tf="1W">1W</button>
+          <button class="tf-btn" data-tf="1M">1M</button>
+          <button class="tf-btn active" data-tf="3M">3M</button>
+          <button class="tf-btn" data-tf="YTD">YTD</button>
+          <button class="tf-btn" data-tf="1Y">1Y</button>
+        </div>
+      </div>
+      <div class="perf-body">
+        <svg class="perf-svg" id="perf-chart" viewBox="0 0 760 320" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="perf-legend" id="perf-legend"></div>
+      </div>
+      <div class="perf-tooltip" id="perf-tooltip"></div>
+    </div>
+
+    <!-- Sector horizontal bars -->
+    <div class="panel sectors">
+      <div class="panel-head">
+        <h2>Sector Performance</h2>
+        <div class="tf-btns" id="sec-tf-btns">
+          <button class="tf-btn" data-stf="1D">1D</button>
+          <button class="tf-btn active" data-stf="1M">1M</button>
+          <button class="tf-btn" data-stf="3M">3M</button>
+          <button class="tf-btn" data-stf="YTD">YTD</button>
+        </div>
+      </div>
+      <div class="sec-bars" id="sec-bars"></div>
+    </div>
+
+  </div>
+
+  <!-- HEATMAP -->
+  <div class="stitle">
+    <span class="dot" style="background:var(--lime);box-shadow:0 0 8px var(--lime)"></span>
+    <span>HEATMAP · TOP HOLDINGS</span>
+    <span class="line"></span>
+    <span class="tag">SIZE = MARKET CAP · COLOR = 1D CHANGE</span>
   </div>
   <div class="panel">
-    <div class="panel-head">
-      <h2>Index Performance Matrix</h2>
-      <div class="meta"><span id="indices-count">0</span> instruments · auto-refresh 60s</div>
-    </div>
+    <svg class="heatmap-svg" id="heatmap" viewBox="0 0 1600 540" preserveAspectRatio="xMidYMid meet"></svg>
+  </div>
+
+  <!-- INDICES DETAIL TABLE -->
+  <div class="stitle">
+    <span class="dot"></span>
+    <span>INDEX DETAILS</span>
+    <span class="line"></span>
+    <span class="tag">ETF PROXIES · END OF DAY</span>
+  </div>
+  <div class="panel">
     <table id="indices">
       <thead><tr>
         <th>Symbol</th><th>Name</th><th>Price</th>
@@ -202,19 +308,16 @@
     </table>
   </div>
 
-  <!-- SECTORS + SENTIMENT -->
+  <!-- SECTOR ETF RETURNS + SENTIMENT -->
   <div class="two-col">
     <div>
-      <div class="section-title">
+      <div class="stitle">
         <span class="dot" style="background:var(--lime);box-shadow:0 0 8px var(--lime)"></span>
-        <span>SECTOR PERFORMANCE · HEATMAP</span><span class="line"></span>
-        <span class="tag">SPDR SELECT SECTOR ETFS</span>
+        <span>SECTOR ETF RETURNS</span>
+        <span class="line"></span>
+        <span class="tag">COLOR-GRADED MATRIX</span>
       </div>
       <div class="panel">
-        <div class="panel-head">
-          <h2>Sector ETF Returns</h2>
-          <div class="meta"><span id="sectors-count">0</span> sectors · color-graded</div>
-        </div>
         <table id="sectors">
           <thead><tr>
             <th>Sym</th><th>Sector</th>
@@ -226,15 +329,13 @@
     </div>
 
     <div>
-      <div class="section-title">
+      <div class="stitle">
         <span class="dot" style="background:var(--yellow);box-shadow:0 0 8px var(--yellow)"></span>
-        <span>SECTOR SENTIMENT</span><span class="line"></span><span class="tag">TREND BIAS</span>
+        <span>SECTOR SENTIMENT</span>
+        <span class="line"></span>
+        <span class="tag">COMPOSITE BIAS</span>
       </div>
       <div class="panel">
-        <div class="panel-head">
-          <h2>Trend Direction</h2>
-          <div class="meta">composite signal</div>
-        </div>
         <table class="sent-table" id="sentiment">
           <thead><tr>
             <th>Sym</th><th>Bias</th><th>Strength</th><th>Signal</th>
@@ -245,70 +346,54 @@
     </div>
   </div>
 
-  <!-- CHARTS -->
-  <div class="section-title">
-    <span class="dot" style="background:var(--red);box-shadow:0 0 8px var(--red)"></span>
-    <span>SECTOR RETURN CHARTS</span><span class="line"></span><span class="tag">BAR · COMPARATIVE</span>
-  </div>
-  <div class="charts-row">
-    <div class="panel chart-panel">
-      <h3>Monthly Sector Performance</h3>
-      <div class="sub">Trailing 30 days · % return</div>
-      <svg class="chart-svg" id="chart-monthly" viewBox="0 0 660 320" preserveAspectRatio="xMidYMid meet"></svg>
-    </div>
-    <div class="panel chart-panel">
-      <h3>Year-to-Date Sector Performance</h3>
-      <div class="sub">Jan 1 — Today · % return</div>
-      <svg class="chart-svg" id="chart-ytd" viewBox="0 0 660 320" preserveAspectRatio="xMidYMid meet"></svg>
-    </div>
-  </div>
-
   <div class="footer">
     <div class="legend">
       <span><span class="swatch" style="background:var(--lime)"></span>Positive</span>
       <span><span class="swatch" style="background:var(--red)"></span>Negative</span>
-      <span><span class="swatch" style="background:var(--yellow)"></span>KPI Highlight</span>
-      <span><span class="swatch" style="background:var(--cyan)"></span>Neutral / Symbol</span>
+      <span><span class="swatch" style="background:var(--cyan)"></span>Symbol</span>
     </div>
     <div>SOURCE · GOOGLE FINANCE VIA SHEETS · ~20 MIN DELAY · NOT INVESTMENT ADVICE</div>
   </div>
+
 </div>
 
 <script>
 /* ============================================================
-   CONFIG
-   ============================================================
-   Paste your published Google Sheet CSV URL below.
-   In Sheets: File → Share → Publish to web →
-              Sheet1, Comma-separated values (.csv) → Publish.
-   Copy the URL it gives you and paste between the quotes.
+   CONFIG — paste your sheet ID below.
+   The sheet must be shared as "Anyone with the link can view".
+   It needs THREE tabs: data, history, stocks (defaults below).
    ============================================================ */
 const CONFIG = {
-  // OPTION A — Published CSV URL (File → Share → Publish to web → CSV).
-  // Works from https:// or localhost. May fail from file:// due to CORS on Google's redirect.
-  sheetCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQtFV5_gTO-4CkpKxDnvwe_k8QBw_LWq5Fiwz93I3HmDp0-oHxujIrRJTueFIdcuL78_S93_WlJNeNd/pub?output=csv",   // e.g. "https://docs.google.com/spreadsheets/d/e/.../pub?output=csv"
-
-  // OPTION B — Sheet ID for gviz endpoint (works from file:// too).
-  // Get it from your sheet's edit URL:  /spreadsheets/d/{THIS_PART}/edit
-  // The sheet must be shared as "Anyone with the link can view".
-  // Used as fallback if sheetCsvUrl is empty or fails.
-  sheetId: "1Ro0o9E8iv0TPFQzFBtFqhwJu3P3H7TNWUh7vgQ8X9W8",       // e.g. "1AbcDEFghiJKLmnoPQRstuVWXyz1234567890abcdef"
-  sheetName: "גיליון1",  // tab name (default Google Sheets first-tab name)
-
+  sheetId: "",            // ← paste sheet ID here (the long /d/ID/edit part)
+  dataTab:    "Sheet1",   // tab with indices+sectors (your existing tab)
+  historyTab: "history",  // tab with daily closes for SPY/DIA/QQQ/IWM
+  stocksTab:  "stocks",   // tab with 30 stocks for the heatmap
   refreshSec: 60
 };
-
 /* ============================================================ */
 
-/* --- DEMO FALLBACK DATA --- */
+const SECTOR_COLORS = {
+  XLK:"#00FFFF", XLC:"#9B6BFF", XLY:"#FFB347", XLI:"#7FE5F0",
+  XLF:"#FFEA00", XLP:"#A0E060", XLU:"#80D8FF", XLV:"#FF80AB",
+  XLB:"#C0C0C0", XLRE:"#B57F50", XLE:"#FF7043"
+};
+const SECTOR_NAMES = {
+  XLK:"Technology", XLC:"Communication", XLY:"Cons. Discretionary",
+  XLI:"Industrials", XLF:"Financials", XLP:"Cons. Staples",
+  XLU:"Utilities", XLV:"Health Care", XLB:"Materials",
+  XLRE:"Real Estate", XLE:"Energy"
+};
+const INDEX_COLORS = { SPY:"#FF4757", DIA:"#00FF99", QQQ:"#00BFFF", IWM:"#FFEA00" };
+
+/* --- DEMO DATA --- */
 const DEMO = {
   indices: [
-    ["INDEX","SPY","S&P 500",      "557.42",  0.42,  1.18,  2.34,  5.61,  7.82, 14.32, "598.61", "493.55", ""],
-    ["INDEX","DIA","Dow Jones",    "426.81",  0.31,  0.94,  1.87,  4.52,  5.98, 12.04, "432.10", "367.11", ""],
-    ["INDEX","QQQ","Nasdaq 100",   "501.32",  0.62,  1.58,  3.47,  8.21, 10.12, 23.45, "511.04", "393.82", ""],
-    ["INDEX","IWM","Russell 2000", "224.18", -0.18, -0.62,  0.94,  3.21,  4.18,  8.74, "230.04", "184.63", ""],
-    ["INDEX","VTI","Total US Mkt", "291.74",  0.48,  1.32,  2.61,  6.04,  7.21, 13.92, "298.21", "248.55", ""],
-    ["INDEX","EFA","Intl Developed","82.41",  0.18,  0.62,  1.42,  3.18,  4.52, 11.27,  "84.62",  "70.18", ""],
+    ["INDEX","SPY","S&P 500",      557.42,  0.42,  1.18,  2.34,  5.61,  7.82, 14.32, 598.61, 493.55, ""],
+    ["INDEX","DIA","Dow Jones",    426.81,  0.31,  0.94,  1.87,  4.52,  5.98, 12.04, 432.10, 367.11, ""],
+    ["INDEX","QQQ","Nasdaq 100",   501.32,  0.62,  1.58,  3.47,  8.21, 10.12, 23.45, 511.04, 393.82, ""],
+    ["INDEX","IWM","Russell 2000", 224.18, -0.18, -0.62,  0.94,  3.21,  4.18,  8.74, 230.04, 184.63, ""],
+    ["INDEX","VTI","Total US Mkt", 291.74,  0.48,  1.32,  2.61,  6.04,  7.21, 13.92, 298.21, 248.55, ""],
+    ["INDEX","EFA","Intl Developed",82.41,  0.18,  0.62,  1.42,  3.18,  4.52, 11.27,  84.62,  70.18, ""],
   ],
   sectors: [
     ["SECTOR","XLK", "Technology",          "—",  1.24,  2.81,  4.32,  8.94, 11.32, 24.58, "—","—",""],
@@ -322,45 +407,104 @@ const DEMO = {
     ["SECTOR","XLB", "Materials",           "—", -0.32, -0.81, -1.42, -2.18, -0.94,  3.18, "—","—",""],
     ["SECTOR","XLRE","Real Estate",         "—", -0.62, -1.18,  0.42,  1.84,  2.91,  8.41, "—","—",""],
     ["SECTOR","XLE", "Energy",              "—", -0.81, -1.42, -2.31, -4.18,  1.94,  6.41, "—","—",""],
+  ],
+  history: null,   // generated below
+  stocks: [
+    {sym:"AAPL",name:"Apple",sector:"XLK",price:218.4,chg:0.52,mcap:3320000000000},
+    {sym:"MSFT",name:"Microsoft",sector:"XLK",price:441.2,chg:0.81,mcap:3280000000000},
+    {sym:"NVDA",name:"NVIDIA",sector:"XLK",price:124.3,chg:1.85,mcap:3050000000000},
+    {sym:"AVGO",name:"Broadcom",sector:"XLK",price:1740,chg:1.32,mcap:810000000000},
+    {sym:"ORCL",name:"Oracle",sector:"XLK",price:185.4,chg:0.42,mcap:520000000000},
+    {sym:"GOOGL",name:"Alphabet",sector:"XLC",price:172.8,chg:0.28,mcap:2120000000000},
+    {sym:"META",name:"Meta",sector:"XLC",price:584.2,chg:1.64,mcap:1480000000000},
+    {sym:"NFLX",name:"Netflix",sector:"XLC",price:782.5,chg:0.94,mcap:336000000000},
+    {sym:"AMZN",name:"Amazon",sector:"XLY",price:194.5,chg:0.72,mcap:2030000000000},
+    {sym:"TSLA",name:"Tesla",sector:"XLY",price:284.7,chg:-1.21,mcap:910000000000},
+    {sym:"HD",name:"Home Depot",sector:"XLY",price:412.6,chg:0.32,mcap:410000000000},
+    {sym:"MCD",name:"McDonald's",sector:"XLY",price:298.4,chg:-0.14,mcap:215000000000},
+    {sym:"CAT",name:"Caterpillar",sector:"XLI",price:382.1,chg:0.62,mcap:185000000000},
+    {sym:"GE",name:"GE Aerospace",sector:"XLI",price:212.4,chg:0.92,mcap:230000000000},
+    {sym:"BA",name:"Boeing",sector:"XLI",price:184.3,chg:-0.84,mcap:114000000000},
+    {sym:"RTX",name:"RTX",sector:"XLI",price:128.6,chg:0.42,mcap:172000000000},
+    {sym:"JPM",name:"JPMorgan",sector:"XLF",price:228.4,chg:0.32,mcap:642000000000},
+    {sym:"V",name:"Visa",sector:"XLF",price:298.1,chg:0.51,mcap:582000000000},
+    {sym:"MA",name:"Mastercard",sector:"XLF",price:512.4,chg:0.62,mcap:472000000000},
+    {sym:"BAC",name:"Bank of America",sector:"XLF",price:46.2,chg:-0.21,mcap:355000000000},
+    {sym:"LLY",name:"Eli Lilly",sector:"XLV",price:824.5,chg:0.18,mcap:782000000000},
+    {sym:"UNH",name:"UnitedHealth",sector:"XLV",price:548.3,chg:-0.42,mcap:504000000000},
+    {sym:"JNJ",name:"Johnson&Johnson",sector:"XLV",price:158.4,chg:0.12,mcap:381000000000},
+    {sym:"ABBV",name:"AbbVie",sector:"XLV",price:184.6,chg:-0.32,mcap:326000000000},
+    {sym:"WMT",name:"Walmart",sector:"XLP",price:84.6,chg:0.21,mcap:680000000000},
+    {sym:"COST",name:"Costco",sector:"XLP",price:912.4,chg:0.42,mcap:404000000000},
+    {sym:"PG",name:"Procter&Gamble",sector:"XLP",price:172.4,chg:-0.12,mcap:407000000000},
+    {sym:"XOM",name:"Exxon Mobil",sector:"XLE",price:118.3,chg:-0.82,mcap:521000000000},
+    {sym:"CVX",name:"Chevron",sector:"XLE",price:158.4,chg:-1.12,mcap:288000000000},
+    {sym:"NEE",name:"NextEra",sector:"XLU",price:78.4,chg:0.32,mcap:161000000000},
+    {sym:"PLD",name:"Prologis",sector:"XLRE",price:118.2,chg:-0.42,mcap:109000000000},
+    {sym:"LIN",name:"Linde",sector:"XLB",price:454.6,chg:-0.18,mcap:218000000000},
   ]
 };
+// generate fake demo history (180 trading days for each index)
+(function genDemoHistory(){
+  const days = 250;
+  const today = new Date();
+  const dates = [];
+  let d = new Date(today);
+  for (let i=0; i<days; i++){
+    while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate()-1);
+    dates.unshift(new Date(d));
+    d.setDate(d.getDate()-1);
+  }
+  const seeds = { SPY: 480, DIA: 380, QQQ: 410, IWM: 198 };
+  const drifts = { SPY: 0.0006, DIA: 0.0005, QQQ: 0.0009, IWM: 0.0004 };
+  const vols   = { SPY: 0.011,  DIA: 0.009,  QQQ: 0.015,  IWM: 0.014 };
+  const series = {};
+  for (const sym of Object.keys(seeds)){
+    const arr = [];
+    let p = seeds[sym];
+    for (let i=0;i<days;i++){
+      const r = (Math.random()-0.5) * vols[sym] + drifts[sym];
+      p *= (1 + r);
+      arr.push({date:dates[i], close:p});
+    }
+    series[sym] = arr;
+  }
+  DEMO.history = series;
+})();
 
 /* --- STATE --- */
 const state = {
   indices: DEMO.indices.slice(),
   sectors: DEMO.sectors.slice(),
+  history: DEMO.history,
+  stocks:  DEMO.stocks.slice(),
   live: false,
-  lastUpdate: null
+  lastUpdate: null,
+  perfTimeframe: "3M",
+  secTimeframe:  "1M",
+  hiddenSeries:  new Set()
 };
 
 /* --- HELPERS --- */
-function fmtPct(v){
-  if (v === null || v === undefined || v === "" || isNaN(v)) return null;
-  return (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2) + "%";
-}
-function pnCell(v){
-  if (v === null || v === undefined || v === "" || isNaN(v)) return `<td class="nul">—</td>`;
-  const cls = v >= 0 ? "pos" : "neg";
-  return `<td class="${cls}">${Math.abs(v).toFixed(2)}%</td>`;
-}
-function hmStyle(v){
-  if (v === null || v === undefined || v === "" || isNaN(v)) return "color:var(--dim)";
-  const mag = Math.min(Math.abs(v) / 8, 1);
-  const alpha = 0.10 + mag * 0.55;
-  if (v > 0) return `background:rgba(0,255,153,${alpha.toFixed(3)});color:#E8FFF4`;
-  if (v < 0) return `background:rgba(255,71,87,${alpha.toFixed(3)});color:#FFEAEC`;
-  return "color:var(--muted)";
-}
 function num(v){
   if (v === null || v === undefined || v === "") return null;
-  const n = parseFloat(String(v).replace(/,/g,""));
+  const n = parseFloat(String(v).replace(/[,]/g,""));
   return isNaN(n) ? null : n;
 }
-function fmtPrice(v){
-  if (v === null || v === undefined || v === "") return "—";
-  const n = num(v);
-  if (n === null) return v;
-  return n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+function fmt2(n){
+  if (n === null || n === undefined || isNaN(n)) return "—";
+  return Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function fmtPctSigned(v){
+  if (v === null || v === undefined || isNaN(v)) return "—";
+  return (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(2) + "%";
+}
+function fmtCap(n){
+  if (!n || isNaN(n)) return "—";
+  if (n >= 1e12) return (n/1e12).toFixed(2)+"T";
+  if (n >= 1e9)  return (n/1e9).toFixed(1)+"B";
+  if (n >= 1e6)  return (n/1e6).toFixed(0)+"M";
+  return n.toFixed(0);
 }
 function fmtTime(d){
   return d.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
@@ -368,148 +512,165 @@ function fmtTime(d){
 function fmtDate(d){
   return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}).toUpperCase();
 }
+function pnCell(v){
+  if (v === null || v === undefined || isNaN(v)) return `<td class="nul">—</td>`;
+  const cls = v >= 0 ? "pos" : "neg";
+  return `<td class="${cls}">${Math.abs(v).toFixed(2)}%</td>`;
+}
+function changeColor(v){
+  if (v === null || v === undefined || isNaN(v)) return "#3F567F";
+  const a = Math.min(Math.abs(v)/4, 1);
+  if (v >= 0) return `rgba(0,255,153,${0.30+a*0.55})`;
+  return `rgba(255,71,87,${0.30+a*0.55})`;
+}
 
-/* --- CSV PARSER (handles quoted fields w/ commas) --- */
+/* --- CSV PARSER --- */
 function parseCSV(text){
   const lines = [];
   let cur = "", row = [], inQ = false;
   for (let i=0; i<text.length; i++){
     const c = text[i];
     if (inQ){
-      if (c === '"'){
-        if (text[i+1] === '"'){ cur += '"'; i++; }
-        else inQ = false;
-      } else cur += c;
+      if (c === '"'){ if (text[i+1] === '"'){ cur+='"'; i++; } else inQ=false; }
+      else cur += c;
     } else {
       if (c === '"') inQ = true;
-      else if (c === ","){ row.push(cur); cur = ""; }
-      else if (c === "\n"){ row.push(cur); lines.push(row); row = []; cur = ""; }
-      else if (c === "\r"){ /* skip */ }
+      else if (c === ","){ row.push(cur); cur=""; }
+      else if (c === "\n"){ row.push(cur); lines.push(row); row=[]; cur=""; }
+      else if (c === "\r"){}
       else cur += c;
     }
   }
   if (cur.length || row.length){ row.push(cur); lines.push(row); }
-  return lines.filter(r => r.some(c => c && c.trim() !== ""));
+  return lines;
 }
 
-/* --- NORMALIZE SHEET URL --- */
-// Accepts the various forms users paste and converts to the CSV publish URL.
-function normalizeSheetUrl(raw){
-  if (!raw) return "";
-  let url = raw.trim();
-
-  // Case 1: pubhtml URL — swap pubhtml → pub and ensure output=csv
-  if (url.includes("/pubhtml")){
-    url = url.replace("/pubhtml", "/pub");
-    if (!/[?&]output=csv\b/.test(url)){
-      url += (url.includes("?") ? "&" : "?") + "output=csv";
-    }
-    return url;
-  }
-
-  // Case 2: pub URL but missing output=csv
-  if (/\/pub(\?|$)/.test(url) && !/[?&]output=csv\b/.test(url)){
-    return url + (url.includes("?") ? "&" : "?") + "output=csv";
-  }
-
-  // Case 3: regular /edit URL — user didn't actually publish
-  if (url.includes("/edit") || url.includes("/d/") && !url.includes("/pub")){
-    console.warn("URL looks like an edit link, not a publish link. Use File → Share → Publish to web.");
-    return url; // try anyway, will likely fail with HTML response
-  }
-
-  return url;
-}
-
-/* --- BUILD GVIZ CSV URL --- */
-// gviz/tq endpoint returns CSV with permissive CORS (works from file://).
+/* --- BUILD GVIZ URL --- */
 function buildGvizUrl(sheetId, sheetName){
   const base = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq`;
-  const params = new URLSearchParams({
-    tqx: "out:csv",
-    sheet: sheetName || "Sheet1"
-  });
+  const params = new URLSearchParams({ tqx:"out:csv", sheet: sheetName||"Sheet1" });
   return `${base}?${params.toString()}`;
 }
 
-/* --- LOAD LIVE DATA --- */
+/* --- LOAD ALL TABS IN PARALLEL --- */
 async function loadLive(){
-  // Decide which URL to use. Prefer gviz (works from file://); fall back to pub CSV.
-  let url = "";
-  let usedSource = "";
-  if (CONFIG.sheetId){
-    url = buildGvizUrl(CONFIG.sheetId, CONFIG.sheetName);
-    usedSource = "gviz";
-  } else if (CONFIG.sheetCsvUrl){
-    url = normalizeSheetUrl(CONFIG.sheetCsvUrl);
-    usedSource = "pub";
-  } else {
+  if (!CONFIG.sheetId){
     showSetupBanner();
     setMode(false);
     return;
   }
   hideSetupBanner();
+  const fetchTab = async (tab) => {
+    const url = buildGvizUrl(CONFIG.sheetId, tab) + "&_t=" + Date.now();
+    const res = await fetch(url, {cache:"no-store"});
+    if (!res.ok) throw new Error(`HTTP ${res.status} on ${tab}`);
+    return parseCSV(await res.text());
+  };
+  let dataRows = null, histRows = null, stockRows = null;
+  let anySuccess = false;
 
-  try {
-    const finalUrl = url + (url.includes("?") ? "&" : "?") + "_t=" + Date.now();
-    const res = await fetch(finalUrl, {cache:"no-store"});
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const text = await res.text();
-    const rows = parseCSV(text);
-    if (rows.length < 2) throw new Error("Empty sheet");
+  try { dataRows  = await fetchTab(CONFIG.dataTab);    anySuccess = true; }
+  catch(e){ console.warn("data tab failed:", e); }
 
-    // Expected columns: Type, Symbol, Name, Price, 1D, 1W, 1M, 3M, YTD, 12M, H52, L52, Bias
-    const data = rows.slice(1); // skip header
-    const indices = [];
-    const sectors = [];
-    for (const r of data){
-      const type = (r[0] || "").trim().toUpperCase();
-      const row = [
-        type,
-        (r[1] || "").trim(),                    // Symbol
-        (r[2] || "").trim(),                    // Name
-        (r[3] || "").trim(),                    // Price (string)
-        num(r[4]), num(r[5]), num(r[6]),         // 1D, 1W, 1M
-        num(r[7]), num(r[8]), num(r[9]),         // 3M, YTD, 12M
-        (r[10] || "").trim(),                   // H52
-        (r[11] || "").trim(),                   // L52
-        (r[12] || "").trim().toUpperCase()      // Bias (BULL/NEUT/BEAR)
-      ];
-      if (type === "INDEX") indices.push(row);
-      else if (type === "SECTOR") sectors.push(row);
-    }
-    if (sectors.length === 0 && indices.length === 0) throw new Error("No data rows");
-    state.indices = indices.length ? indices : DEMO.indices;
-    state.sectors = sectors.length ? sectors : DEMO.sectors;
-    state.live = true;
-    state.lastUpdate = new Date();
-    setMode(true);
+  try { histRows  = await fetchTab(CONFIG.historyTab); anySuccess = true; }
+  catch(e){ console.warn("history tab failed (sparklines & chart will use demo):", e); }
+
+  try { stockRows = await fetchTab(CONFIG.stocksTab);  anySuccess = true; }
+  catch(e){ console.warn("stocks tab failed (heatmap will use demo):", e); }
+
+  if (!anySuccess){
+    setMode(false, "All fetches failed");
     renderAll();
-  } catch (e){
-    console.warn("Live fetch failed:", e);
-    state.live = false;
-    state.lastUpdate = new Date();
-    setMode(false, e.message);
-    renderAll();
+    return;
   }
+
+  // --- parse data tab ---
+  if (dataRows && dataRows.length > 1){
+    const indices = [], sectors = [];
+    for (const r of dataRows.slice(1)){
+      const type = (r[0]||"").trim().toUpperCase();
+      const row = [
+        type, (r[1]||"").trim(), (r[2]||"").trim(),
+        num(r[3]),
+        num(r[4]), num(r[5]), num(r[6]),
+        num(r[7]), num(r[8]), num(r[9]),
+        num(r[10]), num(r[11]),
+        (r[12]||"").trim().toUpperCase()
+      ];
+      if (type === "INDEX")  indices.push(row);
+      if (type === "SECTOR") sectors.push(row);
+    }
+    if (indices.length) state.indices = indices;
+    if (sectors.length) state.sectors = sectors;
+  }
+
+  // --- parse history tab ---
+  // Layout (4 side-by-side blocks of [Date, Close]):
+  //   Row 1: SPY, ?, ?, DIA, ?, ?, QQQ, ?, ?, IWM
+  //   Row 2: Date, Close, _, Date, Close, _, ...
+  //   Row 3+: actual data
+  if (histRows && histRows.length > 2){
+    const series = {};
+    const blocks = [{sym:"SPY",col:0},{sym:"DIA",col:3},{sym:"QQQ",col:6},{sym:"IWM",col:9}];
+    for (const blk of blocks){
+      const arr = [];
+      for (let i=2; i<histRows.length; i++){
+        const r = histRows[i];
+        const dStr = (r[blk.col]||"").trim();
+        const cStr = (r[blk.col+1]||"").trim();
+        if (!dStr || !cStr) continue;
+        const close = num(cStr);
+        // GOOGLEFINANCE returns dates in various locale formats; try a few
+        let d = new Date(dStr);
+        if (isNaN(d.getTime())){
+          // try DD/MM/YYYY HH:MM:SS or M/D/YYYY
+          const m = dStr.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+          if (m){ d = new Date(parseInt(m[3]), parseInt(m[1])-1, parseInt(m[2])); }
+        }
+        if (!isNaN(d.getTime()) && close !== null){
+          arr.push({date:d, close});
+        }
+      }
+      arr.sort((a,b) => a.date - b.date);
+      if (arr.length) series[blk.sym] = arr;
+    }
+    if (Object.keys(series).length) state.history = series;
+  }
+
+  // --- parse stocks tab ---
+  if (stockRows && stockRows.length > 1){
+    const stocks = [];
+    for (const r of stockRows.slice(1)){
+      const sym = (r[0]||"").trim();
+      const name = (r[1]||"").trim();
+      const sector = (r[2]||"").trim().toUpperCase();
+      const price = num(r[3]);
+      const chg = num(r[4]);
+      const mcap = num(r[5]);
+      if (sym && mcap && !isNaN(mcap)){
+        stocks.push({sym, name, sector, price, chg, mcap});
+      }
+    }
+    if (stocks.length) state.stocks = stocks;
+  }
+
+  state.live = true;
+  state.lastUpdate = new Date();
+  setMode(true);
+  renderAll();
 }
 
-/* --- BANNERS / STATUS --- */
+/* --- BANNERS --- */
 function showSetupBanner(){
   const el = document.getElementById("setup-banner");
   el.classList.remove("hidden");
-  el.innerHTML = `
-    <strong style="letter-spacing:0.15em">SETUP REQUIRED</strong>
-    <span>· Configure either</span>
-    <code>CONFIG.sheetId</code>
-    <span>(works from file://) or</span>
-    <code>CONFIG.sheetCsvUrl</code>
-    <span>(needs http server). Showing demo data until configured.</span>
-  `;
+  el.innerHTML = `<strong style="letter-spacing:0.15em">SETUP REQUIRED</strong>
+    <span>· Set</span><code>CONFIG.sheetId</code>
+    <span>and ensure tabs</span>
+    <code>Sheet1</code> <code>history</code> <code>stocks</code>
+    <span>exist. Showing demo data until configured.</span>`;
 }
-function hideSetupBanner(){
-  document.getElementById("setup-banner").classList.add("hidden");
-}
+function hideSetupBanner(){ document.getElementById("setup-banner").classList.add("hidden"); }
 function setMode(isLive, errMsg){
   const pill = document.getElementById("hdr-mode");
   pill.className = "pill " + (isLive ? "live" : "demo");
@@ -519,118 +680,461 @@ function setMode(isLive, errMsg){
   document.getElementById("hdr-updated").textContent = state.lastUpdate ? fmtTime(state.lastUpdate) : "—";
 }
 
-/* --- AUTO-DERIVE SENTIMENT FROM PRICE DATA --- */
-function deriveSentiment(row){
-  // row: [type, sym, name, price, 1D, 1W, 1M, 3M, YTD, 12M, H52, L52, Bias]
-  const m1 = row[6], m3 = row[7], ytd = row[8], y1 = row[9];
-  const explicit = row[12]; // user-set bias
+/* ============================================================
+   RENDER FUNCTIONS
+   ============================================================ */
 
-  let bias;
-  if (explicit === "BULL" || explicit === "BEAR" || explicit === "NEUT") {
-    bias = explicit;
-  } else {
-    const m1v = m1 ?? 0, m3v = m3 ?? 0, ytdv = ytd ?? 0;
-    const score = (m1v >= 0 ? 1 : -1) + (m3v >= 0 ? 1 : -1) + (ytdv >= 0 ? 1 : -1);
-    if (score >= 2) bias = "BULL";
-    else if (score <= -2) bias = "BEAR";
-    else bias = "NEUT";
+/* --- SPARKLINE --- */
+function renderSparkline(svgEl, data, color){
+  const W = 200, H = 54, pad = 2;
+  if (!data || data.length < 2){ svgEl.innerHTML = ""; return; }
+  const n = data.length;
+  const closes = data.map(d => d.close);
+  const min = Math.min(...closes), max = Math.max(...closes);
+  const range = max - min || 1;
+  const step = (W - pad*2) / (n - 1);
+  const yOf = v => pad + (H - pad*2) * (1 - (v - min) / range);
+
+  let path = "M";
+  let area = `M${pad},${H-pad} L`;
+  for (let i=0; i<n; i++){
+    const x = pad + i * step;
+    const y = yOf(closes[i]);
+    path += `${i===0?"":"L"}${x.toFixed(1)},${y.toFixed(1)} `;
+    area += `${x.toFixed(1)},${y.toFixed(1)} `;
   }
+  area += `L${(W-pad).toFixed(1)},${H-pad} Z`;
 
-  // strength (0-5) based on magnitudes
-  const mag = Math.min(Math.max(Math.abs(m1 ?? 0) + Math.abs(m3 ?? 0)/2, 0), 10);
-  const strength = Math.max(1, Math.min(5, Math.round(mag * 0.6 + 1)));
-
-  // signal text
-  let signal;
-  if (bias === "BULL") {
-    if ((m1 ?? 0) > 4) signal = "Strong uptrend · momentum";
-    else if ((m3 ?? 0) > 5) signal = "Sustained advance";
-    else signal = "Above key levels";
-  } else if (bias === "BEAR") {
-    if ((m1 ?? 0) < -3) signal = "Sharp downtrend";
-    else if ((m3 ?? 0) < -2) signal = "Below key levels";
-    else signal = "Weakness · caution";
-  } else {
-    signal = "Range-bound · mixed";
-  }
-
-  const icon = bias === "BULL" ? "🔥" : bias === "BEAR" ? "⚠️" : "💧";
-  return { bias, strength, signal, icon };
+  const grad = `sparkGrad-${Math.random().toString(36).slice(2,8)}`;
+  svgEl.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  svgEl.innerHTML = `
+    <defs>
+      <linearGradient id="${grad}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"  stop-color="${color}" stop-opacity="0.45"/>
+        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="${area}" fill="url(#${grad})" />
+    <path d="${path}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+  `;
 }
 
-/* --- RENDER: KPIs --- */
-function renderKPIs(){
+/* --- INDEX CARDS --- */
+function renderIndexCards(){
+  const cards = ["SPY","DIA","QQQ","IWM"];
+  const container = document.getElementById("index-cards");
+  container.innerHTML = "";
+  for (const sym of cards){
+    const idx = state.indices.find(r => r[1] === sym);
+    const hist = state.history && state.history[sym];
+    const price = idx ? idx[3] : null;
+    const chg1d = idx ? idx[4] : null;
+    const name  = idx ? idx[2] : sym;
+    const dirClass = chg1d == null ? "" : chg1d >= 0 ? "up" : "down";
+    const chgClass = chg1d == null ? "" : chg1d >= 0 ? "pos" : "neg";
+    const chgArrow = chg1d == null ? "" : chg1d >= 0 ? "▲" : "▼";
+    const lineColor = chg1d == null ? "#6F87B8" : chg1d >= 0 ? "#00FF99" : "#FF4757";
+
+    const card = document.createElement("div");
+    card.className = `idx-card ${dirClass}`;
+    card.innerHTML = `
+      <div class="top">
+        <div>
+          <div class="title">${name}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.15em;margin-top:3px">MARKET CLOSED</div>
+        </div>
+        <span class="sym">${sym}</span>
+      </div>
+      <div class="price">${fmt2(price)}</div>
+      <div class="chg ${chgClass}">${chgArrow} ${chg1d!=null ? fmtPctSigned(chg1d) : "—"}</div>
+      <div class="spark"><svg viewBox="0 0 200 54" preserveAspectRatio="none"></svg></div>
+    `;
+    container.appendChild(card);
+    const svg = card.querySelector(".spark svg");
+    renderSparkline(svg, hist, lineColor);
+  }
+}
+
+/* --- SENTIMENT GAUGE --- */
+function computeSentimentScore(){
   const all = [...state.indices, ...state.sectors];
-  const sectors = state.sectors;
   const valid = arr => arr.filter(v => v !== null && !isNaN(v));
+  const oneD = valid(all.map(r => r[4]));
+  const oneM = valid(all.map(r => r[6]));
+  const threeM = valid(all.map(r => r[7]));
+  const ytd = valid(all.map(r => r[8]));
+  const pct = arr => arr.length ? arr.filter(v => v > 0).length / arr.length : 0.5;
+  // Weighted blend: short-term breadth, medium-term momentum
+  const score = (
+    pct(oneD)   * 0.20 +
+    pct(oneM)   * 0.35 +
+    pct(threeM) * 0.25 +
+    pct(ytd)    * 0.20
+  ) * 100;
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+function gaugeLabel(score){
+  if (score < 25)  return "Extreme Fear";
+  if (score < 45)  return "Fear";
+  if (score < 55)  return "Neutral";
+  if (score < 75)  return "Greed";
+  return "Extreme Greed";
+}
+function gaugeColor(score){
+  if (score < 25)  return "#FF4757";
+  if (score < 45)  return "#FF9F40";
+  if (score < 55)  return "#FFEA00";
+  if (score < 75)  return "#A0E060";
+  return "#00FF99";
+}
+function renderGauge(){
+  const score = computeSentimentScore();
+  const W = 220, H = 140, cx = W/2, cy = H - 18, r = 88;
+  // Semicircle: 180° = left, 0° = right; we want 180°=fear (left), 0°=greed (right)
+  const angleDeg = 180 - (score / 100) * 180;
+  const angle = angleDeg * Math.PI / 180;
+  const nx = cx + (r - 14) * Math.cos(angle);
+  const ny = cy - (r - 14) * Math.sin(angle);
 
-  const oneDayVals = valid(all.map(r => r[4]));
-  const oneMVals   = valid(all.map(r => r[6]));
-  const threeMVals = valid(all.map(r => r[7]));
-  const ytdVals    = valid(all.map(r => r[8]));
+  // Build colored arc segments
+  const segments = [
+    {start:0,   end:25,  color:"#FF4757"},
+    {start:25,  end:45,  color:"#FF9F40"},
+    {start:45,  end:55,  color:"#FFEA00"},
+    {start:55,  end:75,  color:"#A0E060"},
+    {start:75,  end:100, color:"#00FF99"},
+  ];
+  function arcPath(p0, p1){
+    const a0 = (180 - p0/100*180) * Math.PI/180;
+    const a1 = (180 - p1/100*180) * Math.PI/180;
+    const x0 = cx + r*Math.cos(a0), y0 = cy - r*Math.sin(a0);
+    const x1 = cx + r*Math.cos(a1), y1 = cy - r*Math.sin(a1);
+    const xi0 = cx + (r-16)*Math.cos(a0), yi0 = cy - (r-16)*Math.sin(a0);
+    const xi1 = cx + (r-16)*Math.cos(a1), yi1 = cy - (r-16)*Math.sin(a1);
+    return `M${x0},${y0} A${r},${r} 0 0 1 ${x1},${y1} L${xi1},${yi1} A${r-16},${r-16} 0 0 0 ${xi0},${yi0} Z`;
+  }
+  const segHtml = segments.map(s => `<path d="${arcPath(s.start,s.end)}" fill="${s.color}" opacity="0.85"/>`).join("");
 
-  const pct = arr => arr.length === 0 ? 0 : (arr.filter(v => v > 0).length / arr.length) * 100;
-  const avg = arr => arr.length === 0 ? 0 : arr.reduce((a,b) => a+b,0) / arr.length;
+  // ticks
+  let ticks = "";
+  for (let p = 0; p <= 100; p += 25){
+    const a = (180 - p/100*180) * Math.PI/180;
+    const x1 = cx + (r+2)*Math.cos(a), y1 = cy - (r+2)*Math.sin(a);
+    const x2 = cx + (r+10)*Math.cos(a), y2 = cy - (r+10)*Math.sin(a);
+    ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#6F87B8" stroke-width="1"/>`;
+    const xt = cx + (r+22)*Math.cos(a), yt = cy - (r+22)*Math.sin(a);
+    ticks += `<text x="${xt}" y="${yt+3}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#6F87B8">${p}</text>`;
+  }
 
-  const breadth1D  = pct(oneDayVals);
-  const breadth1M  = pct(oneMVals);
-  const breadth3M  = pct(threeMVals);
-  const avg1D      = avg(oneDayVals);
+  const label = gaugeLabel(score);
+  const color = gaugeColor(score);
 
-  const adv = oneDayVals.filter(v => v > 0).length;
-  const dec = oneDayVals.filter(v => v < 0).length;
-  const ratio = dec === 0 ? "∞" : (adv / dec).toFixed(2);
-
-  const avgClass = avg1D >= 0 ? "green" : "red";
-  const avgSign  = avg1D >= 0 ? "+" : "−";
-
-  document.getElementById("kpi-row").innerHTML = `
-    <div class="kpi yellow">
-      <div class="kpi-label">Daily Breadth</div>
-      <div class="kpi-value">${breadth1D.toFixed(1)}%</div>
-      <div class="kpi-meta">Adv ${adv} / Dec ${dec} · Ratio ${ratio}</div>
-      <div class="kpi-bar"><span style="width:${breadth1D.toFixed(1)}%;background:linear-gradient(90deg,var(--yellow),var(--lime))"></span></div>
-    </div>
-    <div class="kpi yellow">
-      <div class="kpi-label">% Above 1M Trend</div>
-      <div class="kpi-value">${breadth1M.toFixed(1)}%</div>
-      <div class="kpi-meta">${all.length} symbols · positive 1M return</div>
-      <div class="kpi-bar"><span style="width:${breadth1M.toFixed(1)}%;background:linear-gradient(90deg,var(--yellow),var(--lime))"></span></div>
-    </div>
-    <div class="kpi yellow">
-      <div class="kpi-label">% Above 3M Trend</div>
-      <div class="kpi-value">${breadth3M.toFixed(1)}%</div>
-      <div class="kpi-meta">${all.length} symbols · positive 3M return</div>
-      <div class="kpi-bar"><span style="width:${breadth3M.toFixed(1)}%;background:linear-gradient(90deg,var(--yellow),var(--lime))"></span></div>
-    </div>
-    <div class="kpi ${avgClass}">
-      <div class="kpi-label">Average 1D Move</div>
-      <div class="kpi-value">${avgSign}${Math.abs(avg1D).toFixed(2)}%</div>
-      <div class="kpi-meta">market temperature</div>
-      <div class="kpi-bar"><span style="width:${Math.min(Math.abs(avg1D)*30,100).toFixed(0)}%;background:linear-gradient(90deg,${avg1D>=0?'var(--lime)':'var(--red)'},var(--cyan))"></span></div>
+  document.getElementById("gauge-wrap").innerHTML = `
+    <svg class="gauge-svg" viewBox="0 0 ${W} ${H+30}">
+      ${segHtml}
+      ${ticks}
+      <line x1="${cx}" y1="${cy}" x2="${nx}" y2="${ny}" stroke="${color}" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="${cx}" cy="${cy}" r="6" fill="#02092E" stroke="${color}" stroke-width="2"/>
+      <circle cx="${cx}" cy="${cy}" r="2" fill="${color}"/>
+    </svg>
+    <div class="gauge-meta">
+      <div class="lbl">Sentiment Index</div>
+      <div class="val" style="color:${color}">${score}</div>
+      <div class="sub" style="color:${color};font-weight:600;letter-spacing:0.15em;text-transform:uppercase;font-size:10.5px;margin-top:6px">${label}</div>
     </div>
   `;
 }
 
-/* --- RENDER: INDICES --- */
-function renderIndices(){
+/* --- PERFORMANCE CHART --- */
+function getTimeframeDays(tf){
+  switch(tf){
+    case "1W":  return 7;
+    case "1M":  return 30;
+    case "3M":  return 90;
+    case "YTD": {
+      const start = new Date(new Date().getFullYear(), 0, 1);
+      return Math.ceil((Date.now() - start.getTime()) / 86400000);
+    }
+    case "1Y":  return 365;
+    default: return 90;
+  }
+}
+function renderPerfChart(){
+  const svg = document.getElementById("perf-chart");
+  const tf = state.perfTimeframe;
+  const days = getTimeframeDays(tf);
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
+
+  const W = 760, H = 320;
+  const padL = 50, padR = 70, padT = 14, padB = 32;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const symbols = ["SPY","DIA","QQQ","IWM"];
+
+  // Build normalized series
+  const series = {};
+  let allDates = new Set();
+  for (const sym of symbols){
+    if (state.hiddenSeries.has(sym)) continue;
+    const data = state.history && state.history[sym];
+    if (!data || data.length < 2) continue;
+    // slice to timeframe
+    const sliced = data.filter(d => d.date >= cutoff);
+    if (sliced.length < 2) continue;
+    const base = sliced[0].close;
+    series[sym] = sliced.map(d => ({date:d.date, val: (d.close/base - 1) * 100}));
+    sliced.forEach(d => allDates.add(d.date.getTime()));
+  }
+  if (Object.keys(series).length === 0){
+    svg.innerHTML = `<text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="#6F87B8">— history data unavailable —</text>`;
+    return;
+  }
+
+  const dates = [...allDates].sort((a,b) => a-b).map(t => new Date(t));
+  const xMin = dates[0].getTime(), xMax = dates[dates.length-1].getTime();
+  const xRange = xMax - xMin || 1;
+  const allVals = Object.values(series).flat().map(d => d.val);
+  let yMin = Math.min(...allVals), yMax = Math.max(...allVals);
+  const yPad = (yMax - yMin) * 0.10 || 1;
+  yMin -= yPad; yMax += yPad;
+
+  const xOf = d => padL + (d - xMin) / xRange * innerW;
+  const yOf = v => padT + innerH * (1 - (v - yMin) / (yMax - yMin));
+
+  let html = "";
+
+  // grid + y labels
+  const yTicks = 5;
+  for (let i = 0; i <= yTicks; i++){
+    const v = yMin + (yMax - yMin) * i / yTicks;
+    const y = yOf(v);
+    html += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#173070" stroke-width="0.5" stroke-dasharray="2 4" opacity="0.6"/>`;
+    html += `<text x="${padL-7}" y="${y+3}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#6F87B8">${v.toFixed(1)}%</text>`;
+  }
+  // zero line
+  if (yMin <= 0 && yMax >= 0){
+    const y0 = yOf(0);
+    html += `<line x1="${padL}" y1="${y0}" x2="${W-padR}" y2="${y0}" stroke="#00FFFF" stroke-width="1" opacity="0.4"/>`;
+  }
+
+  // x labels (4-5 dates)
+  const xTicks = 5;
+  for (let i = 0; i <= xTicks; i++){
+    const t = xMin + (xMax - xMin) * i / xTicks;
+    const d = new Date(t);
+    const x = padL + i * innerW / xTicks;
+    const label = d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+    html += `<text x="${x}" y="${H - padB + 16}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" fill="#6F87B8">${label}</text>`;
+  }
+
+  // line per symbol
+  for (const sym of symbols){
+    if (!series[sym]) continue;
+    const pts = series[sym];
+    const last = pts[pts.length-1];
+    let path = "";
+    pts.forEach((p,i) => { path += (i===0?"M":"L") + xOf(p.date.getTime()).toFixed(1) + "," + yOf(p.val).toFixed(1) + " "; });
+    const color = INDEX_COLORS[sym];
+    html += `<path d="${path}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>`;
+    // last value label
+    const lx = xOf(last.date.getTime()), ly = yOf(last.val);
+    const lbl = `${sym}  ${last.val>=0?"+":""}${last.val.toFixed(1)}%`;
+    html += `<rect x="${lx+4}" y="${ly-9}" width="68" height="18" rx="2" fill="${color}" opacity="0.92"/>`;
+    html += `<text x="${lx+38}" y="${ly+3}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600" fill="#02092E">${lbl}</text>`;
+  }
+
+  svg.innerHTML = html;
+
+  // legend
+  const legend = document.getElementById("perf-legend");
+  legend.innerHTML = symbols.map(sym => {
+    const dim = state.hiddenSeries.has(sym) ? "dim" : "";
+    return `<div class="item ${dim}" data-sym="${sym}">
+      <span class="swatch" style="background:${INDEX_COLORS[sym]}"></span>${sym}
+    </div>`;
+  }).join("");
+  legend.querySelectorAll(".item").forEach(el => {
+    el.onclick = () => {
+      const sym = el.dataset.sym;
+      if (state.hiddenSeries.has(sym)) state.hiddenSeries.delete(sym);
+      else state.hiddenSeries.add(sym);
+      renderPerfChart();
+    };
+  });
+}
+
+/* --- SECTOR HORIZONTAL BARS --- */
+function renderSectorBars(){
+  const tf = state.secTimeframe;
+  // map tf to column index: 1D=4, 1W=5, 1M=6, 3M=7, YTD=8, 12M=9
+  const colMap = {"1D":4,"1W":5,"1M":6,"3M":7,"YTD":8,"12M":9};
+  const col = colMap[tf] || 6;
+  const data = state.sectors.map(r => ({sym:r[1], name:r[2], val:r[col]}))
+    .filter(d => d.val !== null && !isNaN(d.val))
+    .sort((a,b) => b.val - a.val);
+  if (data.length === 0){ document.getElementById("sec-bars").innerHTML = ""; return; }
+
+  const maxAbs = Math.max(...data.map(d => Math.abs(d.val))) || 1;
+
+  const html = data.map(d => {
+    const pctW = Math.abs(d.val) / maxAbs * 50;
+    const fill = d.val >= 0
+      ? `<div class="fill" style="left:50%;width:${pctW}%;background:linear-gradient(90deg,rgba(0,255,153,0.4),var(--lime))"></div>`
+      : `<div class="fill" style="right:50%;width:${pctW}%;background:linear-gradient(90deg,var(--red),rgba(255,71,87,0.4))"></div>`;
+    return `<div class="sec-bar">
+      <div class="sym">${d.sym}</div>
+      <div class="track"><div class="center"></div>${fill}</div>
+      <div class="pct ${d.val>=0?'pos':'neg'}">${d.val>=0?"+":""}${d.val.toFixed(2)}%</div>
+    </div>`;
+  }).join("");
+  document.getElementById("sec-bars").innerHTML = html;
+}
+
+/* --- SQUARIFIED TREEMAP --- */
+function squarify(items, rect){
+  if (items.length === 0) return [];
+  const totalArea = rect.w * rect.h;
+  const totalWeight = items.reduce((s,it) => s + it.weight, 0);
+  if (totalWeight <= 0) return [];
+  const scale = totalArea / totalWeight;
+  const sized = items.slice().sort((a,b) => b.weight - a.weight)
+    .map(it => ({...it, area: it.weight * scale}));
+
+  const result = [];
+  let cur = {...rect};
+  let row = [];
+
+  function worst(items, side){
+    if (items.length === 0) return Infinity;
+    const total = items.reduce((s,i) => s+i.area, 0);
+    const max = Math.max(...items.map(i => i.area));
+    const min = Math.min(...items.map(i => i.area));
+    const r = side*side;
+    return Math.max(r*max/(total*total), total*total/(r*min));
+  }
+  function flush(){
+    if (row.length === 0) return;
+    const total = row.reduce((s,i) => s+i.area, 0);
+    if (cur.w >= cur.h){
+      const stripW = total / cur.h;
+      let y = cur.y;
+      for (const it of row){
+        const h = it.area / stripW;
+        result.push({...it, x:cur.x, y, w:stripW, h});
+        y += h;
+      }
+      cur = {x:cur.x+stripW, y:cur.y, w:cur.w-stripW, h:cur.h};
+    } else {
+      const stripH = total / cur.w;
+      let x = cur.x;
+      for (const it of row){
+        const w = it.area / stripH;
+        result.push({...it, x, y:cur.y, w, h:stripH});
+        x += w;
+      }
+      cur = {x:cur.x, y:cur.y+stripH, w:cur.w, h:cur.h-stripH};
+    }
+    row = [];
+  }
+
+  for (const it of sized){
+    const side = Math.min(cur.w, cur.h);
+    if (row.length === 0) { row.push(it); continue; }
+    const trial = [...row, it];
+    if (worst(trial, side) <= worst(row, side)) row.push(it);
+    else { flush(); row.push(it); }
+  }
+  flush();
+  return result;
+}
+
+/* --- HEATMAP --- */
+function renderHeatmap(){
+  const svg = document.getElementById("heatmap");
+  const W = 1600, H = 540;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const stocks = state.stocks.filter(s => s.mcap > 0);
+  if (stocks.length === 0){
+    svg.innerHTML = `<text x="${W/2}" y="${H/2}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="13" fill="#6F87B8">— stocks data unavailable —</text>`;
+    return;
+  }
+
+  // group by sector
+  const bySector = {};
+  for (const s of stocks){
+    if (!bySector[s.sector]) bySector[s.sector] = [];
+    bySector[s.sector].push(s);
+  }
+  const sectorList = Object.entries(bySector).map(([sec, sts]) => ({
+    sec, stocks: sts,
+    weight: sts.reduce((sum,s) => sum + s.mcap, 0)
+  }));
+
+  // outer treemap: sectors
+  const sectorRects = squarify(sectorList, {x:0, y:0, w:W, h:H});
+
+  let html = "";
+  for (const sr of sectorRects){
+    const headerH = Math.min(22, sr.h * 0.10);
+    const innerY = sr.y + headerH;
+    const innerH = sr.h - headerH;
+    // header strip
+    html += `<rect x="${sr.x}" y="${sr.y}" width="${sr.w}" height="${headerH}" fill="rgba(0,0,0,0.55)"/>`;
+    if (sr.w > 60 && headerH > 10){
+      html += `<text x="${sr.x+8}" y="${sr.y+headerH-6}" font-family="IBM Plex Mono, monospace" font-size="${Math.min(11, headerH*0.65).toFixed(1)}" font-weight="600" fill="#E8F0FF" letter-spacing="0.08em">${sr.sec} · ${SECTOR_NAMES[sr.sec] || ""}</text>`;
+    }
+    // inner treemap: stocks
+    const stockItems = sr.stocks.map(s => ({...s, weight: s.mcap}));
+    const stockRects = squarify(stockItems, {x:sr.x, y:innerY, w:sr.w, h:innerH});
+    for (const st of stockRects){
+      const fill = changeColor(st.chg);
+      html += `<g class="hm-cell">
+        <rect x="${st.x+1}" y="${st.y+1}" width="${Math.max(0,st.w-2)}" height="${Math.max(0,st.h-2)}" fill="${fill}" stroke="#02092E" stroke-width="1"/>`;
+      // label if room
+      const minSide = Math.min(st.w, st.h);
+      if (minSide > 40){
+        const fsSym = Math.min(18, minSide * 0.22);
+        const fsPct = Math.min(13, minSide * 0.16);
+        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2-fsPct*0.15}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="${fsSym.toFixed(1)}" font-weight="700" fill="#02092E" stroke="#02092E" stroke-width="0.3">${st.sym}</text>`;
+        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2+fsPct*1.0}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="${fsPct.toFixed(1)}" font-weight="600" fill="#02092E" opacity="0.85">${st.chg!=null ? (st.chg>=0?"+":"")+st.chg.toFixed(2)+"%" : "—"}</text>`;
+      } else if (minSide > 22){
+        const fsSym = Math.min(11, minSide * 0.32);
+        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2+fsSym*0.35}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="${fsSym.toFixed(1)}" font-weight="700" fill="#02092E">${st.sym}</text>`;
+      }
+      html += `<title>${st.sym} · ${st.name}\n${st.chg!=null?(st.chg>=0?"+":"")+st.chg.toFixed(2)+"%":""}\nMcap: ${fmtCap(st.mcap)}</title></g>`;
+    }
+    // sector outline
+    html += `<rect x="${sr.x}" y="${sr.y}" width="${sr.w}" height="${sr.h}" fill="none" stroke="#173070" stroke-width="1.5"/>`;
+  }
+
+  svg.innerHTML = html;
+}
+
+/* --- INDICES TABLE --- */
+function renderIndicesTable(){
   const tb = document.querySelector("#indices tbody");
   tb.innerHTML = state.indices.map(r => {
     const [, sym, name, price, d, w, m, q, ytd, y, hi, lo] = r;
     return `<tr>
       <td class="sym">${sym}</td>
       <td class="name">${name}</td>
-      <td class="price">${fmtPrice(price)}</td>
+      <td class="price">${fmt2(price)}</td>
       ${pnCell(d)}${pnCell(w)}${pnCell(m)}${pnCell(q)}${pnCell(ytd)}${pnCell(y)}
-      <td style="color:var(--muted)">${fmtPrice(hi)}</td>
-      <td style="color:var(--muted)">${fmtPrice(lo)}</td>
+      <td style="color:var(--muted)">${fmt2(hi)}</td>
+      <td style="color:var(--muted)">${fmt2(lo)}</td>
     </tr>`;
   }).join("");
-  document.getElementById("indices-count").textContent = state.indices.length;
 }
 
-/* --- RENDER: SECTORS --- */
-function renderSectors(){
+/* --- SECTOR ETF TABLE (color-graded heatmap matrix) --- */
+function hmStyle(v){
+  if (v === null || v === undefined || isNaN(v)) return "color:var(--dim)";
+  const mag = Math.min(Math.abs(v) / 8, 1);
+  const alpha = 0.10 + mag * 0.55;
+  if (v > 0) return `background:rgba(0,255,153,${alpha.toFixed(3)});color:#E8FFF4`;
+  if (v < 0) return `background:rgba(255,71,87,${alpha.toFixed(3)});color:#FFEAEC`;
+  return "color:var(--muted)";
+}
+function renderSectorTable(){
   const tb = document.querySelector("#sectors tbody");
   tb.innerHTML = state.sectors.map(r => {
     const [, sym, name, , d, w, m, q, ytd, y] = r;
@@ -644,17 +1148,45 @@ function renderSectors(){
       ${cells}
     </tr>`;
   }).join("");
-  document.getElementById("sectors-count").textContent = state.sectors.length;
 }
 
-/* --- RENDER: SENTIMENT --- */
-function renderSentiment(){
+/* --- SENTIMENT TABLE --- */
+function deriveSentiment(row){
+  // row: [type, sym, name, price, 1D, 1W, 1M, 3M, YTD, 12M, H52, L52, Bias]
+  const m1 = row[6], m3 = row[7], ytd = row[8];
+  const explicit = row[12];
+  let bias;
+  if (explicit === "BULL" || explicit === "BEAR" || explicit === "NEUT") {
+    bias = explicit;
+  } else {
+    const m1v = m1 ?? 0, m3v = m3 ?? 0, ytdv = ytd ?? 0;
+    const score = (m1v >= 0 ? 1 : -1) + (m3v >= 0 ? 1 : -1) + (ytdv >= 0 ? 1 : -1);
+    if (score >= 2) bias = "BULL";
+    else if (score <= -2) bias = "BEAR";
+    else bias = "NEUT";
+  }
+  const mag = Math.min(Math.max(Math.abs(m1 ?? 0) + Math.abs(m3 ?? 0)/2, 0), 10);
+  const strength = Math.max(1, Math.min(5, Math.round(mag * 0.6 + 1)));
+  let signal;
+  if (bias === "BULL") {
+    if ((m1 ?? 0) > 4) signal = "Strong uptrend · momentum";
+    else if ((m3 ?? 0) > 5) signal = "Sustained advance";
+    else signal = "Above key levels";
+  } else if (bias === "BEAR") {
+    if ((m1 ?? 0) < -3) signal = "Sharp downtrend";
+    else if ((m3 ?? 0) < -2) signal = "Below key levels";
+    else signal = "Weakness · caution";
+  } else {
+    signal = "Range-bound · mixed";
+  }
+  const icon = bias === "BULL" ? "🔥" : bias === "BEAR" ? "⚠️" : "💧";
+  return { bias, strength, signal, icon };
+}
+function renderSentimentTable(){
   const tb = document.querySelector("#sentiment tbody");
-  // sort by sentiment: bull first, then neutral, then bear
   const order = { BULL:0, NEUT:1, BEAR:2 };
   const rows = state.sectors.map(r => ({ row:r, s:deriveSentiment(r) }))
     .sort((a,b) => order[a.s.bias] - order[b.s.bias]);
-
   tb.innerHTML = rows.map(({row, s}) => {
     const sym = row[1];
     const tagCls = s.bias === "BULL" ? "sent-bull" : s.bias === "BEAR" ? "sent-bear" : "sent-neut";
@@ -666,87 +1198,42 @@ function renderSentiment(){
       <td class="sym">${sym}</td>
       <td><span class="sent-tag ${tagCls}"><span class="sent-icon">${s.icon}</span>${label}</span></td>
       <td><span class="strength ${strCls}">${bars}</span></td>
-      <td class="name" style="color:var(--muted);font-size:12px">${s.signal}</td>
+      <td class="name" style="color:var(--muted);font-size:11.5px">${s.signal}</td>
     </tr>`;
   }).join("");
 }
 
-/* --- RENDER: BAR CHARTS --- */
-function drawBarChart(svgId, dataIdx){
-  const svg = document.getElementById(svgId);
-  const W = 660, H = 320;
-  const padL = 44, padR = 16, padT = 18, padB = 64;
-  const innerW = W - padL - padR;
-  const innerH = H - padT - padB;
-
-  const data = state.sectors
-    .map(r => ({sym: r[1], val: r[dataIdx]}))
-    .filter(d => d.val !== null && !isNaN(d.val));
-
-  if (data.length === 0){ svg.innerHTML = ""; return; }
-
-  const vals = data.map(d => d.val);
-  const maxV = Math.max(...vals, 0);
-  const minV = Math.min(...vals, 0);
-  const range = (maxV - minV) || 1;
-
-  const yOf = v => padT + innerH * (1 - (v - minV) / range);
-  const y0  = yOf(0);
-
-  const n = data.length;
-  const slot = innerW / n;
-  const barW = Math.min(slot * 0.62, 38);
-
-  let html = "";
-  const ticks = 5;
-  for (let i = 0; i <= ticks; i++){
-    const v = minV + (range * i / ticks);
-    const y = yOf(v);
-    html += `<line x1="${padL}" x2="${W-padR}" y1="${y}" y2="${y}" stroke="#173070" stroke-width="0.5" stroke-dasharray="2 4" opacity="0.6"/>`;
-    html += `<text x="${padL-8}" y="${y+3}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#6F87B8">${v.toFixed(0)}%</text>`;
-  }
-  html += `<line x1="${padL}" x2="${W-padR}" y1="${y0}" y2="${y0}" stroke="#00FFFF" stroke-width="1" opacity="0.5"/>`;
-
-  data.forEach((d, i) => {
-    const cx = padL + slot * i + slot/2;
-    const x  = cx - barW/2;
-    const yTop = d.val >= 0 ? yOf(d.val) : y0;
-    const yBot = d.val >= 0 ? y0 : yOf(d.val);
-    const h   = Math.max(1.5, yBot - yTop);
-    const fillId = d.val >= 0 ? "gradGreen" : "gradRed";
-    const strokeC = d.val >= 0 ? "#00FF99" : "#FF4757";
-    html += `<rect x="${x}" y="${yTop}" width="${barW}" height="${h}" fill="url(#${fillId})" stroke="${strokeC}" stroke-width="0.8" rx="1"/>`;
-    const labelY = d.val >= 0 ? yTop - 6 : yBot + 11;
-    html += `<text x="${cx}" y="${labelY}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9.5" font-weight="600" fill="${strokeC}">${d.val>=0?"+":""}${d.val.toFixed(1)}</text>`;
-    html += `<text x="${cx}" y="${H - padB + 18}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10.5" font-weight="600" fill="#E8F0FF" letter-spacing="0.05em">${d.sym}</text>`;
-  });
-  html += `<line x1="${padL}" x2="${W-padR}" y1="${padT+innerH}" y2="${padT+innerH}" stroke="#173070" stroke-width="1"/>`;
-
-  const defs = `
-    <defs>
-      <linearGradient id="gradGreen" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#00FF99" stop-opacity="0.95"/>
-        <stop offset="100%" stop-color="#00FF99" stop-opacity="0.35"/>
-      </linearGradient>
-      <linearGradient id="gradRed" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#FF4757" stop-opacity="0.45"/>
-        <stop offset="100%" stop-color="#FF4757" stop-opacity="0.95"/>
-      </linearGradient>
-    </defs>`;
-  svg.innerHTML = defs + html;
-}
-
 /* --- RENDER ALL --- */
 function renderAll(){
-  renderKPIs();
-  renderIndices();
-  renderSectors();
-  renderSentiment();
-  drawBarChart("chart-monthly", 6); // 1M index
-  drawBarChart("chart-ytd", 8);     // YTD index
+  renderIndexCards();
+  renderGauge();
+  renderPerfChart();
+  renderSectorBars();
+  renderHeatmap();
+  renderIndicesTable();
+  renderSectorTable();
+  renderSentimentTable();
   document.getElementById("hdr-date").textContent = fmtDate(new Date());
   if (state.lastUpdate) document.getElementById("hdr-updated").textContent = fmtTime(state.lastUpdate);
 }
+
+/* --- EVENTS --- */
+document.querySelectorAll("#tf-btns .tf-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("#tf-btns .tf-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.perfTimeframe = btn.dataset.tf;
+    renderPerfChart();
+  };
+});
+document.querySelectorAll("#sec-tf-btns .tf-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("#sec-tf-btns .tf-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.secTimeframe = btn.dataset.stf;
+    renderSectorBars();
+  };
+});
 
 /* --- INIT --- */
 renderAll();
