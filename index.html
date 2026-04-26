@@ -607,7 +607,7 @@
     <span class="tag">SIZE = MARKET CAP · COLOR = 1D CHANGE</span>
   </div>
   <div class="panel">
-    <svg class="heatmap-svg" id="heatmap" viewBox="0 0 1600 540" preserveAspectRatio="xMidYMid meet"></svg>
+    <svg class="heatmap-svg" id="heatmap" viewBox="0 0 1600 720" preserveAspectRatio="xMidYMid meet"></svg>
   </div>
 
   <!-- INDICES DETAIL TABLE -->
@@ -1719,7 +1719,7 @@ function squarify(items, rect){
 /* --- HEATMAP --- */
 function renderHeatmap(){
   const svg = document.getElementById("heatmap");
-  const W = 1600, H = 540;
+  const W = 1600, H = 720;
   svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
   const tcMuted  = readThemeColor("--text-muted","#787B86");
   const tcDeep   = readThemeColor("--bg-deep","#0A0D14");
@@ -1763,18 +1763,27 @@ function renderHeatmap(){
     for (const st of stockRects){
       const fill = changeColor(st.chg);
       html += `<g class="hm-cell">
-        <rect x="${st.x+1}" y="${st.y+1}" width="${Math.max(0,st.w-2)}" height="${Math.max(0,st.h-2)}" fill="${fill}" stroke="${tcDeep}" stroke-width="1"/>`;
-      // label if room
+        <rect x="${st.x+1}" y="${st.y+1}" width="${Math.max(0,st.w-2)}" height="${Math.max(0,st.h-2)}" fill="${fill}" stroke="${tcDeep}" stroke-width="0.7"/>`;
+      // Three label tiers: full / sym only / nothing
       const minSide = Math.min(st.w, st.h);
-      if (minSide > 40){
-        const fsSym = Math.min(18, minSide * 0.22);
-        const fsPct = Math.min(13, minSide * 0.16);
-        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2-fsPct*0.15}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="${fsSym.toFixed(1)}" font-weight="700" fill="${tcOnTile}" stroke="${tcOnTile}" stroke-width="0.3">${st.sym}</text>`;
+      const area = st.w * st.h;
+      if (minSide > 50 && area > 3500){
+        // Full label: symbol + change %
+        const fsSym = Math.min(20, minSide * 0.22);
+        const fsPct = Math.min(13, minSide * 0.14);
+        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2-fsPct*0.3}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="${fsSym.toFixed(1)}" font-weight="700" fill="${tcOnTile}" stroke="${tcOnTile}" stroke-width="0.3">${st.sym}</text>`;
         html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2+fsPct*1.0}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="${fsPct.toFixed(1)}" font-weight="600" fill="${tcOnTile}" opacity="0.85">${st.chg!=null ? (st.chg>=0?"+":"")+st.chg.toFixed(2)+"%" : "—"}</text>`;
-      } else if (minSide > 22){
-        const fsSym = Math.min(11, minSide * 0.32);
+      } else if (minSide > 26 && area > 800){
+        // Sym only
+        const fsSym = Math.min(13, minSide * 0.36);
         html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2+fsSym*0.35}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="${fsSym.toFixed(1)}" font-weight="700" fill="${tcOnTile}">${st.sym}</text>`;
+      } else if (minSide > 14 && st.w > 24){
+        // Tiny — just abbreviated sym (first 3-4 chars), single line
+        const fsSym = Math.min(9, st.w * 0.20);
+        const txt = st.sym.length > 4 ? st.sym.slice(0,4) : st.sym;
+        html += `<text x="${st.x+st.w/2}" y="${st.y+st.h/2+fsSym*0.35}" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="${fsSym.toFixed(1)}" font-weight="700" fill="${tcOnTile}" opacity="0.9">${txt}</text>`;
       }
+      // hover tooltip always available
       html += `<title>${st.sym} · ${st.name}\n${st.chg!=null?(st.chg>=0?"+":"")+st.chg.toFixed(2)+"%":""}\nMcap: ${fmtCap(st.mcap)}</title></g>`;
     }
     // sector outline
