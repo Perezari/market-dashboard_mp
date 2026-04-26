@@ -175,8 +175,65 @@
   .footer .legend{display:flex;gap:14px;align-items:center}
   .footer .swatch{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle}
 
-  /* sector heatmap table cells */
-  .hm{position:relative;font-weight:500}
+  /* tab nav */
+  .tabs{display:flex;gap:2px;background:#02092E;border:1px solid var(--line);
+    border-radius:6px;padding:4px;font-family:'IBM Plex Mono',monospace}
+  .tab{flex:1;padding:9px 16px;font-size:11px;letter-spacing:0.18em;
+    color:var(--muted);background:transparent;border:0;border-radius:4px;
+    cursor:pointer;text-transform:uppercase;font-family:inherit;
+    transition:all 0.15s;font-weight:500}
+  .tab:hover{color:var(--text);background:rgba(0,255,255,0.05)}
+  .tab.active{background:linear-gradient(180deg,rgba(0,255,255,0.15),rgba(0,255,255,0.05));
+    color:var(--cyan);border:1px solid rgba(0,255,255,0.3);box-shadow:0 0 12px rgba(0,255,255,0.2)}
+  .tab-icon{margin-right:8px;font-size:13px;vertical-align:-1px;letter-spacing:0}
+
+  /* views */
+  .view{display:none;flex-direction:column;gap:14px}
+  .view.active{display:flex}
+
+  /* watchlist row */
+  .wl-table{width:100%}
+  .wl-table thead th{background:#02092E;color:var(--muted);font-weight:500;font-size:9.5px;
+    letter-spacing:0.18em;text-transform:uppercase;text-align:right;
+    padding:10px 12px;border-bottom:1px solid var(--line);border-right:1px solid var(--line-soft);
+    font-family:'IBM Plex Mono',monospace}
+  .wl-table thead th:first-child,
+  .wl-table thead th:nth-child(2),
+  .wl-table thead th:nth-child(8){text-align:left}
+  .wl-table thead th:last-child{border-right:0}
+  .wl-table tbody td{padding:10px 12px;text-align:right;
+    border-bottom:1px solid var(--line-soft);border-right:1px solid var(--line-soft);
+    font-variant-numeric:tabular-nums;font-family:'IBM Plex Mono',monospace;font-size:12px}
+  .wl-table tbody td:first-child,
+  .wl-table tbody td:nth-child(2){text-align:left}
+  .wl-table tbody td:last-child{border-right:0}
+  .wl-table tbody tr:last-child td{border-bottom:0}
+  .wl-table tbody tr:hover td{background:rgba(0,255,255,0.04)}
+
+  .wl-spark{width:90px;height:30px;display:block}
+  .wl-progress{position:relative;width:90px;height:5px;background:#02092E;border-radius:2px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px}
+  .wl-progress > span{position:absolute;left:0;top:0;bottom:0;border-radius:2px}
+  .wl-progress.from-right > span{left:auto;right:0}
+  .wl-cross{display:inline-block;padding:2px 7px;border-radius:3px;
+    font-size:9.5px;font-weight:600;letter-spacing:0.12em;font-family:'IBM Plex Mono',monospace}
+  .wl-cross.golden{background:rgba(255,234,0,0.12);color:var(--yellow);border:1px solid rgba(255,234,0,0.4)}
+  .wl-cross.death{background:rgba(255,71,87,0.12);color:var(--red);border:1px solid rgba(255,71,87,0.35)}
+  .wl-cross.neutral{background:rgba(111,135,184,0.10);color:var(--muted);border:1px solid rgba(111,135,184,0.25)}
+  .wl-vol{display:inline-block;padding:2px 7px;border-radius:3px;font-size:9.5px;
+    letter-spacing:0.1em;font-family:'IBM Plex Mono',monospace;font-weight:500}
+  .wl-vol.high{background:rgba(0,255,153,0.12);color:var(--lime);border:1px solid rgba(0,255,153,0.3)}
+  .wl-vol.norm{background:rgba(111,135,184,0.10);color:var(--muted);border:1px solid rgba(111,135,184,0.25)}
+
+  /* KPI strip for watchlist */
+  .wl-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .wl-kpi{padding:12px 14px;background:linear-gradient(180deg,#0A1A55 0%, #061540 100%);
+    border:1px solid var(--line);border-radius:5px;position:relative;overflow:hidden}
+  .wl-kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--cyan)}
+  .wl-kpi.green::after{background:var(--lime)}
+  .wl-kpi.red::after{background:var(--red)}
+  .wl-kpi-lbl{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase}
+  .wl-kpi-val{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;margin-top:4px;line-height:1.1}
+  .wl-kpi-sub{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);margin-top:3px}
 
   /* two-column layout for sector + sentiment */
   .two-col{display:grid;grid-template-columns:1.55fr 1fr;gap:14px}
@@ -226,6 +283,15 @@
       <div class="pill" id="hdr-mode">DEMO</div>
     </div>
   </div>
+
+  <!-- TABS -->
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-view="markets"><span class="tab-icon">▣</span>MARKETS</button>
+    <button class="tab" data-view="watchlist"><span class="tab-icon">★</span>WATCHLIST</button>
+  </div>
+
+  <!-- ========== VIEW: MARKETS ========== -->
+  <div class="view active" id="view-markets">
 
   <!-- INDEX CARDS -->
   <div class="index-cards" id="index-cards"></div>
@@ -346,7 +412,46 @@
     </div>
   </div>
 
-  <div class="footer">
+  </div> <!-- /view-markets -->
+
+  <!-- ========== VIEW: WATCHLIST ========== -->
+  <div class="view" id="view-watchlist">
+
+    <!-- Watchlist KPI strip -->
+    <div class="wl-kpis" id="wl-kpis"></div>
+
+    <div class="stitle">
+      <span class="dot" style="background:var(--yellow);box-shadow:0 0 8px var(--yellow)"></span>
+      <span>WATCHLIST · TRACKED POSITIONS</span>
+      <span class="line"></span>
+      <span class="tag" id="wl-meta">— SYMBOLS</span>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Personal Watchlist</h2>
+        <div class="meta">sortable · click any column header</div>
+      </div>
+      <table class="wl-table" id="watchlist">
+        <thead><tr>
+          <th data-sort="sym">Symbol</th>
+          <th data-sort="name">Name</th>
+          <th data-sort="price">Price</th>
+          <th data-sort="d1">1D %</th>
+          <th data-sort="w1">1W %</th>
+          <th data-sort="m1">1M %</th>
+          <th data-sort="ytd">YTD %</th>
+          <th>Trend</th>
+          <th data-sort="hi">From 52W High</th>
+          <th data-sort="lo">From 52W Low</th>
+          <th>Volume</th>
+          <th>MA Cross</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+  </div> <!-- /view-watchlist -->
     <div class="legend">
       <span><span class="swatch" style="background:var(--lime)"></span>Positive</span>
       <span><span class="swatch" style="background:var(--red)"></span>Negative</span>
@@ -368,6 +473,8 @@ const CONFIG = {
   dataTab:    "sectors",   // tab with indices+sectors (your existing tab)
   historyTab: "history",  // tab with daily closes for SPY/DIA/QQQ/IWM
   stocksTab:  "stocks",   // tab with 30 stocks for the heatmap
+  watchlistTab:        "watchlist",         // tab with personal watchlist
+  watchlistHistoryTab: "watchlist_history", // tab with sparkline history
   refreshSec: 60
 };
 /* ============================================================ */
@@ -444,6 +551,41 @@ const DEMO = {
     {sym:"LIN",name:"Linde",sector:"XLB",price:454.6,chg:-0.18,mcap:218000000000},
   ]
 };
+
+/* --- WATCHLIST DEMO DATA --- */
+const WATCHLIST_DEMO = [
+  // sym, name, price, d1%, w1%, m1%, ytd%, vol, avgVol, ma50, ma200, hi52, lo52
+  {sym:"NVDA",  name:"NVIDIA",     price:124.30, d1: 1.85, w1: 4.21, m1:  8.94, ytd:11.32, vol:248000000, avgVol:240000000, ma50:118.40, ma200: 95.20, hi52:140.80, lo52: 75.61},
+  {sym:"AAPL",  name:"Apple",      price:218.40, d1: 0.52, w1: 1.24, m1:  3.18, ytd: 6.42, vol: 64000000, avgVol: 58000000, ma50:215.20, ma200:198.40, hi52:232.10, lo52:165.31},
+  {sym:"MSFT",  name:"Microsoft",  price:441.20, d1: 0.81, w1: 2.12, m1:  4.62, ytd: 8.94, vol: 22000000, avgVol: 24000000, ma50:432.10, ma200:412.50, hi52:468.00, lo52:362.90},
+  {sym:"GOOGL", name:"Alphabet",   price:172.80, d1: 0.28, w1: 0.94, m1:  2.41, ytd: 4.52, vol: 28000000, avgVol: 30000000, ma50:170.40, ma200:162.10, hi52:186.40, lo52:138.20},
+  {sym:"AMZN",  name:"Amazon",     price:194.50, d1: 0.72, w1: 1.84, m1:  3.62, ytd: 6.18, vol: 38000000, avgVol: 42000000, ma50:189.30, ma200:178.40, hi52:205.20, lo52:151.61},
+  {sym:"META",  name:"Meta",       price:584.20, d1: 1.64, w1: 3.41, m1:  6.18, ytd:12.84, vol: 14000000, avgVol: 12000000, ma50:558.40, ma200:512.30, hi52:612.40, lo52:414.50},
+  {sym:"TSLA",  name:"Tesla",      price:284.70, d1:-1.21, w1:-2.84, m1: -4.18, ytd:-8.42, vol: 96000000, avgVol: 84000000, ma50:298.40, ma200:240.80, hi52:412.50, lo52:138.80},
+  {sym:"AVGO",  name:"Broadcom",   price:1740.0, d1: 1.32, w1: 2.94, m1:  5.42, ytd:10.84, vol:  3800000, avgVol:  3400000, ma50:1680.0, ma200:1480.0, hi52:1820.0, lo52:1180.0},
+  {sym:"ASML",  name:"ASML",       price: 712.4, d1:-0.41, w1: 0.82, m1:  1.84, ytd: 2.41, vol:  2200000, avgVol:  1900000, ma50:702.10, ma200:758.40, hi52: 920.0, lo52:632.50},
+  {sym:"JPM",   name:"JPMorgan",   price:228.40, d1: 0.32, w1: 0.94, m1:  2.18, ytd: 5.42, vol: 12000000, avgVol: 11000000, ma50:222.10, ma200:208.40, hi52:240.80, lo52:182.50},
+  {sym:"LLY",   name:"Eli Lilly",  price:824.50, d1: 0.18, w1:-0.62, m1:  1.84, ytd: 6.18, vol:  4200000, avgVol:  4400000, ma50:812.40, ma200:758.40, hi52:998.40, lo52:712.30},
+  {sym:"COST",  name:"Costco",     price:912.40, d1: 0.42, w1: 1.18, m1:  2.84, ytd: 7.42, vol:  2400000, avgVol:  2600000, ma50:898.40, ma200:842.10, hi52:945.60, lo52:732.40},
+];
+
+// generate demo sparkline history (30 days each)
+const WATCHLIST_HISTORY_DEMO = {};
+(function genWLHistory(){
+  for (const stock of WATCHLIST_DEMO){
+    const arr = [];
+    let p = stock.price * (1 - stock.m1/100); // start from 1m ago
+    const drift = (stock.price - p) / 30;
+    const vol = stock.price * 0.018;
+    for (let i=0; i<30; i++){
+      const noise = (Math.random()-0.5) * vol;
+      p = p + drift + noise;
+      arr.push(p);
+    }
+    arr[arr.length-1] = stock.price; // anchor end to current
+    WATCHLIST_HISTORY_DEMO[stock.sym] = arr;
+  }
+})();
 // generate fake demo history (180 trading days for each index)
 (function genDemoHistory(){
   const days = 250;
@@ -478,11 +620,15 @@ const state = {
   sectors: DEMO.sectors.slice(),
   history: DEMO.history,
   stocks:  DEMO.stocks.slice(),
+  watchlist: WATCHLIST_DEMO.slice(),
+  watchlistHistory: {...WATCHLIST_HISTORY_DEMO},
   live: false,
   lastUpdate: null,
   perfTimeframe: "3M",
   secTimeframe:  "1M",
-  hiddenSeries:  new Set()
+  hiddenSeries:  new Set(),
+  view: "markets",
+  wlSort: { col: "ytd", dir: "desc" }
 };
 
 /* --- HELPERS --- */
@@ -607,6 +753,7 @@ async function loadLive(){
     return parseCSV(await res.text());
   };
   let dataRows = null, histRows = null, stockRows = null;
+  let wlRows = null, wlHistRows = null;
   let anySuccess = false;
 
   try { dataRows  = await fetchTab(CONFIG.dataTab);    anySuccess = true; }
@@ -617,6 +764,12 @@ async function loadLive(){
 
   try { stockRows = await fetchTab(CONFIG.stocksTab);  anySuccess = true; }
   catch(e){ console.warn("stocks tab failed (heatmap will use demo):", e); }
+
+  try { wlRows = await fetchTab(CONFIG.watchlistTab); anySuccess = true; }
+  catch(e){ console.warn("watchlist tab failed (will use demo):", e); }
+
+  try { wlHistRows = await fetchTab(CONFIG.watchlistHistoryTab); anySuccess = true; }
+  catch(e){ console.warn("watchlist_history tab failed (sparklines will use demo):", e); }
 
   if (!anySuccess){
     setMode(false, "All fetches failed");
@@ -691,6 +844,63 @@ async function loadLive(){
       }
     }
     if (stocks.length) state.stocks = stocks;
+  }
+
+  // --- parse watchlist tab ---
+  // Columns: Symbol, Name, Price, Change1D, Change1W, Change1M, YTD, Volume, AvgVol10D, MA50, MA200, High52, Low52
+  if (wlRows && wlRows.length > 1){
+    const wl = [];
+    for (const r of wlRows.slice(1)){
+      const sym = (r[0]||"").trim();
+      if (!sym) continue;
+      wl.push({
+        sym,
+        name:   (r[1]||"").trim(),
+        price:  num(r[2]),
+        d1:     num(r[3]),
+        w1:     num(r[4]),
+        m1:     num(r[5]),
+        ytd:    num(r[6]),
+        vol:    num(r[7]),
+        avgVol: num(r[8]),
+        ma50:   num(r[9]),
+        ma200:  num(r[10]),
+        hi52:   num(r[11]),
+        lo52:   num(r[12])
+      });
+    }
+    if (wl.length) state.watchlist = wl;
+  }
+
+  // --- parse watchlist_history tab ---
+  // Layout: each symbol gets 3 columns (Date, Close, blank), 12 symbols = 36 cols
+  // Row 1: SYMBOL ticker labels at cols 0,3,6,9,...
+  // Row 2: header (Date, Close)
+  // Row 3+: data
+  if (wlHistRows && wlHistRows.length > 2){
+    const series = {};
+    const isDDMM = detectDDMM(wlHistRows, 0, 2);
+    // discover symbols from row 0
+    const headerRow = wlHistRows[0] || [];
+    for (let col = 0; col < headerRow.length; col += 3){
+      const sym = (headerRow[col]||"").trim().toUpperCase();
+      if (!sym) continue;
+      const arr = [];
+      for (let i = 2; i < wlHistRows.length; i++){
+        const r = wlHistRows[i];
+        const dStr = (r[col]||"").trim();
+        const cStr = (r[col+1]||"").trim();
+        if (!dStr || !cStr) continue;
+        const close = num(cStr);
+        const d = parseHistDate(dStr, isDDMM);
+        if (d && close !== null) arr.push({date:d, close});
+      }
+      arr.sort((a,b) => a.date - b.date);
+      // Take just last 30 days for sparkline
+      const closes = arr.slice(-30).map(p => p.close);
+      if (closes.length) series[sym] = closes;
+    }
+    if (Object.keys(series).length) state.watchlistHistory = series;
   }
 
   state.live = true;
@@ -1338,7 +1548,162 @@ function renderSentimentTable(){
   }).join("");
 }
 
-/* --- RENDER ALL --- */
+/* --- WATCHLIST: KPI strip --- */
+function renderWatchlistKPIs(){
+  const el = document.getElementById("wl-kpis");
+  if (!el) return;
+  const wl = state.watchlist;
+  const valid = arr => arr.filter(v => v !== null && !isNaN(v));
+  const d1Vals  = valid(wl.map(s => s.d1));
+  const m1Vals  = valid(wl.map(s => s.m1));
+  const ytdVals = valid(wl.map(s => s.ytd));
+
+  const adv = d1Vals.filter(v => v > 0).length;
+  const dec = d1Vals.filter(v => v < 0).length;
+  const breadth = d1Vals.length ? (adv / d1Vals.length * 100) : 0;
+  const avgYtd = ytdVals.length ? (ytdVals.reduce((a,b) => a+b, 0) / ytdVals.length) : 0;
+  const best = wl.length ? wl.reduce((a,b) => (a.ytd ?? -Infinity) > (b.ytd ?? -Infinity) ? a : b) : null;
+  const worst = wl.length ? wl.reduce((a,b) => (a.ytd ?? Infinity) < (b.ytd ?? Infinity) ? a : b) : null;
+
+  el.innerHTML = `
+    <div class="wl-kpi ${avgYtd>=0?'green':'red'}">
+      <div class="wl-kpi-lbl">Avg YTD</div>
+      <div class="wl-kpi-val" style="color:${avgYtd>=0?'var(--lime)':'var(--red)'}">${avgYtd>=0?'+':''}${avgYtd.toFixed(2)}%</div>
+      <div class="wl-kpi-sub">${wl.length} positions tracked</div>
+    </div>
+    <div class="wl-kpi ${breadth>=50?'green':'red'}">
+      <div class="wl-kpi-lbl">Today's Breadth</div>
+      <div class="wl-kpi-val" style="color:${breadth>=50?'var(--lime)':'var(--red)'}">${breadth.toFixed(0)}%</div>
+      <div class="wl-kpi-sub">Adv ${adv} · Dec ${dec}</div>
+    </div>
+    <div class="wl-kpi green">
+      <div class="wl-kpi-lbl">Best Performer YTD</div>
+      <div class="wl-kpi-val" style="color:var(--lime)">${best ? best.sym : '—'}</div>
+      <div class="wl-kpi-sub">${best && best.ytd != null ? (best.ytd>=0?'+':'')+best.ytd.toFixed(2)+'%' : '—'}</div>
+    </div>
+    <div class="wl-kpi red">
+      <div class="wl-kpi-lbl">Worst Performer YTD</div>
+      <div class="wl-kpi-val" style="color:var(--red)">${worst ? worst.sym : '—'}</div>
+      <div class="wl-kpi-sub">${worst && worst.ytd != null ? (worst.ytd>=0?'+':'')+worst.ytd.toFixed(2)+'%' : '—'}</div>
+    </div>
+  `;
+}
+
+/* --- WATCHLIST: trend sparkline (compact) --- */
+function makeTrendSparkline(closes, width=90, height=30){
+  if (!closes || closes.length < 2) return `<svg class="wl-spark" viewBox="0 0 ${width} ${height}"></svg>`;
+  const min = Math.min(...closes), max = Math.max(...closes);
+  const range = max - min || 1;
+  const step = (width - 4) / (closes.length - 1);
+  const yOf = v => 2 + (height - 4) * (1 - (v - min) / range);
+  let path = "";
+  closes.forEach((c, i) => {
+    path += (i===0?"M":"L") + (2 + i*step).toFixed(1) + "," + yOf(c).toFixed(1) + " ";
+  });
+  const isUp = closes[closes.length-1] >= closes[0];
+  const color = isUp ? "#00FF99" : "#FF4757";
+  // area fill
+  let area = `M2,${height-2} `;
+  closes.forEach((c, i) => {
+    area += "L" + (2 + i*step).toFixed(1) + "," + yOf(c).toFixed(1) + " ";
+  });
+  area += `L${width-2},${height-2} Z`;
+  const gid = "wlsg-" + Math.random().toString(36).slice(2,8);
+  return `<svg class="wl-spark" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${color}" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#${gid})"/>
+    <path d="${path}" fill="none" stroke="${color}" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/>
+  </svg>`;
+}
+
+/* --- WATCHLIST: distance from high/low progress bar --- */
+function makeDistanceBar(price, hi, lo){
+  if (price == null || hi == null || lo == null || hi <= lo) return '';
+  const pct = ((price - lo) / (hi - lo)) * 100;
+  const clamped = Math.max(0, Math.min(100, pct));
+  // Color: green near high, red near low
+  let color;
+  if (clamped > 70) color = "var(--lime)";
+  else if (clamped > 40) color = "var(--yellow)";
+  else color = "var(--red)";
+  return `<div class="wl-progress"><span style="width:${clamped}%;background:${color}"></span></div>`;
+}
+
+/* --- WATCHLIST: render table --- */
+function renderWatchlist(){
+  const tbody = document.querySelector("#watchlist tbody");
+  if (!tbody) return;
+
+  // sort
+  const wl = state.watchlist.slice();
+  const { col, dir } = state.wlSort;
+  wl.sort((a, b) => {
+    const av = a[col], bv = b[col];
+    if (av == null && bv == null) return 0;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    if (typeof av === "string") {
+      return dir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
+    }
+    return dir === "asc" ? av - bv : bv - av;
+  });
+
+  tbody.innerHTML = wl.map(s => {
+    // distance from high
+    const fromHi = (s.price != null && s.hi52 != null) ? ((s.price/s.hi52 - 1) * 100) : null;
+    const fromLo = (s.price != null && s.lo52 != null) ? ((s.price/s.lo52 - 1) * 100) : null;
+
+    // MA cross
+    let cross = "neutral", crossLbl = "—";
+    if (s.ma50 != null && s.ma200 != null) {
+      if (s.ma50 > s.ma200 * 1.005)      { cross = "golden";  crossLbl = "GOLDEN"; }
+      else if (s.ma50 < s.ma200 * 0.995) { cross = "death";   crossLbl = "DEATH";  }
+      else                                { cross = "neutral"; crossLbl = "FLAT";   }
+    }
+
+    // Volume vs avg
+    let volTag = "";
+    if (s.vol != null && s.avgVol != null && s.avgVol > 0) {
+      const ratio = s.vol / s.avgVol;
+      if (ratio > 1.3) volTag = `<span class="wl-vol high">${ratio.toFixed(1)}× AVG</span>`;
+      else volTag = `<span class="wl-vol norm">${ratio.toFixed(1)}× avg</span>`;
+    } else {
+      volTag = `<span class="wl-vol norm">—</span>`;
+    }
+
+    // sparkline
+    const closes = state.watchlistHistory[s.sym];
+    const spark = makeTrendSparkline(closes);
+
+    const pcCell = v => {
+      if (v == null || isNaN(v)) return `<td class="nul">—</td>`;
+      const cls = v >= 0 ? "pos" : "neg";
+      return `<td class="${cls}">${Math.abs(v).toFixed(2)}%</td>`;
+    };
+
+    return `<tr>
+      <td class="sym">${s.sym}</td>
+      <td class="name">${s.name || ""}</td>
+      <td class="price">${fmt2(s.price)}</td>
+      ${pcCell(s.d1)}
+      ${pcCell(s.w1)}
+      ${pcCell(s.m1)}
+      ${pcCell(s.ytd)}
+      <td>${spark}</td>
+      <td><span class="${fromHi != null && fromHi >= -3 ? 'pos' : 'neg'}" style="${fromHi != null && fromHi >= -3 ? '' : 'color:var(--muted)'}">${fromHi != null ? fromHi.toFixed(2)+'%' : '—'}</span></td>
+      <td><span class="pos" style="color:var(--lime)">${fromLo != null ? '+'+fromLo.toFixed(1)+'%' : '—'}</span></td>
+      <td>${volTag}</td>
+      <td><span class="wl-cross ${cross}">${crossLbl}</span></td>
+    </tr>`;
+  }).join("");
+
+  // meta count
+  const meta = document.getElementById("wl-meta");
+  if (meta) meta.textContent = `${state.watchlist.length} SYMBOLS`;
+}
 function renderAll(){
   renderIndexCards();
   renderGauge();
@@ -1348,9 +1713,37 @@ function renderAll(){
   renderIndicesTable();
   renderSectorTable();
   renderSentimentTable();
+  renderWatchlistKPIs();
+  renderWatchlist();
   document.getElementById("hdr-date").textContent = fmtDate(new Date());
   if (state.lastUpdate) document.getElementById("hdr-updated").textContent = fmtTime(state.lastUpdate);
 }
+
+/* --- TAB SWITCHING --- */
+document.querySelectorAll("#tabs .tab").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("#tabs .tab").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.view = btn.dataset.view;
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    document.getElementById("view-" + state.view).classList.add("active");
+  };
+});
+
+/* --- WATCHLIST SORT HEADERS --- */
+document.querySelectorAll("#watchlist thead th[data-sort]").forEach(th => {
+  th.style.cursor = "pointer";
+  th.onclick = () => {
+    const col = th.dataset.sort;
+    if (state.wlSort.col === col) {
+      state.wlSort.dir = state.wlSort.dir === "asc" ? "desc" : "asc";
+    } else {
+      state.wlSort.col = col;
+      state.wlSort.dir = (col === "sym" || col === "name") ? "asc" : "desc";
+    }
+    renderWatchlist();
+  };
+});
 
 /* --- EVENTS --- */
 document.querySelectorAll("#tf-btns .tf-btn").forEach(btn => {
