@@ -263,7 +263,96 @@
     font-family:'JetBrains Mono',monospace;letter-spacing:0;line-height:1.4}
   .tab-badge.show{display:inline-block}
 
-  /* === SPLASH LOADER === */
+  /* === STOCK DETAIL MODAL === */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.55);
+    z-index:500;display:none;align-items:center;justify-content:center;
+    backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+    animation:modalFadeIn 0.2s ease-out}
+  .modal-backdrop.show{display:flex}
+  @keyframes modalFadeIn{from{opacity:0}to{opacity:1}}
+
+  .modal{background:var(--bg-panel);border:1px solid var(--border);
+    border-radius:12px;width:min(640px,calc(100vw - 40px));max-height:calc(100vh - 60px);
+    overflow:auto;box-shadow:0 12px 48px rgba(0,0,0,0.5);
+    animation:modalSlideIn 0.25s ease-out;display:flex;flex-direction:column}
+  @keyframes modalSlideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+  .modal-header{display:flex;align-items:flex-start;justify-content:space-between;
+    padding:18px 22px;border-bottom:1px solid var(--border-soft);gap:14px}
+  .modal-title-block{flex:1}
+  .modal-sym{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;
+    color:var(--text-bright);letter-spacing:-0.01em;line-height:1}
+  .modal-name{font-family:'Inter',sans-serif;font-size:13px;color:var(--text-muted);margin-top:5px;font-weight:500}
+  .modal-close{padding:6px 10px;background:transparent;border:1px solid var(--border);
+    border-radius:6px;color:var(--text-muted);cursor:pointer;font-size:14px;
+    font-family:'Inter',sans-serif;transition:all 0.12s}
+  .modal-close:hover{color:var(--text-bright);border-color:var(--border-strong);background:var(--bg-input)}
+
+  .modal-price-row{display:flex;align-items:baseline;gap:14px;padding:14px 22px 16px;
+    border-bottom:1px solid var(--border-soft);flex-wrap:wrap}
+  .modal-price{font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:600;
+    color:var(--text-bright);letter-spacing:-0.02em;line-height:1}
+  .modal-chg{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600}
+  .modal-chg.pos{color:var(--pos)}
+  .modal-chg.neg{color:var(--neg)}
+
+  .modal-spark{padding:10px 22px 18px;border-bottom:1px solid var(--border-soft)}
+  .modal-spark svg{width:100%;height:120px;display:block}
+
+  .modal-grid{padding:18px 22px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px 18px}
+  .modal-stat{display:flex;flex-direction:column;gap:3px}
+  .modal-stat .lbl{font-family:'Inter',sans-serif;font-size:10.5px;color:var(--text-muted);
+    text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
+  .modal-stat .val{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text);font-weight:600}
+  .modal-stat .val.pos{color:var(--pos)}
+  .modal-stat .val.neg{color:var(--neg)}
+  .modal-stat .val.muted{color:var(--text-muted)}
+
+  .modal-footer{padding:14px 22px;border-top:1px solid var(--border-soft);
+    display:flex;gap:10px;flex-wrap:wrap}
+  .modal-action-btn{padding:9px 14px;background:var(--bg-input);border:1px solid var(--border);
+    color:var(--text);border-radius:6px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;
+    text-decoration:none;cursor:pointer;transition:all 0.12s;display:inline-flex;align-items:center;gap:6px}
+  .modal-action-btn:hover{color:var(--text-bright);border-color:var(--border-strong);background:var(--bg-panel-hover)}
+  .modal-action-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .modal-action-btn.primary:hover{background:var(--accent-bright);border-color:var(--accent-bright)}
+  .modal-action-btn .ext-arrow{font-size:11px;opacity:0.7}
+
+  .modal-range-bar{padding:12px 22px;border-bottom:1px solid var(--border-soft)}
+  .modal-range-track{position:relative;height:6px;background:var(--bg-input);border-radius:3px;
+    overflow:hidden;margin-top:8px}
+  .modal-range-fill{position:absolute;top:0;bottom:0;
+    background:linear-gradient(90deg,var(--neg),var(--warn),var(--pos));border-radius:3px}
+  .modal-range-marker{position:absolute;top:-3px;width:2px;height:12px;background:var(--text-bright);
+    border-radius:1px;box-shadow:0 0 8px rgba(0,0,0,0.5)}
+  .modal-range-labels{display:flex;justify-content:space-between;margin-top:6px;
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-muted)}
+  @keyframes flashUp {
+    0%   { background: rgba(38,166,154,0.45); }
+    100% { background: transparent; }
+  }
+  @keyframes flashDown {
+    0%   { background: rgba(239,83,80,0.45); }
+    100% { background: transparent; }
+  }
+  .flash-up   { animation: flashUp 1.2s ease-out; }
+  .flash-down { animation: flashDown 1.2s ease-out; }
+
+  /* For text-based flashes (e.g. KPI big numbers) */
+  @keyframes flashTextUp {
+    0%   { color: var(--pos-bright); text-shadow: 0 0 8px var(--pos); }
+    100% { /* inherits */ }
+  }
+  @keyframes flashTextDown {
+    0%   { color: var(--neg-bright); text-shadow: 0 0 8px var(--neg); }
+    100% { /* inherits */ }
+  }
+  .flash-text-up   { animation: flashTextUp 1.2s ease-out; }
+  .flash-text-down { animation: flashTextDown 1.2s ease-out; }
+
+  /* === CLICK-ABLE SYMBOLS === */
+  .clickable-sym{cursor:pointer;transition:filter 0.12s}
+  .clickable-sym:hover{filter:brightness(1.4)}
   .splash{position:fixed;inset:0;background:var(--bg-app);z-index:9999;
     display:flex;align-items:center;justify-content:center;
     transition:opacity 0.5s ease, visibility 0.5s ease}
@@ -552,6 +641,12 @@
   .wl-table tbody td:nth-child(2){text-align:left}
   .wl-table tbody tr:last-child td{border-bottom:0}
   .wl-table tbody tr:hover td{background:var(--bg-panel-hover)}
+
+  /* Watchlist timeframe highlighting */
+  .wl-table th.tf-primary{color:var(--accent-bright);font-weight:700}
+  .wl-table td.tf-primary{font-weight:700;font-size:13px}
+  .wl-table td.tf-secondary{opacity:0.55;font-size:11.5px}
+  .wl-table th.tf-secondary{opacity:0.65}
 
   .wl-spark{width:90px;height:30px;display:block}
   .wl-progress{position:relative;width:90px;height:5px;background:var(--bg-input);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-right:6px}
@@ -866,17 +961,25 @@
     <div class="panel">
       <div class="panel-head">
         <h2>Personal Watchlist</h2>
-        <div class="meta">sortable · click any column header</div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <div style="font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted)">Highlight:</div>
+          <div class="tf-btns" id="wl-tf-btns">
+            <button class="tf-btn active" data-tf="1D">1D</button>
+            <button class="tf-btn" data-tf="1W">1W</button>
+            <button class="tf-btn" data-tf="1M">1M</button>
+            <button class="tf-btn" data-tf="YTD">YTD</button>
+          </div>
+        </div>
       </div>
       <table class="wl-table" id="watchlist">
         <thead><tr>
           <th data-sort="sym">Symbol</th>
           <th data-sort="name">Name</th>
           <th data-sort="price">Price</th>
-          <th data-sort="d1">1D %</th>
-          <th data-sort="w1">1W %</th>
-          <th data-sort="m1">1M %</th>
-          <th data-sort="ytd">YTD %</th>
+          <th data-sort="d1" data-tf-col="1D">1D %</th>
+          <th data-sort="w1" data-tf-col="1W">1W %</th>
+          <th data-sort="m1" data-tf-col="1M">1M %</th>
+          <th data-sort="ytd" data-tf-col="YTD">YTD %</th>
           <th>Trend</th>
           <th data-sort="hi">From 52W High</th>
           <th data-sort="lo">From 52W Low</th>
@@ -960,6 +1063,43 @@
 
 <!-- toast stack for alerts -->
 <div class="toast-stack" id="toast-stack"></div>
+
+<!-- Stock detail modal -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div class="modal-title-block">
+        <div class="modal-sym" id="modal-sym">—</div>
+        <div class="modal-name" id="modal-name">—</div>
+      </div>
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-price-row">
+      <div class="modal-price" id="modal-price">—</div>
+      <div class="modal-chg" id="modal-chg">—</div>
+    </div>
+    <div class="modal-spark">
+      <svg id="modal-spark-svg" viewBox="0 0 600 120" preserveAspectRatio="none"></svg>
+    </div>
+    <div class="modal-range-bar" id="modal-range-bar" style="display:none">
+      <div style="font-family:'Inter',sans-serif;font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;font-weight:500">52 Week Range</div>
+      <div class="modal-range-track">
+        <div class="modal-range-fill" style="left:0;right:0;opacity:0.25"></div>
+        <div class="modal-range-marker" id="modal-range-marker"></div>
+      </div>
+      <div class="modal-range-labels">
+        <span id="modal-range-lo">—</span>
+        <span id="modal-range-hi">—</span>
+      </div>
+    </div>
+    <div class="modal-grid" id="modal-grid"></div>
+    <div class="modal-footer">
+      <a class="modal-action-btn primary" id="modal-tv-link" target="_blank" rel="noopener">TradingView <span class="ext-arrow">↗</span></a>
+      <a class="modal-action-btn" id="modal-yahoo-link" target="_blank" rel="noopener">Yahoo Finance <span class="ext-arrow">↗</span></a>
+      <a class="modal-action-btn" id="modal-google-link" target="_blank" rel="noopener">Google Finance <span class="ext-arrow">↗</span></a>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ============================================================
@@ -1234,6 +1374,7 @@ const state = {
   stocks:  DEMO.stocks.slice(),
   watchlist: WATCHLIST_DEMO.slice(),
   watchlistHistory: {...WATCHLIST_HISTORY_DEMO},
+  alerts: [],
   live: false,
   lastUpdate: null,
   perfTimeframe: "3M",
@@ -1242,7 +1383,10 @@ const state = {
   view: "markets",
   wlSort: { col: "ytd", dir: "desc" },
   scanType: "top-gainers",
-  alerts: []  // {id, sym, cond, val, note, triggered, triggeredAt, lastValue}
+  // NEW: change tracking & UI state
+  prevValues: {},      // sym -> { price, d1, w1, m1, ytd, ... } from previous render
+  wlPrimaryTf: "1D",   // primary % column shown in watchlist
+  modalSym: null       // currently open in modal, or null
 };
 
 /* --- HELPERS --- */
@@ -1667,13 +1811,14 @@ function renderIndexCards(){
 
     const card = document.createElement("div");
     card.className = `idx-card ${dirClass}`;
+    card.dataset.sym = sym;
     card.innerHTML = `
       <div class="top">
         <div>
           <div class="title">${name}</div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.15em;margin-top:3px">MARKET CLOSED</div>
         </div>
-        <span class="sym">${sym}</span>
+        <span class="sym clickable-sym" data-sym="${sym}">${sym}</span>
       </div>
       <div class="price">${fmt2(price)}</div>
       <div class="chg ${chgClass}">${chgArrow} ${chg1d!=null ? fmtPctSigned(chg1d) : "—"}</div>
@@ -2129,7 +2274,7 @@ function renderHeatmap(){
     const stockRects = squarify(stockItems, {x:sr.x, y:innerY, w:sr.w, h:innerH});
     for (const st of stockRects){
       const fill = changeColor(st.chg);
-      html += `<g class="hm-cell">
+      html += `<g class="hm-cell clickable-sym" data-sym="${st.sym}" style="cursor:pointer">
         <rect x="${st.x+1}" y="${st.y+1}" width="${Math.max(0,st.w-2)}" height="${Math.max(0,st.h-2)}" fill="${fill}" stroke="${tcDeep}" stroke-width="0.7"/>`;
       // Three label tiers: full / sym only / nothing
       const minSide = Math.min(st.w, st.h);
@@ -2165,8 +2310,8 @@ function renderIndicesTable(){
   const tb = document.querySelector("#indices tbody");
   tb.innerHTML = state.indices.map(r => {
     const [, sym, name, price, d, w, m, q, ytd, y, hi, lo] = r;
-    return `<tr>
-      <td class="sym">${sym}</td>
+    return `<tr data-sym="${sym}">
+      <td class="sym clickable-sym" data-sym="${sym}">${sym}</td>
       <td class="name">${name}</td>
       <td class="price">${fmt2(price)}</td>
       ${pnCell(d)}${pnCell(w)}${pnCell(m)}${pnCell(q)}${pnCell(ytd)}${pnCell(y)}
@@ -2210,7 +2355,7 @@ function renderSectorTable(){
       return `<td class="hm" style="${hmStyle(v)}">${v>=0?"+":"−"}${Math.abs(v).toFixed(2)}%</td>`;
     }).join("");
     return `<tr>
-      <td class="sym">${sym}</td>
+      <td class="sym clickable-sym" data-sym="${sym}">${sym}</td>
       <td class="name">${name}</td>
       ${cells}
     </tr>`;
@@ -2359,6 +2504,17 @@ function renderWatchlist(){
   const tbody = document.querySelector("#watchlist tbody");
   if (!tbody) return;
 
+  // Sync primary timeframe column highlighting
+  const tfToCol = {"1D":"d1","1W":"w1","1M":"m1","YTD":"ytd"};
+  const primaryCol = tfToCol[state.wlPrimaryTf] || "d1";
+  document.querySelectorAll("#watchlist thead th[data-tf-col]").forEach(th => {
+    if (th.dataset.tfCol === state.wlPrimaryTf) {
+      th.classList.add("tf-primary"); th.classList.remove("tf-secondary");
+    } else {
+      th.classList.remove("tf-primary"); th.classList.add("tf-secondary");
+    }
+  });
+
   // sort
   const wl = state.watchlist.slice();
   const { col, dir } = state.wlSort;
@@ -2374,11 +2530,9 @@ function renderWatchlist(){
   });
 
   tbody.innerHTML = wl.map(s => {
-    // distance from high
     const fromHi = (s.price != null && s.hi52 != null) ? ((s.price/s.hi52 - 1) * 100) : null;
     const fromLo = (s.price != null && s.lo52 != null) ? ((s.price/s.lo52 - 1) * 100) : null;
 
-    // MA cross
     let cross = "neutral", crossLbl = "—";
     if (s.ma50 != null && s.ma200 != null) {
       if (s.ma50 > s.ma200 * 1.005)      { cross = "golden";  crossLbl = "GOLDEN"; }
@@ -2386,7 +2540,6 @@ function renderWatchlist(){
       else                                { cross = "neutral"; crossLbl = "FLAT";   }
     }
 
-    // Volume vs avg
     let volTag = "";
     if (s.vol != null && s.avgVol != null && s.avgVol > 0) {
       const ratio = s.vol / s.avgVol;
@@ -2396,24 +2549,25 @@ function renderWatchlist(){
       volTag = `<span class="wl-vol norm">—</span>`;
     }
 
-    // sparkline
     const closes = state.watchlistHistory[s.sym];
     const spark = makeTrendSparkline(closes);
 
-    const pcCell = v => {
-      if (v == null || isNaN(v)) return `<td class="nul">—</td>`;
+    // Build pct cells with primary/secondary classes
+    const pcCellTf = (v, tf) => {
+      const tfCls = tf === state.wlPrimaryTf ? "tf-primary" : "tf-secondary";
+      if (v == null || isNaN(v)) return `<td class="nul ${tfCls}">—</td>`;
       const cls = v >= 0 ? "pos" : "neg";
-      return `<td class="${cls}">${Math.abs(v).toFixed(2)}%</td>`;
+      return `<td class="${cls} ${tfCls}">${Math.abs(v).toFixed(2)}%</td>`;
     };
 
-    return `<tr>
-      <td class="sym">${s.sym}</td>
+    return `<tr data-sym="${s.sym}">
+      <td class="sym clickable-sym" data-sym="${s.sym}">${s.sym}</td>
       <td class="name">${s.name || ""}</td>
       <td class="price">${fmt2(s.price)}</td>
-      ${pcCell(s.d1)}
-      ${pcCell(s.w1)}
-      ${pcCell(s.m1)}
-      ${pcCell(s.ytd)}
+      ${pcCellTf(s.d1, "1D")}
+      ${pcCellTf(s.w1, "1W")}
+      ${pcCellTf(s.m1, "1M")}
+      ${pcCellTf(s.ytd, "YTD")}
       <td>${spark}</td>
       <td><span class="${fromHi != null && fromHi >= -3 ? 'pos' : 'neg'}" style="${fromHi != null && fromHi >= -3 ? '' : 'color:var(--muted)'}">${fromHi != null ? fromHi.toFixed(2)+'%' : '—'}</span></td>
       <td><span class="pos" style="color:var(--lime)">${fromLo != null ? '+'+fromLo.toFixed(1)+'%' : '—'}</span></td>
@@ -2562,7 +2716,7 @@ function renderScannerResults(){
       const subVal = isYtd
         ? `<span class="sub">${fmt2(s.price)}</span>`
         : (s.d1 != null ? `<span class="sub">${fmt2(s.price)}</span>` : '');
-      return `<div class="scan-result">
+      return `<div class="scan-result clickable-sym" data-sym="${s.sym}" style="cursor:pointer">
         <div class="sym-name">
           <div class="sym-line">${s.sym}</div>
           <div class="name-line">${s.name || s.sector}</div>
@@ -2578,6 +2732,301 @@ function renderScannerResults(){
 }
 
 function renderScanner(){ renderScannerChips(); renderScannerResults(); }
+
+/* ============================================================
+   STOCK DETAIL MODAL
+   ============================================================ */
+
+// Aggregate everything we know about a symbol
+function getSymbolInfo(sym){
+  if (!sym) return null;
+  const SYM = sym.toUpperCase();
+  const fromStocks = state.stocks.find(s => s.sym === SYM);
+  const fromWl     = state.watchlist.find(w => w.sym === SYM);
+  const fromIdx    = state.indices.find(r => r[1] === SYM);
+
+  let info = {
+    sym: SYM,
+    name: null, sector: null,
+    price: null, d1: null, w1: null, m1: null, q3: null, ytd: null, y1: null,
+    hi52: null, lo52: null,
+    mcap: null, vol: null, avgVol: null,
+    ma50: null, ma200: null,
+    history: null,
+    source: null
+  };
+
+  if (fromIdx){
+    info.name = fromIdx[2]; info.price = fromIdx[3];
+    info.d1 = fromIdx[4]; info.w1 = fromIdx[5]; info.m1 = fromIdx[6];
+    info.q3 = fromIdx[7]; info.ytd = fromIdx[8]; info.y1 = fromIdx[9];
+    info.hi52 = fromIdx[10]; info.lo52 = fromIdx[11];
+    info.source = "index";
+  }
+  if (fromStocks){
+    info.name = info.name || fromStocks.name;
+    info.sector = fromStocks.sector;
+    info.price = info.price ?? fromStocks.price;
+    info.d1 = info.d1 ?? fromStocks.chg;
+    info.mcap = fromStocks.mcap;
+    info.source = info.source || "stock";
+  }
+  if (fromWl){
+    info.name = info.name || fromWl.name;
+    info.price = info.price ?? fromWl.price;
+    info.d1 = info.d1 ?? fromWl.d1;
+    info.w1 = info.w1 ?? fromWl.w1;
+    info.m1 = info.m1 ?? fromWl.m1;
+    info.ytd = info.ytd ?? fromWl.ytd;
+    info.hi52 = info.hi52 ?? fromWl.hi52;
+    info.lo52 = info.lo52 ?? fromWl.lo52;
+    info.vol = fromWl.vol; info.avgVol = fromWl.avgVol;
+    info.ma50 = fromWl.ma50; info.ma200 = fromWl.ma200;
+    info.source = info.source || "watchlist";
+  }
+  // history candidates: state.history (indices) or state.watchlistHistory (watchlist syms)
+  if (state.history && state.history[SYM]){
+    info.history = state.history[SYM]; // {date, close} array
+  } else if (state.watchlistHistory && state.watchlistHistory[SYM]){
+    info.history = state.watchlistHistory[SYM]; // closes array
+  }
+  if (!info.source) return null;
+  return info;
+}
+
+function openStockModal(sym){
+  const info = getSymbolInfo(sym);
+  if (!info){
+    console.warn("No data for", sym);
+    return;
+  }
+  state.modalSym = info.sym;
+
+  document.getElementById("modal-sym").textContent = info.sym;
+  document.getElementById("modal-name").textContent = info.name
+    || (info.sector ? `${info.sector} sector` : "—");
+  document.getElementById("modal-price").textContent = info.price != null ? "$" + fmt2(info.price) : "—";
+
+  const chgEl = document.getElementById("modal-chg");
+  if (info.d1 != null && !isNaN(info.d1)){
+    chgEl.textContent = `${info.d1 >= 0 ? "▲ +" : "▼ "}${info.d1.toFixed(2)}% today`;
+    chgEl.className = "modal-chg " + (info.d1 >= 0 ? "pos" : "neg");
+  } else {
+    chgEl.textContent = "—";
+    chgEl.className = "modal-chg";
+  }
+
+  // Sparkline
+  const sparkSvg = document.getElementById("modal-spark-svg");
+  let closes = null;
+  if (Array.isArray(info.history)){
+    if (info.history.length && typeof info.history[0] === "object" && info.history[0].close != null){
+      closes = info.history.slice(-90).map(d => d.close);
+    } else {
+      closes = info.history.slice(-90);
+    }
+  }
+  renderModalSparkline(sparkSvg, closes, info.d1);
+
+  // 52-week range bar
+  const rangeBar = document.getElementById("modal-range-bar");
+  if (info.price != null && info.hi52 != null && info.lo52 != null && info.hi52 > info.lo52){
+    rangeBar.style.display = "block";
+    const pct = ((info.price - info.lo52) / (info.hi52 - info.lo52)) * 100;
+    document.getElementById("modal-range-marker").style.left = `calc(${Math.max(0,Math.min(100,pct)).toFixed(1)}% - 1px)`;
+    document.getElementById("modal-range-lo").textContent = "$" + fmt2(info.lo52);
+    document.getElementById("modal-range-hi").textContent = "$" + fmt2(info.hi52);
+  } else {
+    rangeBar.style.display = "none";
+  }
+
+  // Stats grid
+  const grid = document.getElementById("modal-grid");
+  const stats = [];
+  const addStat = (lbl, val, cls) => {
+    if (val == null || val === "" || (typeof val === "number" && isNaN(val))) return;
+    stats.push(`<div class="modal-stat"><div class="lbl">${lbl}</div><div class="val ${cls||""}">${val}</div></div>`);
+  };
+  const pctVal = v => v == null ? null : `<span class="${v>=0?'pos':'neg'}">${v>=0?'+':''}${v.toFixed(2)}%</span>`;
+
+  if (info.w1 != null) addStat("1 Week", pctVal(info.w1));
+  if (info.m1 != null) addStat("1 Month", pctVal(info.m1));
+  if (info.q3 != null) addStat("3 Month", pctVal(info.q3));
+  if (info.ytd != null) addStat("YTD", pctVal(info.ytd));
+  if (info.y1 != null) addStat("12 Month", pctVal(info.y1));
+  if (info.mcap) addStat("Market Cap", fmtCap(info.mcap));
+  if (info.vol != null) addStat("Volume", info.vol.toLocaleString());
+  if (info.avgVol != null) addStat("Avg Volume (10d)", info.avgVol.toLocaleString());
+  if (info.vol != null && info.avgVol != null && info.avgVol > 0){
+    const r = info.vol / info.avgVol;
+    addStat("Volume Ratio", `${r.toFixed(2)}× avg`, r > 1.3 ? "pos" : "muted");
+  }
+  if (info.ma50 != null) addStat("MA50", "$" + fmt2(info.ma50));
+  if (info.ma200 != null) addStat("MA200", "$" + fmt2(info.ma200));
+  if (info.ma50 != null && info.ma200 != null){
+    const cross = info.ma50 > info.ma200 * 1.005 ? "Golden Cross"
+                : info.ma50 < info.ma200 * 0.995 ? "Death Cross"
+                : "Flat";
+    const cls = cross === "Golden Cross" ? "pos" : cross === "Death Cross" ? "neg" : "muted";
+    addStat("MA Status", cross, cls);
+  }
+  if (info.sector) addStat("Sector", info.sector);
+
+  grid.innerHTML = stats.length ? stats.join("") : `<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);font-family:'Inter',sans-serif;font-size:12px;padding:18px">No additional data available</div>`;
+
+  // External links
+  document.getElementById("modal-tv-link").href = `https://www.tradingview.com/symbols/${info.sym}/`;
+  document.getElementById("modal-yahoo-link").href = `https://finance.yahoo.com/quote/${info.sym}`;
+  document.getElementById("modal-google-link").href = `https://www.google.com/finance/quote/${info.sym}:NASDAQ`;
+
+  document.getElementById("modal-backdrop").classList.add("show");
+}
+
+function closeStockModal(){
+  document.getElementById("modal-backdrop").classList.remove("show");
+  state.modalSym = null;
+}
+
+function renderModalSparkline(svg, closes, chg1d){
+  if (!closes || closes.length < 2){
+    svg.innerHTML = `<text x="300" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="${readThemeColor("--text-muted","#787B86")}">— historical data unavailable —</text>`;
+    return;
+  }
+  const W = 600, H = 120, pad = 8;
+  const min = Math.min(...closes), max = Math.max(...closes);
+  const range = max - min || 1;
+  const step = (W - pad*2) / (closes.length - 1);
+  const yOf = v => pad + (H - pad*2) * (1 - (v - min) / range);
+
+  let path = "";
+  let area = `M${pad},${H-pad} L`;
+  for (let i=0; i<closes.length; i++){
+    const x = pad + i * step;
+    const y = yOf(closes[i]);
+    path += (i===0?"M":"L") + x.toFixed(1) + "," + y.toFixed(1) + " ";
+    area  += x.toFixed(1) + "," + y.toFixed(1) + " ";
+  }
+  area += `L${(W-pad).toFixed(1)},${H-pad} Z`;
+
+  const isUp = chg1d != null ? chg1d >= 0 : closes[closes.length-1] >= closes[0];
+  const color = isUp ? readThemeColor("--pos","#26A69A") : readThemeColor("--neg","#EF5350");
+  const gid = "modspg-" + Math.random().toString(36).slice(2,8);
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${color}" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="${area}" fill="url(#${gid})"/>
+    <path d="${path}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+  `;
+}
+
+// Global click delegation for clickable symbols
+document.addEventListener("click", (e) => {
+  const el = e.target.closest(".clickable-sym");
+  if (!el) return;
+  const sym = el.dataset.sym || el.textContent.trim();
+  if (sym) openStockModal(sym);
+});
+
+// Close handlers
+document.getElementById("modal-close").addEventListener("click", closeStockModal);
+document.getElementById("modal-backdrop").addEventListener("click", (e) => {
+  if (e.target.id === "modal-backdrop") closeStockModal();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && state.modalSym) closeStockModal();
+});
+
+// Heatmap cells: make clickable too (handled via SVG <g class="hm-cell"> — needs sym data attr)
+
+
+
+// Snapshot all current values keyed by symbol
+function snapshotValues(){
+  const snap = {};
+  for (const s of state.stocks){
+    snap[s.sym] = { price: s.price, d1: s.chg };
+  }
+  for (const w of state.watchlist){
+    snap[w.sym] = Object.assign(snap[w.sym] || {}, {
+      price: w.price, d1: w.d1, w1: w.w1, m1: w.m1, ytd: w.ytd
+    });
+  }
+  for (const r of state.indices){
+    snap[r[1]] = { price: r[3], d1: r[4], w1: r[5], m1: r[6], q3: r[7], ytd: r[8], y1: r[9] };
+  }
+  return snap;
+}
+
+// Compare to previous snapshot and apply flash classes
+function applyFlashes(){
+  const prev = state.prevValues;
+  if (!prev || Object.keys(prev).length === 0) return; // first render
+
+  // 1. Index cards (.idx-card .price)
+  document.querySelectorAll(".idx-card").forEach(card => {
+    const sym = card.dataset.sym;
+    if (!sym || !prev[sym]) return;
+    const idx = state.indices.find(r => r[1] === sym);
+    if (!idx) return;
+    const oldP = prev[sym].price, newP = idx[3];
+    if (oldP != null && newP != null && Math.abs(newP - oldP) > 0.001){
+      const priceEl = card.querySelector(".price");
+      if (priceEl) flashElement(priceEl, newP > oldP);
+    }
+  });
+
+  // 2. Watchlist rows (cells)
+  document.querySelectorAll("#watchlist tbody tr").forEach(tr => {
+    const sym = tr.dataset.sym;
+    if (!sym || !prev[sym]) return;
+    const w = state.watchlist.find(x => x.sym === sym);
+    if (!w) return;
+    const cells = tr.querySelectorAll("td");
+    // Cell positions: 0:sym 1:name 2:price 3:1D 4:1W 5:1M 6:YTD 7:trend 8:fromHi 9:fromLo 10:vol 11:cross
+    flashCellIfChanged(cells[2], prev[sym].price, w.price);
+    flashCellIfChanged(cells[3], prev[sym].d1, w.d1);
+    flashCellIfChanged(cells[4], prev[sym].w1, w.w1);
+    flashCellIfChanged(cells[5], prev[sym].m1, w.m1);
+    flashCellIfChanged(cells[6], prev[sym].ytd, w.ytd);
+  });
+
+  // 3. Indices table rows
+  document.querySelectorAll("#indices tbody tr").forEach(tr => {
+    const sym = tr.dataset.sym;
+    if (!sym || !prev[sym]) return;
+    const r = state.indices.find(x => x[1] === sym);
+    if (!r) return;
+    const cells = tr.querySelectorAll("td");
+    // 0:sym 1:name 2:price 3:1D 4:1W 5:1M 6:3M 7:YTD 8:12M 9:hi 10:lo
+    flashCellIfChanged(cells[2], prev[sym].price, r[3]);
+    flashCellIfChanged(cells[3], prev[sym].d1, r[4]);
+    flashCellIfChanged(cells[4], prev[sym].w1, r[5]);
+    flashCellIfChanged(cells[5], prev[sym].m1, r[6]);
+    flashCellIfChanged(cells[6], prev[sym].q3, r[7]);
+    flashCellIfChanged(cells[7], prev[sym].ytd, r[8]);
+    flashCellIfChanged(cells[8], prev[sym].y1, r[9]);
+  });
+}
+
+function flashElement(el, isUp){
+  if (!el) return;
+  el.classList.remove("flash-up","flash-down");
+  // force reflow so animation re-triggers
+  void el.offsetWidth;
+  el.classList.add(isUp ? "flash-up" : "flash-down");
+}
+function flashCellIfChanged(cell, oldVal, newVal){
+  if (!cell) return;
+  if (oldVal == null || newVal == null || isNaN(oldVal) || isNaN(newVal)) return;
+  if (Math.abs(newVal - oldVal) < 0.001) return;
+  flashElement(cell, newVal > oldVal);
+}
+
 
 /* ============================================================
    ALERTS — managed via Google Sheet "alerts" tab
@@ -2782,6 +3231,10 @@ function renderAll(){
   renderScanner();
   renderAlerts();
   checkAlerts();
+  // Apply flash-on-change AFTER DOM is updated, BEFORE saving new snapshot
+  applyFlashes();
+  state.prevValues = snapshotValues();
+
   document.getElementById("hdr-date").textContent = fmtDate(new Date());
   if (state.lastUpdate) document.getElementById("hdr-updated").textContent = fmtTime(state.lastUpdate);
 }
@@ -2827,6 +3280,18 @@ document.querySelectorAll("#sec-tf-btns .tf-btn").forEach(btn => {
     btn.classList.add("active");
     state.secTimeframe = btn.dataset.stf;
     renderSectorBars();
+  };
+});
+document.querySelectorAll("#wl-tf-btns .tf-btn").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("#wl-tf-btns .tf-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.wlPrimaryTf = btn.dataset.tf;
+    // Auto-update sort to match the selected timeframe
+    const tfToCol = {"1D":"d1","1W":"w1","1M":"m1","YTD":"ytd"};
+    state.wlSort.col = tfToCol[state.wlPrimaryTf] || "d1";
+    state.wlSort.dir = "desc";
+    renderWatchlist();
   };
 });
 
