@@ -703,6 +703,73 @@
     background:rgba(239,83,80,0.08);border-color:var(--neg);
   }
 
+  /* === SHEET HEALTH === */
+  .settings-health-summary{
+    font-family:'Inter',sans-serif;font-size:12.5px;color:var(--text-muted);
+    padding:8px 0 4px;
+  }
+  .health-summary-line{display:inline-block;line-height:1.5}
+  .health-pill{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:3px 9px;border-radius:12px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+    margin-right:6px;
+  }
+  .health-pill-ok{background:var(--pos-soft);color:var(--pos);border:1px solid rgba(38,166,154,0.3)}
+  .health-pill-warn{background:var(--warn-soft);color:var(--warn);border:1px solid rgba(255,152,0,0.3)}
+  .health-pill-error{background:var(--neg-soft);color:var(--neg);border:1px solid rgba(239,83,80,0.3)}
+  .health-pill-info{background:var(--accent-soft);color:var(--accent-bright);border:1px solid rgba(41,98,255,0.3)}
+
+  .settings-health-results{
+    display:flex;flex-direction:column;gap:6px;
+    margin-top:8px;
+  }
+  .settings-health-results:empty{display:none}
+
+  .health-item{
+    display:flex;gap:10px;padding:10px 12px;
+    background:var(--bg-input);border-radius:7px;
+    border-left:3px solid transparent;
+    font-family:'Inter',sans-serif;font-size:12px;
+  }
+  .health-item.ok{border-left-color:var(--pos)}
+  .health-item.warn{border-left-color:var(--warn)}
+  .health-item.error{border-left-color:var(--neg)}
+  .health-item.info{border-left-color:var(--accent)}
+
+  .health-item-icon{
+    flex-shrink:0;width:18px;height:18px;display:flex;align-items:center;justify-content:center;
+    margin-top:1px;
+  }
+  .health-item.ok .health-item-icon{color:var(--pos)}
+  .health-item.warn .health-item-icon{color:var(--warn)}
+  .health-item.error .health-item-icon{color:var(--neg)}
+  .health-item.info .health-item-icon{color:var(--accent-bright)}
+
+  .health-item-body{flex:1;min-width:0}
+  .health-item-msg{
+    color:var(--text-bright);font-weight:500;font-size:12.5px;
+    line-height:1.4;
+  }
+  .health-item-fix{
+    color:var(--text-muted);font-size:11.5px;line-height:1.45;margin-top:4px;
+  }
+  .health-item-fix code{
+    background:var(--bg-panel);padding:1px 5px;border-radius:3px;
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text);
+  }
+  .health-item-link{
+    display:inline-flex;align-items:center;gap:4px;
+    color:var(--accent-bright);font-size:11px;font-weight:500;
+    margin-top:6px;cursor:pointer;
+    text-decoration:none;
+  }
+  .health-item-link:hover{text-decoration:underline}
+  .health-checking{
+    text-align:center;color:var(--text-muted);
+    padding:14px;font-size:12px;
+  }
+
   /* Mobile */
   @media (max-width: 768px){
     .settings-overlay{padding:0;align-items:stretch}
@@ -2130,6 +2197,21 @@
         </div>
       </div>
 
+      <!-- SHEET HEALTH -->
+      <div class="settings-section">
+        <h3 data-i18n="Sheet Health">Sheet Health</h3>
+        <div id="settings-health-summary" class="settings-health-summary">
+          <span class="health-summary-line" data-i18n="Click below to check your sheet">Click below to check your sheet</span>
+        </div>
+        <div id="settings-health-results" class="settings-health-results"></div>
+        <div class="settings-actions">
+          <button class="settings-btn settings-btn-secondary" id="settings-run-health">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span data-i18n="Run Health Check">Run Health Check</span>
+          </button>
+        </div>
+      </div>
+
       <!-- ABOUT -->
       <div class="settings-section">
         <h3 data-i18n="About">About</h3>
@@ -2615,7 +2697,86 @@ function syncSettingsToUI(){
       showInfoToast(t("Settings reset to defaults"));
     });
   }
+
+  // === SHEET HEALTH SECTION WIRING ===
+
+  const healthBtn = document.getElementById("settings-run-health");
+  if (healthBtn){
+    healthBtn.addEventListener("click", () => {
+      renderHealthCheck();
+    });
+  }
 })();
+
+/* ============================================================
+   SHEET HEALTH UI RENDERING
+   ============================================================ */
+function renderHealthCheck(){
+  const summaryEl = document.getElementById("settings-health-summary");
+  const resultsEl = document.getElementById("settings-health-results");
+  if (!summaryEl || !resultsEl) return;
+
+  // If we have no health data yet (e.g. demo mode with no real fetches), inform user
+  const tabs = (state.health && state.health.tabs) || {};
+  if (Object.keys(tabs).length === 0){
+    summaryEl.innerHTML = `<span class="health-summary-line" style="color:var(--warn)">No health data yet — connect a sheet first</span>`;
+    resultsEl.innerHTML = "";
+    return;
+  }
+
+  const summary = getHealthSummary();
+
+  // Render summary pills
+  const pills = [];
+  if (summary.error > 0) pills.push(`<span class="health-pill health-pill-error">${summary.error} ${t("error")}${summary.error === 1 ? '' : 's'}</span>`);
+  if (summary.warn > 0)  pills.push(`<span class="health-pill health-pill-warn">${summary.warn} ${t("warning")}${summary.warn === 1 ? '' : 's'}</span>`);
+  if (summary.ok > 0)    pills.push(`<span class="health-pill health-pill-ok">${summary.ok} ${t("ok")}</span>`);
+  if (summary.info > 0)  pills.push(`<span class="health-pill health-pill-info">${summary.info} ${t("info")}</span>`);
+
+  const lastChecked = state.health.lastChecked
+    ? new Date(state.health.lastChecked).toLocaleTimeString(undefined, {hour:"2-digit", minute:"2-digit"})
+    : "—";
+
+  summaryEl.innerHTML = `
+    <div style="margin-bottom:8px">${pills.join("")}</div>
+    <span class="health-summary-line" style="font-size:11px">${t("Last checked")}: ${lastChecked}</span>
+  `;
+
+  // Render each issue
+  const sheetUrl = CONFIG.sheetId
+    ? `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/edit`
+    : null;
+
+  const iconSvg = {
+    ok:    `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
+    warn:  `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+    error: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+    info:  `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`
+  };
+
+  // Sort: errors first, then warns, then info, then oks
+  const sortOrder = { error: 0, warn: 1, info: 2, ok: 3 };
+  const sortedIssues = summary.issues.slice().sort((a, b) => sortOrder[a.level] - sortOrder[b.level]);
+
+  resultsEl.innerHTML = sortedIssues.map(issue => {
+    const fixHtml = issue.fix
+      ? `<div class="health-item-fix">${issue.fix}</div>`
+      : "";
+    const linkHtml = (issue.fix && sheetUrl)
+      ? `<a class="health-item-link" href="${sheetUrl}" target="_blank" rel="noopener">${t("Open Sheet to fix")} →</a>`
+      : "";
+    return `
+      <div class="health-item ${issue.level}">
+        <div class="health-item-icon">${iconSvg[issue.level] || ""}</div>
+        <div class="health-item-body">
+          <div class="health-item-msg">${issue.msg}</div>
+          ${fixHtml}
+          ${linkHtml}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
 
 /* Apply translations to all data-i18n elements (called on language change) */
 function applyTranslations(){
@@ -2936,6 +3097,17 @@ const STRINGS = {
   "Hebrew": "עברית",
   "No sheet connected": "אין גיליון מחובר",
 
+  // Sheet Health
+  "Sheet Health": "תקינות הגיליון",
+  "Run Health Check": "הרץ בדיקת תקינות",
+  "Click below to check your sheet": "לחץ למטה כדי לבדוק את הגיליון",
+  "Last checked": "נבדק לאחרונה",
+  "error": "שגיאה",
+  "warning": "אזהרה",
+  "ok": "תקין",
+  "info": "מידע",
+  "Open Sheet to fix": "פתח גיליון לתיקון",
+
   // Footer
   "Source: Google Finance via Sheets": "מקור: Google Finance דרך Sheets",
   "~20 min delay": "השהיה של ~20 דקות",
@@ -2984,6 +3156,266 @@ function fmtMoney(amountUsd, opts){
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals
   });
+}
+/* ============================================================ */
+
+/* ============================================================
+   SHEET HEALTH CHECK
+   Validates that the user's Google Sheet has the expected schema
+   ============================================================ */
+const SHEET_SCHEMA = {
+  sectors: {
+    label: "Sectors / Indices",
+    required: true,
+    columns: ["Type","Symbol","Name","Price","1D","1W","1M","3M","YTD","12M","H52","L52","Bias"],
+    requiredColumns: ["Type","Symbol","Name","Price"],
+    minRows: 1
+  },
+  history: {
+    label: "Historical Prices",
+    required: true,
+    columns: [],
+    requiredColumns: [],
+    minRows: 30
+  },
+  stocks: {
+    label: "S&P 500 Stocks",
+    required: true,
+    columns: ["Symbol","Name","Sector","Price","Change1D","MarketCap"],
+    requiredColumns: ["Symbol","Name","Sector","Price"],
+    minRows: 50
+  },
+  watchlist: {
+    label: "Watchlist",
+    required: false,
+    // Each column can have aliases — match if ANY alias is present
+    columns: [
+      ["Symbol"],
+      ["Name"],
+      ["Price"],
+      ["1D", "Change1D", "1D %", "Day Change", "DayChg"],
+      ["1W", "Change1W", "1W %", "Week Change", "WeekChg"],
+      ["1M", "Change1M", "1M %", "Month Change", "MonthChg"],
+      ["YTD", "YTD %"],
+      ["Volume", "Vol"],
+      ["AvgVol10D", "Avg Vol 10D", "AvgVolume", "AverageVolume"],
+      ["MA50", "MA 50", "50-day MA", "50DMA"],
+      ["MA200", "MA 200", "200-day MA", "200DMA"],
+      ["High52", "52W High", "52-week High", "52WHigh", "Hi52"],
+      ["Low52", "52W Low", "52-week Low", "52WLow", "Lo52"],
+      ["Notes", "Note", "Comment"]
+    ],
+    requiredColumns: [["Symbol"], ["Name"], ["Price"]],
+    minRows: 1
+  },
+  watchlist_history: {
+    label: "Watchlist History",
+    required: false,
+    columns: [],
+    requiredColumns: [],
+    minRows: 1
+  },
+  portfolio: {
+    label: "Portfolio",
+    required: false,
+    columns: [
+      ["Symbol"],
+      ["Shares", "Quantity", "Qty"],
+      ["AvgCost", "Avg Cost", "Average Cost", "Cost Basis", "CostBasis"],
+      ["PurchaseDate", "Purchase Date", "Buy Date", "Date"],
+      ["Notes", "Note", "Comment"]
+    ],
+    requiredColumns: [["Symbol"], ["Shares", "Quantity", "Qty"], ["AvgCost", "Avg Cost", "Average Cost", "Cost Basis"]],
+    minRows: 1
+  },
+  alerts: {
+    label: "Alerts",
+    required: false,
+    columns: [
+      ["Symbol"],
+      ["Condition", "Cond"],
+      ["Value", "Threshold", "Target"],
+      ["Note", "Notes", "Comment"],
+      ["Active", "Enabled"]
+    ],
+    requiredColumns: [["Symbol"], ["Condition"], ["Value"]],
+    minRows: 0
+  },
+  israel: {
+    label: "Israeli Market",
+    required: false,
+    columns: ["Type","Symbol","Name","Price","1D","1W","1M","3M","YTD","12M","H52","L52","Bias"],
+    requiredColumns: ["Type","Symbol","Name","Price"],
+    minRows: 1
+  }
+};
+
+// Normalize header for fuzzy matching: "P&L %" → "pnl"; "MA50" → "ma50"
+function normalizeHeader(h){
+  return (h||"").toString().toLowerCase()
+    .replace(/[\s_\-&%$#.()/]/g, "")
+    .replace(/[^a-z0-9]/gi, "");
+}
+
+// Returns array of issues with levels: ok / warn / error / info
+function runHealthCheck(){
+  const issues = [];
+  const tabs = (state.health && state.health.tabs) || {};
+
+  for (const tabKey of Object.keys(SHEET_SCHEMA)){
+    const schema = SHEET_SCHEMA[tabKey];
+    const tabData = tabs[tabKey];
+
+    // Tab not loaded at all
+    if (!tabData){
+      if (schema.required){
+        issues.push({
+          level: "error",
+          tab: tabKey,
+          msg: `Required tab "${tabKey}" not loaded yet`,
+          fix: null
+        });
+      }
+      continue;
+    }
+
+    // Tab fetch failed
+    if (!tabData.fetched){
+      const errMsg = tabData.error || "Unknown error";
+      if (schema.required){
+        issues.push({
+          level: "error",
+          tab: tabKey,
+          msg: `Tab "${tabKey}" failed to load: ${errMsg}`,
+          fix: errMsg.includes("404") || errMsg.includes("not found")
+            ? `Create a tab named "${tabKey}" in your sheet`
+            : `Check that the tab "${tabKey}" exists and the sheet is set to "Anyone with link · Viewer"`
+        });
+      } else {
+        issues.push({
+          level: "info",
+          tab: tabKey,
+          msg: `Optional tab "${tabKey}" not found — feature disabled`,
+          fix: `Create a tab named "${tabKey}" to enable ${schema.label}`
+        });
+      }
+      continue;
+    }
+
+    // Tab is empty (no data rows)
+    if (tabData.rowCount < schema.minRows){
+      issues.push({
+        level: "warn",
+        tab: tabKey,
+        msg: `Tab "${tabKey}" has ${tabData.rowCount} data row${tabData.rowCount === 1 ? '' : 's'} (expected ≥${schema.minRows})`,
+        fix: `Add data rows to "${tabKey}"`
+      });
+      continue;
+    }
+
+    // Check required columns by fuzzy match
+    if (schema.requiredColumns.length > 0){
+      const presentNorm = tabData.headers.map(normalizeHeader);
+      // Helper: find if any of the aliases match a present header
+      const hasColumn = (aliases) => {
+        const list = Array.isArray(aliases) ? aliases : [aliases];
+        return list.some(name => presentNorm.includes(normalizeHeader(name)));
+      };
+      // Get the canonical (first) name for display
+      const canonicalName = (aliases) => Array.isArray(aliases) ? aliases[0] : aliases;
+      // Normalize requiredColumns into list of canonical names
+      const requiredCanonical = schema.requiredColumns.map(canonicalName);
+
+      const missingRequired = [];
+      const missingOptional = [];
+      for (const colDef of schema.columns){
+        const canonical = canonicalName(colDef);
+        const isRequired = requiredCanonical.includes(canonical);
+        if (!hasColumn(colDef)){
+          if (isRequired) missingRequired.push(canonical);
+          else missingOptional.push(canonical);
+        }
+      }
+      if (missingRequired.length){
+        issues.push({
+          level: "error",
+          tab: tabKey,
+          msg: `Tab "${tabKey}" missing required column${missingRequired.length === 1 ? '' : 's'}: ${missingRequired.join(", ")}`,
+          fix: `Add column${missingRequired.length === 1 ? '' : 's'} to row 1 of "${tabKey}": ${missingRequired.join(", ")}`
+        });
+      }
+      if (missingOptional.length){
+        issues.push({
+          level: "warn",
+          tab: tabKey,
+          msg: `Tab "${tabKey}" missing optional column${missingOptional.length === 1 ? '' : 's'}: ${missingOptional.join(", ")}`,
+          fix: `Add column${missingOptional.length === 1 ? '' : 's'} to row 1 of "${tabKey}": ${missingOptional.join(", ")} — adds extended functionality`
+        });
+      }
+      // All good for this tab
+      if (!missingRequired.length && !missingOptional.length){
+        issues.push({
+          level: "ok",
+          tab: tabKey,
+          msg: `${schema.label}: ${tabData.rowCount} row${tabData.rowCount === 1 ? '' : 's'}, all columns present`,
+          fix: null
+        });
+      }
+    } else {
+      // Tab passes minimal checks
+      issues.push({
+        level: "ok",
+        tab: tabKey,
+        msg: `${schema.label}: ${tabData.rowCount} row${tabData.rowCount === 1 ? '' : 's'}`,
+        fix: null
+      });
+    }
+  }
+
+  // Check optional _settings tab
+  const settingsData = tabs._settings;
+  if (settingsData){
+    if (!settingsData.fetched){
+      issues.push({
+        level: "info",
+        tab: "_settings",
+        msg: `Optional tab "_settings" not found — using fallback currency rates`,
+        fix: `Create "_settings" tab with USD_ILS and USD_EUR currency formulas to enable live rates`
+      });
+    } else if (CURRENCY_RATES.USD_ILS == null && CURRENCY_RATES.USD_EUR == null){
+      issues.push({
+        level: "warn",
+        tab: "_settings",
+        msg: `Tab "_settings" found but no currency rates loaded`,
+        fix: `Add USD_ILS and USD_EUR rows with =GOOGLEFINANCE("CURRENCY:USDILS")`
+      });
+    } else {
+      const rates = [];
+      if (CURRENCY_RATES.USD_ILS) rates.push(`USD/ILS: ${CURRENCY_RATES.USD_ILS.toFixed(4)}`);
+      if (CURRENCY_RATES.USD_EUR) rates.push(`USD/EUR: ${CURRENCY_RATES.USD_EUR.toFixed(4)}`);
+      issues.push({
+        level: "ok",
+        tab: "_settings",
+        msg: `Currency rates loaded: ${rates.join(" · ")}`,
+        fix: null
+      });
+    }
+  }
+
+  return issues;
+}
+
+// Get a quick summary count of issues
+function getHealthSummary(){
+  const issues = runHealthCheck();
+  return {
+    ok: issues.filter(i => i.level === "ok").length,
+    warn: issues.filter(i => i.level === "warn").length,
+    error: issues.filter(i => i.level === "error").length,
+    info: issues.filter(i => i.level === "info").length,
+    total: issues.length,
+    issues
+  };
 }
 /* ============================================================ */
 
@@ -3155,6 +3587,7 @@ const state = {
   },
   live: false,
   lastUpdate: null,
+  health: { tabs: {}, lastChecked: null },
   perfTimeframe: "3M",
   secTimeframe:  "1M",
   hiddenSeries:  new Set(),
@@ -3334,33 +3767,58 @@ async function loadLive(){
   let portfolioRows = null, israelRows = null;
   let anySuccess = false;
 
+  // Reset health tracking for this fetch cycle
+  state.health = state.health || { tabs: {}, lastChecked: null };
+  const recordHealth = (tabKey, result) => {
+    state.health.tabs[tabKey] = {
+      fetched: result.ok,
+      headers: (result.rows && result.rows[0]) ? result.rows[0].map(c => (c||"").toString().trim()) : [],
+      rowCount: result.rows ? Math.max(0, result.rows.length - 1) : 0,
+      error: result.error ? result.error.message : null
+    };
+  };
+
   const r1 = await fetchWithStep(CONFIG.dataTab, "indices", "indices & sectors");
   dataRows = r1.rows; if (r1.ok) anySuccess = true;
+  recordHealth("sectors", r1);
 
   const r2 = await fetchWithStep(CONFIG.historyTab, "history", "historical price data");
   histRows = r2.rows; if (r2.ok) anySuccess = true;
+  recordHealth("history", r2);
 
   const r3 = await fetchWithStep(CONFIG.stocksTab, "stocks", "S&P 500 components");
   stockRows = r3.rows; if (r3.ok) anySuccess = true;
+  recordHealth("stocks", r3);
 
   const r4 = await fetchWithStep(CONFIG.israelTab, "israel", "Israeli market data");
   israelRows = r4.rows; if (r4.ok) anySuccess = true;
+  recordHealth("israel", r4);
 
   const r5 = await fetchWithStep(CONFIG.watchlistTab, "watchlist", "personal watchlist");
   wlRows = r5.rows; if (r5.ok) anySuccess = true;
+  recordHealth("watchlist", r5);
 
   const r6 = await fetchWithStep(CONFIG.watchlistHistoryTab, "watchlist-history", "watchlist sparklines");
   wlHistRows = r6.rows; if (r6.ok) anySuccess = true;
+  recordHealth("watchlist_history", r6);
 
   const r7 = await fetchWithStep(CONFIG.portfolioTab, "portfolio", "portfolio positions");
   portfolioRows = r7.rows; if (r7.ok) anySuccess = true;
+  recordHealth("portfolio", r7);
 
   const r8 = await fetchWithStep(CONFIG.alertsTab, "alerts", "price alerts");
   alertsRows = r8.rows; if (r8.ok) anySuccess = true;
+  recordHealth("alerts", r8);
 
   // _settings tab — silent/optional. Populates currency rates if available.
   try {
     const settingsRows = await fetchTab(CONFIG.settingsTab);
+    state.health.tabs._settings = {
+      fetched: !!settingsRows,
+      headers: [],
+      rowCount: settingsRows ? settingsRows.length : 0,
+      error: null
+    };
     if (settingsRows && settingsRows.length > 0){
       for (const row of settingsRows){
         const key = (row[0]||"").toString().trim().toUpperCase();
@@ -3370,8 +3828,9 @@ async function loadLive(){
       }
     }
   } catch(e) {
-    // Silent failure — _settings tab is optional
+    state.health.tabs._settings = { fetched: false, headers: [], rowCount: 0, error: e.message };
   }
+  state.health.lastChecked = Date.now();
 
   if (!anySuccess){
     state.consecutiveFails++;
