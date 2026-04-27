@@ -223,8 +223,8 @@
     body{
       padding:0;
       padding-top:env(safe-area-inset-top);
-      padding-left:env(safe-area-inset-left);
-      padding-right:env(safe-area-inset-right);
+      padding-left:calc(10px + env(safe-area-inset-left));
+      padding-right:calc(10px + env(safe-area-inset-right));
       padding-bottom:72px;
       /* Disable text selection on mobile by default */
       -webkit-user-select:none;
@@ -1184,8 +1184,7 @@
     .tf-btn{padding:5px 9px;font-size:10.5px}
 
     /* === HEATMAP — horizontal scroll === */
-    .heatmap-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;
-      margin:0 -14px;padding:0 14px}
+    .heatmap-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
     .heatmap-wrap svg{min-width:1100px;height:auto}
 
     /* === TABLES — horizontal scroll with sticky first two columns === */
