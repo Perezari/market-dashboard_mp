@@ -848,6 +848,7 @@
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.55);
     z-index:1100;display:none;align-items:center;justify-content:center;
     backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+    overscroll-behavior:contain;
     animation:modalFadeIn 0.2s ease-out}
   .modal-backdrop.show{display:flex}
   @keyframes modalFadeIn{from{opacity:0}to{opacity:1}}
@@ -925,6 +926,8 @@
   .modal-action-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
   .modal-action-btn.primary:hover{background:var(--accent-bright);border-color:var(--accent-bright)}
   .modal-action-btn .ext-arrow{font-size:11px;opacity:0.7}
+  .modal-action-btn .ext-arrow-svg{margin-left:6px;opacity:0.7;transition:transform 0.15s,opacity 0.15s}
+  .modal-action-btn:hover .ext-arrow-svg{opacity:1;transform:translate(1px,-1px)}
 
   .modal-range-bar{padding:12px 22px;border-bottom:1px solid var(--border-soft)}
   .modal-range-track{position:relative;height:6px;background:var(--bg-input);border-radius:3px;
@@ -982,6 +985,7 @@
   .clickable-sym:hover{filter:brightness(1.4)}
   .splash{position:fixed;inset:0;background:var(--bg-app);z-index:9999;
     display:flex;align-items:center;justify-content:center;
+    overflow:hidden;touch-action:none;overscroll-behavior:contain;
     transition:opacity 0.5s ease, visibility 0.5s ease}
   .splash.fade{opacity:0;visibility:hidden;pointer-events:none}
   .splash-inner{display:flex;flex-direction:column;align-items:center;gap:32px;max-width:520px;padding:40px}
@@ -1424,7 +1428,7 @@
     .brand .logo{width:30px;height:30px;font-size:14px;flex-shrink:0}
     .brand h1{font-size:14px;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .brand .sub{display:none}
-    .header-right{gap:6px;flex-wrap:wrap;justify-content:width:100%}
+    .header-right{gap:6px;flex-wrap:wrap;justify-content:flex-end;width:100%}
     .pill{padding:4px 8px;font-size:9.5px}
     .pill .lbl{display:none}
     .header-btn{padding:4px 7px;font-size:10px}
@@ -1545,11 +1549,16 @@
     .pf-alloc-bar{width:50px}
 
     /* === MODAL — full screen on mobile === */
-    .modal-backdrop{padding:0;align-items:stretch}
+    .modal-backdrop{
+      padding:0;align-items:stretch;justify-content:stretch;
+      /* Pin to viewport explicitly — overrides any inherited centering */
+      top:0;right:0;bottom:0;left:0;
+    }
     .modal{
       width:100%;max-width:100%;
-      height:100vh;height:100dvh;
-      max-height:100vh;max-height:100dvh;
+      height:100%;
+      max-height:none;
+      flex:1 1 auto;
       border-radius:0;border-left:0;border-right:0;border-top:0;
       overflow-y:auto;-webkit-overflow-scrolling:touch;
     }
@@ -1839,7 +1848,7 @@
     <!-- Performance chart -->
     <div class="panel" style="position:relative">
       <div class="perf-head">
-        <h2>Index Performance</h2>
+        <h2>Normalized Index Performance</h2>
         <div class="tf-btns" id="tf-btns">
           <button class="tf-btn" data-tf="1W">1W</button>
           <button class="tf-btn" data-tf="1M">1M</button>
@@ -1876,7 +1885,7 @@
     <span class="dot" style="background:var(--lime);box-shadow:0 0 8px var(--lime)"></span>
     <span>HEATMAP · TOP HOLDINGS</span>
     <span class="line"></span>
-    <span class="tag">SIZE = MARKET CAP</span>
+    <span class="tag">SIZE = MARKET CAP · COLOR = 1D CHANGE</span>
   </div>
   <div class="panel">
     <svg class="heatmap-svg" id="heatmap" viewBox="0 0 1600 720" preserveAspectRatio="xMidYMid meet"></svg>
@@ -2147,9 +2156,14 @@
       <span class="item"><span class="swatch" style="background:var(--accent)"></span>Symbol</span>
     </div>
     <div class="source">
+      <span>Source: Google Finance via Sheets</span>
+      <span class="sep">·</span>
+      <span>~20 min delay</span>
+      <span class="sep">·</span>
       <span id="refresh-countdown" title="Time until next data refresh">Next refresh in —</span>
-    </div>
-	<div class="source">
+      <span class="sep">·</span>
+      <span>Not investment advice</span>
+      <span class="sep">·</span>
       <a href="https://links.payboxapp.com/A2Lh6pF5F2b" target="_blank" rel="noopener noreferrer" class="footer-tip-link" data-i18n="Buy me a coffee ☕">Buy me a coffee ☕</a>
     </div>
   </div>
@@ -2368,9 +2382,9 @@
     </div>
     <div class="modal-grid" id="modal-grid"></div>
     <div class="modal-footer">
-      <a class="modal-action-btn primary" id="modal-tv-link" target="_blank" rel="noopener">TradingView <span class="ext-arrow">↗</span></a>
-      <a class="modal-action-btn" id="modal-yahoo-link" target="_blank" rel="noopener">Yahoo Finance <span class="ext-arrow">↗</span></a>
-      <a class="modal-action-btn" id="modal-google-link" target="_blank" rel="noopener">Google Finance <span class="ext-arrow">↗</span></a>
+      <a class="modal-action-btn primary" id="modal-tv-link" target="_blank" rel="noopener">TradingView <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="ext-arrow-svg" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
+      <a class="modal-action-btn" id="modal-yahoo-link" target="_blank" rel="noopener">Yahoo Finance <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="ext-arrow-svg" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
+      <a class="modal-action-btn" id="modal-google-link" target="_blank" rel="noopener">Google Finance <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="ext-arrow-svg" aria-hidden="true"><path d="M7 17 17 7"></path><path d="M7 7h10v10"></path></svg></a>
     </div>
   </div>
 </div>
@@ -2411,6 +2425,26 @@ function svgIcon(name, size = 16, strokeWidth = 2){
 const SPLASH_STEPS = ["indices","history","stocks","israel","watchlist","watchlist-history","portfolio","alerts"];
 let splashFirstRun = true;
 let splashTimeout = null;
+let _splashScrollLocked = false;
+
+// Lock body scroll while splash is visible (prevents background scrolling on initial load)
+(function lockSplashScroll(){
+  // Only do this if splash element exists and we're at first run
+  if (typeof document !== "undefined") {
+    document.addEventListener("DOMContentLoaded", () => {
+      const sp = document.getElementById("splash");
+      if (sp && !sp.classList.contains("fade") && splashFirstRun) {
+        try {
+          // We can't call lockBodyScroll here yet since it's defined later;
+          // but we can directly add the class
+          document.body.classList.add("no-scroll");
+          document.body.style.top = "0px";
+          _splashScrollLocked = true;
+        } catch(e) {}
+      }
+    });
+  }
+})();
 
 function setSplashStep(step, status){
   // status: 'active' | 'done' | 'failed'
@@ -2451,6 +2485,12 @@ function hideSplash(){
   const sp = document.getElementById("splash");
   if (sp) sp.classList.add("fade");
   splashFirstRun = false;
+  // Release the splash-time scroll lock if active
+  if (_splashScrollLocked){
+    document.body.classList.remove("no-scroll");
+    document.body.style.top = "";
+    _splashScrollLocked = false;
+  }
 }
 
 function showSplashError(msg){
@@ -2485,22 +2525,54 @@ function startSplashSafetyTimer(){
 
 /* ============================================================
    BODY SCROLL LOCK (for modals & setup screen)
-   Saves scroll position, locks body, restores on unlock
+   Saves scroll position, locks body, blocks iOS touch scroll
    ============================================================ */
 let _scrollLockY = 0;
 let _scrollLockCount = 0;
+
+// iOS-specific: prevent touchmove on body when locked, but allow inside scrollable elements
+function _preventTouchMove(e){
+  // Allow scrolling inside an element with .scroll-allow class or that's part of an open overlay
+  let el = e.target;
+  while (el && el !== document.body){
+    if (el.classList && (
+      el.classList.contains("modal") ||
+      el.classList.contains("settings-modal") ||
+      el.classList.contains("setup-card") ||
+      el.classList.contains("search-results") ||
+      el.classList.contains("search-box") ||
+      el.classList.contains("settings-body") ||
+      el.classList.contains("modal-vp") ||
+      el.classList.contains("panel")
+    )){
+      // Inside an allowed scrollable container — let it scroll natively
+      return;
+    }
+    // Check overflow via computed style
+    const style = window.getComputedStyle(el);
+    if ((style.overflowY === "auto" || style.overflowY === "scroll") && el.scrollHeight > el.clientHeight){
+      return;
+    }
+    el = el.parentNode;
+  }
+  e.preventDefault();
+}
+
 function lockBodyScroll(){
   _scrollLockCount++;
   if (_scrollLockCount > 1) return; // already locked
   _scrollLockY = window.scrollY;
   document.body.classList.add("no-scroll");
   document.body.style.top = `-${_scrollLockY}px`;
+  // iOS: also block touch scroll on body
+  document.body.addEventListener("touchmove", _preventTouchMove, { passive: false });
 }
 function unlockBodyScroll(){
   _scrollLockCount = Math.max(0, _scrollLockCount - 1);
-  if (_scrollLockCount > 0) return; // still other locks holding
+  if (_scrollLockCount > 0) return;
   document.body.classList.remove("no-scroll");
   document.body.style.top = "";
+  document.body.removeEventListener("touchmove", _preventTouchMove);
   window.scrollTo(0, _scrollLockY);
 }
 
