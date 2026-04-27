@@ -236,7 +236,7 @@
       padding-top:env(safe-area-inset-top);
       padding-left:calc(10px + env(safe-area-inset-left));
       padding-right:calc(10px + env(safe-area-inset-right));
-      padding-bottom:env(safe-area-inset-bottom);
+      padding-bottom:calc(56px + env(safe-area-inset-bottom));
     }
     /* Re-enable text selection for inputs, textareas and within modal data display */
     input,textarea,
@@ -1593,15 +1593,19 @@
     .gauge-wrap{padding:8px 4px}
 
     /* === SETUP SCREEN === */
-    .setup-screen{padding:0;align-items:flex-start}
+    .setup-screen{
+      padding:0;
+      align-items:stretch;justify-content:stretch;
+    }
     .setup-card{
       width:100%;max-width:100%;border-radius:0;
-      border-left:0;border-right:0;border-top:0;
+      border-left:0;border-right:0;border-top:0;border-bottom:0;
       padding-top:calc(22px + env(safe-area-inset-top));
       padding-left:calc(18px + env(safe-area-inset-left));
       padding-right:calc(18px + env(safe-area-inset-right));
       padding-bottom:calc(28px + env(safe-area-inset-bottom));
-      min-height:100vh;min-height:100dvh;
+      min-height:100%;
+      flex:1 1 auto;
     }
     .setup-step{padding:11px 12px;gap:10px}
     .setup-input{font-size:11px}
