@@ -574,6 +574,152 @@
   .search-footer .hint{display:flex;gap:10px}
   .search-footer .hint-item{display:flex;align-items:center;gap:5px}
 
+  /* === SETTINGS MODAL === */
+  .settings-overlay{
+    position:fixed;inset:0;z-index:1100;
+    display:none;background:rgba(0,0,0,0.55);
+    backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+    align-items:center;justify-content:center;padding:20px;
+    animation:modalFadeIn 0.2s ease-out;
+  }
+  .settings-overlay.show{display:flex}
+
+  .settings-modal{
+    background:var(--bg-panel);border:1px solid var(--border);
+    border-radius:12px;width:min(560px,100%);max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);
+    overflow:hidden;display:flex;flex-direction:column;
+    box-shadow:0 12px 48px rgba(0,0,0,0.5);
+    animation:modalSlideIn 0.25s ease-out;
+  }
+
+  .settings-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 22px;border-bottom:1px solid var(--border-soft);flex-shrink:0;
+  }
+  .settings-header h2{
+    font-family:'Inter',sans-serif;font-size:16px;font-weight:600;
+    color:var(--text-bright);letter-spacing:-0.01em;
+  }
+  .settings-close{
+    background:transparent;border:0;cursor:pointer;
+    width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+    color:var(--text-muted);transition:background 0.12s,color 0.12s;
+  }
+  .settings-close:hover{background:var(--bg-input);color:var(--text-bright)}
+
+  .settings-body{
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:8px 22px 22px;flex:1;
+    scrollbar-width:thin;
+    scrollbar-color:var(--border-strong) transparent;
+  }
+  .settings-body::-webkit-scrollbar{width:8px}
+  .settings-body::-webkit-scrollbar-track{background:transparent}
+  .settings-body::-webkit-scrollbar-thumb{
+    background:var(--border-strong);border-radius:4px;
+    border:2px solid var(--bg-panel);
+  }
+
+  .settings-section{
+    padding:16px 0;border-bottom:1px solid var(--border-soft);
+  }
+  .settings-section:last-child{border-bottom:0}
+  .settings-section h3{
+    font-family:'Inter',sans-serif;font-size:11px;font-weight:600;
+    color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;
+    margin-bottom:14px;
+  }
+
+  .settings-row{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:9px 0;gap:14px;
+  }
+  .settings-row + .settings-row{border-top:1px dashed var(--border-soft)}
+  .settings-row-center{justify-content:center}
+  .settings-label{
+    font-family:'Inter',sans-serif;font-size:13px;font-weight:500;color:var(--text);
+    flex-shrink:0;
+  }
+  .settings-sheet-id{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    background:var(--bg-input);padding:5px 9px;border-radius:5px;
+    color:var(--text-muted);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    border:1px solid var(--border-soft);
+    -webkit-user-select:text;user-select:text;
+  }
+  .settings-version{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);
+  }
+
+  /* Segmented control */
+  .settings-segment{
+    display:inline-flex;background:var(--bg-input);border-radius:7px;padding:3px;
+    border:1px solid var(--border-soft);
+  }
+  .seg-btn{
+    background:transparent;border:0;cursor:pointer;
+    font-family:'Inter',sans-serif;font-size:12px;font-weight:500;
+    color:var(--text-muted);padding:6px 12px;border-radius:5px;
+    transition:background 0.12s,color 0.12s;
+  }
+  .seg-btn:hover:not(.active){color:var(--text)}
+  .seg-btn.active{
+    background:var(--bg-panel);color:var(--text-bright);
+    box-shadow:0 1px 3px rgba(0,0,0,0.15);
+    font-weight:600;
+  }
+
+  /* Select dropdown */
+  .settings-select{
+    background:var(--bg-input);border:1px solid var(--border-soft);
+    color:var(--text-bright);font-family:'Inter',sans-serif;font-size:12.5px;
+    padding:7px 28px 7px 12px;border-radius:6px;cursor:pointer;
+    appearance:none;-webkit-appearance:none;-moz-appearance:none;
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23787B86' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat:no-repeat;background-position:right 9px center;background-size:10px;
+    transition:border-color 0.12s;
+    min-width:140px;
+  }
+  .settings-select:hover{border-color:var(--border-strong)}
+  .settings-select:focus{outline:none;border-color:var(--accent)}
+
+  /* Buttons */
+  .settings-actions{
+    display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;
+  }
+  .settings-btn{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:8px 14px;border-radius:6px;cursor:pointer;
+    font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;
+    border:1px solid var(--border);background:var(--bg-input);color:var(--text-bright);
+    transition:background 0.12s,border-color 0.12s;
+  }
+  .settings-btn:hover{background:var(--bg-panel-hover);border-color:var(--border-strong)}
+  .settings-btn-secondary{}
+  .settings-btn-danger{
+    color:var(--neg);border-color:rgba(239,83,80,0.3);background:transparent;
+  }
+  .settings-btn-danger:hover{
+    background:rgba(239,83,80,0.08);border-color:var(--neg);
+  }
+
+  /* Mobile */
+  @media (max-width: 768px){
+    .settings-overlay{padding:0;align-items:stretch}
+    .settings-modal{
+      width:100%;height:100vh;height:100dvh;max-height:none;
+      border-radius:0;border-left:0;border-right:0;border-top:0;
+    }
+    .settings-header{padding:calc(16px + env(safe-area-inset-top)) 18px 14px}
+    .settings-body{padding:8px 18px calc(22px + env(safe-area-inset-bottom))}
+    .settings-section h3{font-size:10.5px}
+    .settings-row{flex-wrap:wrap;gap:8px}
+    .settings-label{font-size:12.5px}
+    .settings-select{font-size:12px;min-width:120px}
+    .seg-btn{font-size:11.5px;padding:6px 10px}
+    .settings-sheet-id{max-width:100%;font-size:10px}
+  }
+
   /* === STOCK DETAIL MODAL === */
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.55);
     z-index:1100;display:none;align-items:center;justify-content:center;
@@ -1529,12 +1675,12 @@
 
   <!-- TABS -->
   <div class="tabs" id="tabs">
-    <button class="tab active" data-view="markets"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="3" y1="20" x2="21" y2="20"></line></svg>MARKETS</button>
-    <button class="tab" data-view="israel"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M12 2 L3.5 17 L20.5 17 Z"></path><path d="M12 22 L3.5 7 L20.5 7 Z"></path></svg>ISRAEL</button>
-    <button class="tab" data-view="watchlist"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>WATCHLIST</button>
-    <button class="tab" data-view="portfolio"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>PORTFOLIO</button>
-    <button class="tab" data-view="scanner"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>SCANNER</button>
-    <button class="tab" data-view="alerts"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>ALERTS<span class="tab-badge" id="alerts-badge"></span></button>
+    <button class="tab active" data-view="markets"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="3" y1="20" x2="21" y2="20"></line></svg><span data-i18n="MARKETS">MARKETS</span></button>
+    <button class="tab" data-view="israel"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M12 2 L3.5 17 L20.5 17 Z"></path><path d="M12 22 L3.5 7 L20.5 7 Z"></path></svg><span data-i18n="ISRAEL">ISRAEL</span></button>
+    <button class="tab" data-view="watchlist"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span data-i18n="WATCHLIST">WATCHLIST</span></button>
+    <button class="tab" data-view="portfolio"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg><span data-i18n="PORTFOLIO">PORTFOLIO</span></button>
+    <button class="tab" data-view="scanner"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span data-i18n="SCANNER">SCANNER</span></button>
+    <button class="tab" data-view="alerts"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg><span data-i18n="ALERTS">ALERTS</span><span class="tab-badge" id="alerts-badge"></span></button>
   </div>
 
   <!-- ========== VIEW: MARKETS ========== -->
@@ -1900,32 +2046,124 @@
   </div>
 </div>
 
+<!-- SETTINGS MODAL -->
+<div class="settings-overlay" id="settings-overlay">
+  <div class="settings-modal" id="settings-modal">
+    <div class="settings-header">
+      <h2 data-i18n="Settings">Settings</h2>
+      <button class="settings-close" id="settings-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <div class="settings-body">
+
+      <!-- CONNECTION -->
+      <div class="settings-section">
+        <h3 data-i18n="Connection">Connection</h3>
+        <div class="settings-row">
+          <span class="settings-label" data-i18n="Sheet ID">Sheet ID</span>
+          <code class="settings-sheet-id" id="settings-sheet-id">—</code>
+        </div>
+        <div class="settings-actions">
+          <button class="settings-btn settings-btn-secondary" id="settings-open-sheet">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span data-i18n="Open Sheet">Open Sheet</span>
+          </button>
+          <button class="settings-btn settings-btn-secondary" id="settings-change-sheet">
+            <span data-i18n="Change Sheet">Change Sheet</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- DISPLAY -->
+      <div class="settings-section">
+        <h3 data-i18n="Display">Display</h3>
+
+        <div class="settings-row">
+          <span class="settings-label" data-i18n="Currency">Currency</span>
+          <div class="settings-segment" id="settings-currency">
+            <button class="seg-btn" data-val="USD">USD $</button>
+            <button class="seg-btn" data-val="ILS">ILS ₪</button>
+            <button class="seg-btn" data-val="EUR">EUR €</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <span class="settings-label" data-i18n="Language">Language</span>
+          <div class="settings-segment" id="settings-language">
+            <button class="seg-btn" data-val="en">English</button>
+            <button class="seg-btn" data-val="he">עברית</button>
+          </div>
+        </div>
+
+        <div class="settings-row">
+          <span class="settings-label" data-i18n="Default View">Default View</span>
+          <select class="settings-select" id="settings-default-view">
+            <option value="markets" data-i18n="Markets">Markets</option>
+            <option value="israel" data-i18n="Israel">Israel</option>
+            <option value="watchlist" data-i18n="Watchlist">Watchlist</option>
+            <option value="portfolio" data-i18n="Portfolio">Portfolio</option>
+            <option value="scanner" data-i18n="Scanner">Scanner</option>
+            <option value="alerts" data-i18n="Alerts">Alerts</option>
+          </select>
+        </div>
+
+        <div class="settings-row">
+          <span class="settings-label" data-i18n="Theme">Theme</span>
+          <select class="settings-select" id="settings-theme">
+            <option value="tradingview">TradingView</option>
+            <option value="bloomberg">Bloomberg</option>
+            <option value="midnight">Midnight</option>
+            <option value="carbon">Carbon</option>
+            <option value="light">Light</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ABOUT -->
+      <div class="settings-section">
+        <h3 data-i18n="About">About</h3>
+        <div class="settings-row settings-row-center">
+          <span class="settings-version">Market Terminal · v1.0</span>
+        </div>
+        <div class="settings-actions">
+          <button class="settings-btn settings-btn-danger" id="settings-reset">
+            <span data-i18n="Reset all settings">Reset all settings</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- BOTTOM NAVIGATION (mobile only) -->
 <nav class="bottom-nav" id="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bn-tab active" data-view="markets">
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="3" y1="20" x2="21" y2="20"></line></svg>
-      <span>Markets</span>
+      <span data-i18n="Markets">Markets</span>
     </button>
     <button class="bn-tab" data-view="israel">
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><path d="M12 2 L3.5 17 L20.5 17 Z"></path><path d="M12 22 L3.5 7 L20.5 7 Z"></path></svg>
-      <span>Israel</span>
+      <span data-i18n="Israel">Israel</span>
     </button>
     <button class="bn-tab" data-view="watchlist">
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-      <span>Watch</span>
+      <span data-i18n="Watch">Watch</span>
     </button>
     <button class="bn-tab" data-view="portfolio">
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
-      <span>Portfolio</span>
+      <span data-i18n="Portfolio">Portfolio</span>
     </button>
     <button class="bn-tab" data-view="scanner">
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <span>Scanner</span>
+      <span data-i18n="Scanner">Scanner</span>
     </button>
     <button class="bn-tab" data-view="alerts">
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
-      <span>Alerts</span>
+      <span data-i18n="Alerts">Alerts</span>
       <span class="bn-badge" id="bn-alerts-badge"></span>
     </button>
   </div>
@@ -2201,11 +2439,145 @@ function extractSheetId(input){
   };
 })();
 
-// Settings button — re-open setup
+// Settings button — opens Settings Modal
 (function setupSettingsBtn(){
   const btn = document.getElementById("settings-btn");
-  if (btn) btn.onclick = () => showSetupScreen();
+  if (btn) btn.onclick = () => openSettingsModal();
 })();
+
+/* ============================================================
+   SETTINGS MODAL — Open / Close
+   (UI logic only in this stage; full wiring in stage 3)
+   ============================================================ */
+function openSettingsModal(){
+  const overlay = document.getElementById("settings-overlay");
+  if (!overlay) return;
+  // Populate current values
+  const sheetIdEl = document.getElementById("settings-sheet-id");
+  if (sheetIdEl) sheetIdEl.textContent = CONFIG.sheetId || "(not connected)";
+  // Mark current preferences as active
+  syncSettingsToUI();
+  overlay.classList.add("show");
+  lockBodyScroll();
+}
+function closeSettingsModal(){
+  const overlay = document.getElementById("settings-overlay");
+  if (!overlay) return;
+  overlay.classList.remove("show");
+  unlockBodyScroll();
+}
+
+function syncSettingsToUI(){
+  // Currency segment
+  document.querySelectorAll("#settings-currency .seg-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.val === PREFS.currency);
+  });
+  // Language segment
+  document.querySelectorAll("#settings-language .seg-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.val === PREFS.language);
+  });
+  // Default View
+  const dv = document.getElementById("settings-default-view");
+  if (dv) dv.value = PREFS.defaultView;
+  // Theme — read from current attribute
+  const th = document.getElementById("settings-theme");
+  if (th) {
+    const currentTheme = document.documentElement.getAttribute("data-theme") || "tradingview";
+    th.value = currentTheme;
+  }
+}
+
+(function setupSettingsModal(){
+  const overlay = document.getElementById("settings-overlay");
+  const closeBtn = document.getElementById("settings-close");
+  if (!overlay || !closeBtn) return;
+  closeBtn.onclick = () => closeSettingsModal();
+  overlay.addEventListener("click", (e) => {
+    if (e.target.id === "settings-overlay") closeSettingsModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && overlay.classList.contains("show")) {
+      e.preventDefault();
+      closeSettingsModal();
+    }
+  });
+
+  // === DISPLAY SECTION WIRING ===
+
+  // Theme select
+  const themeSelect = document.getElementById("settings-theme");
+  if (themeSelect){
+    themeSelect.addEventListener("change", () => {
+      applyTheme(themeSelect.value);
+    });
+  }
+
+  // Default View select
+  const dvSelect = document.getElementById("settings-default-view");
+  if (dvSelect){
+    dvSelect.addEventListener("change", () => {
+      PREFS.defaultView = dvSelect.value;
+      savePrefs(PREFS);
+      showToast(t("Default View") + ": " + t(dvSelect.options[dvSelect.selectedIndex].text), "info");
+    });
+  }
+
+  // Currency segment
+  document.querySelectorAll("#settings-currency .seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const val = btn.dataset.val;
+      if (val === PREFS.currency) return;
+      PREFS.currency = val;
+      savePrefs(PREFS);
+      // Update active state
+      document.querySelectorAll("#settings-currency .seg-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.val === val);
+      });
+      // Re-render everything that shows money
+      if (typeof renderAll === "function" && state && state.indices) renderAll();
+    });
+  });
+
+  // Language segment
+  document.querySelectorAll("#settings-language .seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const val = btn.dataset.val;
+      if (val === PREFS.language) return;
+      PREFS.language = val;
+      savePrefs(PREFS);
+      document.querySelectorAll("#settings-language .seg-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.val === val);
+      });
+      // Apply translations to all data-i18n elements
+      applyTranslations();
+      // Re-render data tables/labels that aren't data-i18n driven
+      if (typeof renderAll === "function" && state && state.indices) renderAll();
+    });
+  });
+})();
+
+/* Apply translations to all data-i18n elements (called on language change) */
+function applyTranslations(){
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    if (key) el.textContent = t(key);
+  });
+}
+
+/* Lightweight toast helper (used by settings) */
+function showToast(message, type){
+  // Reuse the alerts toast container if available
+  const container = document.getElementById("toast-container");
+  if (!container){ console.log("[toast]", message); return; }
+  const toast = document.createElement("div");
+  toast.className = "toast" + (type ? " toast-" + type : "");
+  toast.innerHTML = `<div class="body"><div class="msg">${message}</div></div>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add("hide");
+    setTimeout(() => toast.remove(), 300);
+  }, 2200);
+}
 
 // Open Sheet button — shown only when a sheet is connected
 // (Initialized later, after CONFIG is set)
@@ -2319,9 +2691,234 @@ const CONFIG = {
   alertsTab:           "alerts",
   portfolioTab:        "portfolio",
   israelTab:           "israel",
-  refreshSec: 120,        // base refresh interval (Google Sheets data is delayed ~20 min anyway)
-  maxRefreshSec: 600      // max interval after repeated rate-limiting
+  settingsTab:         "_settings",
+  refreshSec: 120,
+  maxRefreshSec: 600
 };
+/* ============================================================ */
+
+/* ============================================================
+   USER PREFERENCES (localStorage)
+   ============================================================ */
+const PREFS_KEY = "mt-prefs-v1";
+const DEFAULT_PREFS = {
+  currency: "USD",       // USD / ILS / EUR
+  language: "en",        // en / he
+  defaultView: "markets" // markets / israel / watchlist / portfolio / scanner / alerts
+};
+
+function loadPrefs(){
+  try {
+    const raw = localStorage.getItem(PREFS_KEY);
+    if (!raw) return { ...DEFAULT_PREFS };
+    const parsed = JSON.parse(raw);
+    return { ...DEFAULT_PREFS, ...parsed };
+  } catch(e){ return { ...DEFAULT_PREFS }; }
+}
+function savePrefs(prefs){
+  try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch(e){}
+}
+const PREFS = loadPrefs();
+
+/* ============================================================
+   I18N — TRANSLATIONS
+   English keys → Hebrew translations
+   Financial terms (RSI, Beta, IRR, MA50, etc.) stay in English
+   ============================================================ */
+const STRINGS = {
+  // Tab names
+  "Markets": "שווקים",
+  "Israel": "ישראל",
+  "Watch": "מעקב",
+  "Watchlist": "רשימת מעקב",
+  "Portfolio": "תיק השקעות",
+  "Scanner": "סורק",
+  "Alerts": "התראות",
+  "MARKETS": "שווקים",
+  "ISRAEL": "ישראל",
+  "WATCHLIST": "מעקב",
+  "PORTFOLIO": "תיק",
+  "SCANNER": "סורק",
+  "ALERTS": "התראות",
+
+  // Header
+  "REGULAR": "רגיל",
+  "PRE-MARKET": "טרום-שוק",
+  "AFTER-HOURS": "לאחר-שעות",
+  "CLOSED": "סגור",
+  "LIVE": "חי",
+  "DEMO": "הדגמה",
+
+  // Common
+  "Symbol": "סימול",
+  "Name": "שם",
+  "Price": "מחיר",
+  "Volume": "ווליום",
+  "Change": "שינוי",
+  "Loading data…": "טוען נתונים…",
+  "Refreshing…": "מרענן…",
+  "Live data": "נתונים חיים",
+  "Connection error · retrying": "שגיאת חיבור · מנסה שוב",
+
+  // Index Cards
+  "MARKET CLOSED": "שוק סגור",
+  "MARKET OPEN": "שוק פתוח",
+
+  // Markets View — sections
+  "Market Sentiment": "תחושת השוק",
+  "Index Details": "פרטי מדדים",
+  "Sector Performance": "ביצועי סקטורים",
+  "Sector ETF Returns": "תשואות תעודות סל לסקטורים",
+  "Sector Sentiment": "תחושת סקטורים",
+  "Normalized Index Performance": "ביצועי מדדים מנורמלים",
+  "HEATMAP · TOP HOLDINGS": "מפת חום · אחזקות מובילות",
+
+  // Watchlist
+  "WATCHLIST · TRACKED POSITIONS": "רשימת מעקב · פוזיציות במעקב",
+  "Personal Watchlist": "רשימת מעקב אישית",
+  "Highlight": "הדגשה",
+  "Trend": "מגמה",
+  "From 52W High": "מה-52W גבוה",
+  "MA Cross": "חציית ממוצעים",
+
+  // Portfolio
+  "PORTFOLIO · YOUR POSITIONS": "תיק השקעות · הפוזיציות שלך",
+  "Total Value": "שווי כולל",
+  "Total P&L": "רווח/הפסד כולל",
+  "Today's Change": "שינוי היום",
+  "Annualized Return": "תשואה שנתית",
+  "Cost basis": "בסיס עלות",
+  "Avg held": "ממוצע אחזקה",
+  "Add": "הוסף",
+  "to track": "למעקב",
+  "Your portfolio": "התיק שלך",
+  "Beating market by": "מנצח את השוק ב",
+  "Lagging market by": "פיגור מהשוק ב",
+  "Avg Cost": "עלות ממוצעת",
+  "Current": "נוכחי",
+  "Market Value": "שווי שוק",
+  "Annual %": "שנתי %",
+  "Held": "מוחזק",
+  "Allocation": "הקצאה",
+  "Shares": "מניות",
+  "TOTAL": "סה״כ",
+
+  // Israel
+  "ISRAELI MARKET · INDICES": "שוק ישראלי · מדדים",
+  "ISRAELI MARKET · STOCKS": "שוק ישראלי · מניות",
+
+  // Scanner
+  "SCANNER · MARKET SCANS": "סורק · סריקות שוק",
+  "Top Gainers": "מובילי עליות",
+  "Top Losers": "מובילי ירידות",
+  "Volume Anomalies": "חריגות ווליום",
+  "Near 52W High": "קרוב ל-52W גבוה",
+  "Near 52W Low": "קרוב ל-52W נמוך",
+  "Golden Cross": "חציית זהב",
+  "Death Cross": "חציית מוות",
+  "YTD Leaders": "מובילי השנה",
+  "YTD Laggards": "פיגורי השנה",
+
+  // Alerts
+  "ALERTS · TRIGGERED": "התראות · הופעלו",
+  "Alert Triggered": "התראה הופעלה",
+  "No active alerts": "אין התראות פעילות",
+  "Active": "פעיל",
+
+  // Modal
+  "Open in TradingView": "פתח ב-TradingView",
+  "Open in Yahoo Finance": "פתח ב-Yahoo Finance",
+  "Open in Google": "פתח ב-Google",
+  "VOLUME PROFILE": "פרופיל ווליום",
+  "52 WEEK RANGE": "טווח 52 שבועות",
+  "1 WEEK": "שבוע",
+  "1 MONTH": "חודש",
+  "YTD": "מתחילת השנה",
+  "MARKET CAP": "שווי שוק",
+  "AVG VOLUME (10D)": "ווליום ממוצע (10 ימים)",
+  "VOLUME RATIO": "יחס ווליום",
+  "MA STATUS": "סטטוס ממוצעים",
+  "SECTOR": "סקטור",
+  "B VS SPY": "Beta מול SPY",
+
+  // Search
+  "Search symbol or company name…": "חפש סימול או שם חברה…",
+  "navigate": "ניווט",
+  "open": "פתח",
+  "to open": "לפתיחה",
+  "No matches. Try a different symbol or name.": "לא נמצאו תוצאות. נסה סימול או שם אחר.",
+
+  // Setup
+  "Connect your sheet": "חבר את הגיליון שלך",
+  "Copy Template": "העתק תבנית",
+  "Connect": "התחבר",
+  "Try Demo Mode (no sheet)": "נסה מצב הדגמה (ללא גיליון)",
+
+  // Settings
+  "Settings": "הגדרות",
+  "Connection": "חיבור",
+  "Display": "תצוגה",
+  "About": "אודות",
+  "Currency": "מטבע",
+  "Language": "שפה",
+  "Default View": "תצוגת ברירת מחדל",
+  "Theme": "ערכת נושא",
+  "Sheet ID": "מזהה גיליון",
+  "Change Sheet": "החלף גיליון",
+  "Open Sheet": "פתח גיליון",
+  "Reset all settings": "אפס את כל ההגדרות",
+  "English": "אנגלית",
+  "Hebrew": "עברית",
+
+  // Footer
+  "Source: Google Finance via Sheets": "מקור: Google Finance דרך Sheets",
+  "~20 min delay": "השהיה של ~20 דקות",
+  "Not investment advice": "אינו ייעוץ השקעות",
+  "Next refresh in": "רענון הבא בעוד"
+};
+
+function t(key){
+  if (PREFS.language === "he" && STRINGS[key]) return STRINGS[key];
+  return key;
+}
+
+/* ============================================================
+   CURRENCY CONVERSION
+   Rates pulled from _settings tab in user's sheet
+   ============================================================ */
+const CURRENCY_SYMBOLS = { USD: "$", ILS: "₪", EUR: "€" };
+const CURRENCY_RATES = {
+  // USD is base; rates are "USD to X"
+  USD_USD: 1.0,
+  USD_ILS: null,  // populated from sheet, fallback 3.7
+  USD_EUR: null   // populated from sheet, fallback 0.92
+};
+function getCurrency(){ return PREFS.currency || "USD"; }
+function getCurrencySymbol(cur){ return CURRENCY_SYMBOLS[cur || getCurrency()] || "$"; }
+function convertFromUSD(amountUsd, toCur){
+  toCur = toCur || getCurrency();
+  if (toCur === "USD" || amountUsd == null) return amountUsd;
+  const rate = CURRENCY_RATES[`USD_${toCur}`];
+  if (rate == null) {
+    // Fallback rates
+    if (toCur === "ILS") return amountUsd * 3.7;
+    if (toCur === "EUR") return amountUsd * 0.92;
+    return amountUsd;
+  }
+  return amountUsd * rate;
+}
+function fmtMoney(amountUsd, opts){
+  if (amountUsd == null || isNaN(amountUsd)) return "—";
+  opts = opts || {};
+  const cur = getCurrency();
+  const sym = getCurrencySymbol(cur);
+  const converted = convertFromUSD(amountUsd, cur);
+  const decimals = opts.decimals != null ? opts.decimals : 2;
+  return sym + converted.toLocaleString(undefined, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  });
+}
 /* ============================================================ */
 
 const SECTOR_COLORS = {
@@ -2694,6 +3291,21 @@ async function loadLive(){
 
   const r8 = await fetchWithStep(CONFIG.alertsTab, "alerts", "price alerts");
   alertsRows = r8.rows; if (r8.ok) anySuccess = true;
+
+  // _settings tab — silent/optional. Populates currency rates if available.
+  try {
+    const settingsRows = await fetchTab(CONFIG.settingsTab);
+    if (settingsRows && settingsRows.length > 0){
+      for (const row of settingsRows){
+        const key = (row[0]||"").toString().trim().toUpperCase();
+        const val = num(row[1]);
+        if (key === "USD_ILS" && val) CURRENCY_RATES.USD_ILS = val;
+        if (key === "USD_EUR" && val) CURRENCY_RATES.USD_EUR = val;
+      }
+    }
+  } catch(e) {
+    // Silent failure — _settings tab is optional
+  }
 
   if (!anySuccess){
     state.consecutiveFails++;
@@ -5083,18 +5695,18 @@ function renderPortfolio(){
   summaryWrap.innerHTML = `
     <div class="pf-summary">
       <div class="pf-card blue">
-        <div class="pf-card-lbl">Total Value</div>
-        <div class="pf-card-val">$${totalValue.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
-        <div class="pf-card-sub">Cost basis: $${totalCost.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+        <div class="pf-card-lbl">${t("Total Value")}</div>
+        <div class="pf-card-val">${fmtMoney(totalValue, {decimals: 0})}</div>
+        <div class="pf-card-sub">${t("Cost basis")}: ${fmtMoney(totalCost, {decimals: 0})}</div>
       </div>
       <div class="pf-card ${totalPnL >= 0 ? 'green' : 'red'}">
-        <div class="pf-card-lbl">Total P&amp;L</div>
-        <div class="pf-card-val ${totalPnL >= 0 ? 'pos' : 'neg'}">${totalPnL >= 0 ? '+' : '−'}$${Math.abs(totalPnL).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+        <div class="pf-card-lbl">${t("Total P&L")}</div>
+        <div class="pf-card-val ${totalPnL >= 0 ? 'pos' : 'neg'}">${totalPnL >= 0 ? '+' : '−'}${fmtMoney(Math.abs(totalPnL), {decimals: 0})}</div>
         <div class="pf-card-sub ${totalPnLPct >= 0 ? 'pos' : 'neg'}" style="color:${totalPnLPct >= 0 ? 'var(--pos)' : 'var(--neg)'}">${totalPnLPct >= 0 ? '+' : ''}${totalPnLPct.toFixed(2)}%</div>
       </div>
       <div class="pf-card ${totalDayChange >= 0 ? 'green' : 'red'}">
-        <div class="pf-card-lbl">Today's Change</div>
-        <div class="pf-card-val ${totalDayChange >= 0 ? 'pos' : 'neg'}">${totalDayChange >= 0 ? '+' : '−'}$${Math.abs(totalDayChange).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+        <div class="pf-card-lbl">${t("Today's Change")}</div>
+        <div class="pf-card-val ${totalDayChange >= 0 ? 'pos' : 'neg'}">${totalDayChange >= 0 ? '+' : '−'}${fmtMoney(Math.abs(totalDayChange), {decimals: 0})}</div>
         <div class="pf-card-sub ${totalDayPct >= 0 ? 'pos' : 'neg'}" style="color:${totalDayPct >= 0 ? 'var(--pos)' : 'var(--neg)'}">${totalDayPct >= 0 ? '+' : ''}${totalDayPct.toFixed(2)}%</div>
       </div>
       <div class="pf-card ${portfolioIrr != null ? (portfolioIrr >= 0 ? 'green' : 'red') : 'blue'}">
@@ -5124,10 +5736,10 @@ function renderPortfolio(){
       <td class="sym clickable-sym" data-sym="${p.sym}"><span class="wl-sym-wrap">${p.sym}${noteIcon}</span></td>
       <td class="name">${p.name || "—"}</td>
       <td>${p.shares.toLocaleString()}</td>
-      <td>$${p.avgCost.toFixed(2)}</td>
-      <td>${p.price != null ? '$'+p.price.toFixed(2) : '—'}</td>
-      <td>${p.value != null ? '$'+p.value.toLocaleString(undefined,{maximumFractionDigits:0}) : '—'}</td>
-      <td class="${pnlCls}">${p.pnl != null ? (p.pnl>=0?'+':'−')+'$'+Math.abs(p.pnl).toLocaleString(undefined,{maximumFractionDigits:0}) : '—'}</td>
+      <td>${fmtMoney(p.avgCost, {decimals: 2})}</td>
+      <td>${p.price != null ? fmtMoney(p.price, {decimals: 2}) : '—'}</td>
+      <td>${p.value != null ? fmtMoney(p.value, {decimals: 0}) : '—'}</td>
+      <td class="${pnlCls}">${p.pnl != null ? (p.pnl>=0?'+':'−')+fmtMoney(Math.abs(p.pnl), {decimals: 0}) : '—'}</td>
       <td class="${pnlPctCls}">${p.pnlPct != null ? (p.pnlPct>=0?'+':'')+p.pnlPct.toFixed(2)+'%' : '—'}</td>
       <td class="${annCls}">${annTxt}</td>
       <td class="${d1Cls}">${p.d1 != null ? (p.d1>=0?'+':'')+p.d1.toFixed(2)+'%' : '—'}</td>
@@ -5148,9 +5760,9 @@ function renderPortfolio(){
       ? `<span style="color:var(--text-muted)">${fmtHolding(avgHolding)} avg</span>`
       : '—';
     tfoot.innerHTML = `<tr>
-      <td colspan="5">TOTAL</td>
-      <td>$${totalValue.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
-      <td class="${totalPnL>=0?'pos':'neg'}">${totalPnL>=0?'+':'−'}$${Math.abs(totalPnL).toLocaleString(undefined,{maximumFractionDigits:0})}</td>
+      <td colspan="5">${t("TOTAL")}</td>
+      <td>${fmtMoney(totalValue, {decimals: 0})}</td>
+      <td class="${totalPnL>=0?'pos':'neg'}">${totalPnL>=0?'+':'−'}${fmtMoney(Math.abs(totalPnL), {decimals: 0})}</td>
       <td class="${totalPnLPct>=0?'pos':'neg'}">${totalPnLPct>=0?'+':''}${totalPnLPct.toFixed(2)}%</td>
       <td>${irrCellTxt}</td>
       <td class="${totalDayPct>=0?'pos':'neg'}">${totalDayPct>=0?'+':''}${totalDayPct.toFixed(2)}%</td>
@@ -5310,6 +5922,16 @@ document.querySelectorAll("#tabs .tab").forEach(btn => {
 document.querySelectorAll(".bn-tab").forEach(btn => {
   btn.onclick = () => switchView(btn.dataset.view);
 });
+
+// Apply user's default view on startup (if not "markets" which is the HTML default)
+if (PREFS.defaultView && PREFS.defaultView !== "markets"){
+  switchView(PREFS.defaultView);
+}
+
+// Apply Hebrew translations on startup if preferred
+if (PREFS.language === "he"){
+  applyTranslations();
+}
 
 /* --- WATCHLIST SORT HEADERS --- */
 document.querySelectorAll("#watchlist thead th[data-sort]").forEach(th => {
