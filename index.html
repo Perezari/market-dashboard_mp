@@ -222,9 +222,6 @@
     }
     body{
       padding:0;
-      padding-top:env(safe-area-inset-top);
-      padding-left:calc(10px + env(safe-area-inset-left));
-      padding-right:calc(10px + env(safe-area-inset-right));
       padding-bottom:72px;
       /* Disable text selection on mobile by default */
       -webkit-user-select:none;
@@ -235,6 +232,12 @@
       -webkit-tap-highlight-color:transparent;
       /* Disable iOS callout on long press */
       -webkit-touch-callout:none;
+    }
+    /* Apply safe-area to terminal (content wrapper), not body, so position:fixed overlays span fullscreen */
+    .terminal{
+      padding-top:env(safe-area-inset-top);
+      padding-left:calc(10px + env(safe-area-inset-left));
+      padding-right:calc(10px + env(safe-area-inset-right));
     }
     /* Re-enable text selection for inputs, textareas and within modal data display */
     input,textarea,
@@ -1419,9 +1422,7 @@
 
     /* === HEADER COMPACTION === */
     .header{
-      padding:9px 12px;
-      padding-top:calc(14px + env(safe-area-inset-top));
-      margin-top:8px;
+      padding:14px 12px;
       flex-wrap:wrap;gap:8px
     }
     .brand{gap:8px;flex:1;min-width:0}
