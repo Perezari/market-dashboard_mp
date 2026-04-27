@@ -6,6 +6,16 @@
 <meta name="theme-color" content="#0E1117">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Market Terminal">
+<meta name="application-name" content="Market Terminal">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- PWA Manifest as Data URI (no separate file needed) -->
+<link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name"%3A"Market Terminal"%2C"short_name"%3A"Market"%2C"description"%3A"Personal market dashboard"%2C"start_url"%3A"."%2C"scope"%3A"."%2C"display"%3A"standalone"%2C"orientation"%3A"portrait-primary"%2C"background_color"%3A"%230E1117"%2C"theme_color"%3A"%230E1117"%2C"icons"%3A[{"src"%3A"data%3Aimage%2Fsvg%2Bxml%3Bcharset%3Dutf-8%2C%253Csvg%2520xmlns%253D%2522http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg%2522%2520viewBox%253D%25220%25200%2520512%2520512%2522%253E%253Crect%2520width%253D%2522512%2522%2520height%253D%2522512%2522%2520rx%253D%2522110%2522%2520fill%253D%2522%25232962FF%2522%252F%253E%253Ctext%2520x%253D%2522256%2522%2520y%253D%2522335%2522%2520font-family%253D%2522Inter%252C%2520Arial%2522%2520font-size%253D%2522260%2522%2520font-weight%253D%2522800%2522%2520fill%253D%2522white%2522%2520text-anchor%253D%2522middle%2522%253EM%253C%252Ftext%253E%253C%252Fsvg%253E"%2C"sizes"%3A"any"%2C"type"%3A"image%2Fsvg%2Bxml"%2C"purpose"%3A"any maskable"}]}'>
+
+<!-- iOS icon — also inline SVG so no extra files needed -->
+<link rel="apple-touch-icon" href='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="110" fill="%232962FF"/><text x="256" y="335" font-family="Inter, Arial" font-size="260" font-weight="800" fill="white" text-anchor="middle">M</text></svg>'>
+<link rel="icon" type="image/svg+xml" href='data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="110" fill="%232962FF"/><text x="256" y="335" font-family="Inter, Arial" font-size="260" font-weight="800" fill="white" text-anchor="middle">M</text></svg>'>
 <title>Market Terminal — Live</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -426,6 +436,37 @@
     overflow:hidden;vertical-align:middle;margin-right:6px}
   .pf-alloc-bar > span{display:block;height:100%;background:var(--accent);border-radius:2px}
 
+  /* Portfolio benchmark vs SPY */
+  .pf-benchmark{
+    margin-top:10px;padding:14px 18px;
+    background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;
+    position:relative;overflow:hidden;
+  }
+  .pf-benchmark::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  }
+  .pf-benchmark.beating::before{background:var(--pos)}
+  .pf-benchmark.lagging::before{background:var(--neg)}
+  .pf-bench-row{
+    display:flex;align-items:center;gap:18px;
+  }
+  .pf-bench-cell{flex:1;min-width:0}
+  .pf-bench-cell.pf-bench-result{text-align:right}
+  .pf-bench-vs{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);
+    flex-shrink:0;font-weight:500;
+  }
+  .pf-bench-lbl{
+    font-family:'Inter',sans-serif;font-size:10.5px;color:var(--text-muted);
+    font-weight:500;letter-spacing:0.02em;
+  }
+  .pf-bench-val{
+    font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;margin-top:3px;
+    line-height:1.1;letter-spacing:-0.01em;
+  }
+  .pf-bench-val.pos{color:var(--pos)}
+  .pf-bench-val.neg{color:var(--neg)}
+
   .pf-charts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .pf-chart-panel{padding:18px 22px;background:var(--bg-panel);border:1px solid var(--border);border-radius:8px}
   .pf-chart-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--text-bright);
@@ -445,6 +486,90 @@
     font-family:'Inter',sans-serif;letter-spacing:0.02em}
 
 
+  /* === QUICK SEARCH (Cmd+K) === */
+  .search-overlay{
+    position:fixed;inset:0;z-index:600;
+    display:none;
+    background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    align-items:flex-start;justify-content:center;
+    padding-top:14vh;
+    animation:searchFadeIn 0.15s ease-out;
+  }
+  .search-overlay.show{display:flex}
+  @keyframes searchFadeIn{from{opacity:0}to{opacity:1}}
+
+  .search-box{
+    width:min(560px,calc(100vw - 24px));
+    background:var(--bg-panel);border:1px solid var(--border-strong);
+    border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,0.5);
+    overflow:hidden;display:flex;flex-direction:column;
+    max-height:70vh;
+  }
+  .search-input-wrap{
+    display:flex;align-items:center;gap:10px;
+    padding:14px 16px;border-bottom:1px solid var(--border-soft);
+  }
+  .search-input-wrap .search-icon{
+    color:var(--text-muted);font-size:16px;flex-shrink:0;line-height:1;
+  }
+  .search-input{
+    flex:1;background:transparent;border:0;outline:0;
+    font-family:'Inter',sans-serif;font-size:14px;font-weight:500;
+    color:var(--text-bright);
+  }
+  .search-input::placeholder{color:var(--text-dim)}
+  .search-kbd{
+    padding:2px 6px;background:var(--bg-input);border:1px solid var(--border);
+    border-radius:4px;color:var(--text-muted);
+    font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
+  }
+
+  .search-results{
+    overflow-y:auto;flex:1;padding:6px;
+  }
+  .search-empty{
+    padding:24px;text-align:center;color:var(--text-muted);
+    font-family:'Inter',sans-serif;font-size:12.5px;
+  }
+  .search-result{
+    display:flex;align-items:center;gap:12px;
+    padding:9px 12px;border-radius:6px;cursor:pointer;
+    transition:background 0.1s;
+  }
+  .search-result:hover,.search-result.active{
+    background:var(--bg-panel-hover);
+  }
+  .search-result-sym{
+    font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;
+    color:var(--text-bright);min-width:78px;
+  }
+  .search-result-name{
+    flex:1;font-family:'Inter',sans-serif;font-size:12px;color:var(--text);
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  .search-result-meta{
+    display:flex;align-items:center;gap:8px;flex-shrink:0;
+  }
+  .search-result-tag{
+    padding:1px 6px;border-radius:3px;
+    font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;
+    background:var(--bg-input);color:var(--text-muted);
+    border:1px solid var(--border-soft);
+  }
+  .search-result-pct{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;min-width:54px;text-align:right;
+  }
+  .search-result-pct.pos{color:var(--pos)}
+  .search-result-pct.neg{color:var(--neg)}
+  .search-footer{
+    padding:8px 14px;border-top:1px solid var(--border-soft);
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'Inter',sans-serif;font-size:10.5px;color:var(--text-dim);
+  }
+  .search-footer .hint{display:flex;gap:10px}
+  .search-footer .hint-item{display:flex;align-items:center;gap:5px}
+
+  /* === STOCK DETAIL MODAL === */
   .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.55);
     z-index:500;display:none;align-items:center;justify-content:center;
     backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
@@ -493,6 +618,19 @@
 
   .modal-spark{padding:10px 22px 18px;border-bottom:1px solid var(--border-soft)}
   .modal-spark svg{width:100%;height:120px;display:block}
+
+  /* Watchlist note inside modal */
+  .modal-notes{
+    padding:12px 22px;border-bottom:1px solid var(--border-soft);
+    display:flex;gap:10px;align-items:flex-start;
+    background:linear-gradient(180deg, var(--accent-soft) 0%, transparent 100%);
+  }
+  .modal-notes-icon{font-size:14px;line-height:1.4;flex-shrink:0;opacity:0.85}
+  .modal-notes-text{
+    font-family:'Inter',sans-serif;font-size:12.5px;color:var(--text);
+    line-height:1.5;font-style:italic;font-weight:500;
+    -webkit-user-select:text;user-select:text;
+  }
 
   .modal-grid{padding:18px 22px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px 18px}
   .modal-stat{display:flex;flex-direction:column;gap:3px}
@@ -1299,6 +1437,7 @@
       <div class="pill"><span class="lbl">DATE</span><span id="hdr-date">—</span></div>
       <div class="pill"><span class="lbl">UPDATED</span><span id="hdr-updated">—</span></div>
       <div class="pill" id="hdr-mode">DEMO</div>
+      <button class="header-btn" id="search-btn" title="Search (⌘K)"><span class="icon">⌕</span></button>
       <button class="header-btn" id="settings-btn" title="Change sheet"><span class="icon">⚙</span></button>
       <div class="theme-picker" id="theme-picker">
         <button class="theme-btn" id="theme-btn">
@@ -1705,10 +1844,32 @@
       <span class="sep">·</span>
       <span>~20 min delay</span>
       <span class="sep">·</span>
+      <span id="refresh-countdown" title="Time until next data refresh">Next refresh in —</span>
+      <span class="sep">·</span>
       <span>Not investment advice</span>
     </div>
   </div>
 
+</div>
+
+<!-- QUICK SEARCH OVERLAY (Cmd+K) -->
+<div class="search-overlay" id="search-overlay">
+  <div class="search-box" id="search-box">
+    <div class="search-input-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" class="search-input" id="search-input"
+        placeholder="Search symbol or company name…" autocomplete="off" spellcheck="false">
+      <span class="search-kbd">ESC</span>
+    </div>
+    <div class="search-results" id="search-results"></div>
+    <div class="search-footer">
+      <div class="hint">
+        <span class="hint-item"><span class="search-kbd">↑↓</span> navigate</span>
+        <span class="hint-item"><span class="search-kbd">↵</span> open</span>
+      </div>
+      <span class="hint-item"><span class="search-kbd">⌘K</span> to open</span>
+    </div>
+  </div>
 </div>
 
 <!-- BOTTOM NAVIGATION (mobile only) -->
@@ -1761,6 +1922,10 @@
     </div>
     <div class="modal-spark">
       <svg id="modal-spark-svg" viewBox="0 0 600 120" preserveAspectRatio="none"></svg>
+    </div>
+    <div class="modal-notes" id="modal-notes" style="display:none">
+      <div class="modal-notes-icon">📝</div>
+      <div class="modal-notes-text" id="modal-notes-text"></div>
     </div>
     <div class="modal-vp" id="modal-vp" style="display:none">
       <div class="modal-vp-head">
@@ -2537,7 +2702,7 @@ async function loadLive(){
   }
 
   // --- parse watchlist tab ---
-  // Columns: Symbol, Name, Price, Change1D, Change1W, Change1M, YTD, Volume, AvgVol10D, MA50, MA200, High52, Low52
+  // Columns: Symbol, Name, Price, Change1D, Change1W, Change1M, YTD, Volume, AvgVol10D, MA50, MA200, High52, Low52, Notes
   if (wlRows && wlRows.length > 1){
     const wl = [];
     for (const r of wlRows.slice(1)){
@@ -2556,7 +2721,8 @@ async function loadLive(){
         ma50:   num(r[9]),
         ma200:  num(r[10]),
         hi52:   num(r[11]),
-        lo52:   num(r[12])
+        lo52:   num(r[12]),
+        notes:  (r[13]||"").trim()
       });
     }
     if (wl.length) state.watchlist = wl;
@@ -3881,6 +4047,166 @@ function computeVolumeProfile(history, bins = 20){
 
 
 
+/* ============================================================
+   QUICK SEARCH (Cmd+K / Ctrl+K)
+   ============================================================ */
+const searchState = {
+  open: false,
+  results: [],
+  active: 0
+};
+
+function buildSearchIndex(){
+  const seen = new Set();
+  const out = [];
+  const add = (item) => {
+    const key = item.sym.toUpperCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push(item);
+  };
+  for (const r of state.indices){
+    add({ sym: r[1], name: r[2], price: r[3], d1: r[4], tag: "INDEX" });
+  }
+  for (const w of state.watchlist){
+    add({ sym: w.sym, name: w.name, price: w.price, d1: w.d1, tag: "WATCH" });
+  }
+  for (const s of state.israel.indices) add({ sym: s.sym, name: s.name, price: s.price, d1: s.d1, tag: "IL-IDX" });
+  for (const s of state.israel.stocks)  add({ sym: s.sym, name: s.name, price: s.price, d1: s.d1, tag: "IL" });
+  for (const s of state.stocks){
+    add({ sym: s.sym, name: s.name, price: s.price, d1: s.chg, tag: s.sector || "STOCK" });
+  }
+  return out;
+}
+
+function filterSearch(query){
+  const q = query.trim().toUpperCase();
+  if (!q) return buildSearchIndex().slice(0, 30);
+  const all = buildSearchIndex();
+  const startsWith = [], includes = [], inName = [];
+  for (const item of all){
+    const sym = item.sym.toUpperCase();
+    const name = (item.name || "").toUpperCase();
+    if (sym.startsWith(q)) startsWith.push(item);
+    else if (sym.includes(q)) includes.push(item);
+    else if (name.includes(q)) inName.push(item);
+  }
+  return [...startsWith, ...includes, ...inName].slice(0, 50);
+}
+
+function renderSearchResults(){
+  const container = document.getElementById("search-results");
+  if (!container) return;
+  const items = searchState.results;
+  if (items.length === 0){
+    container.innerHTML = `<div class="search-empty">No matches. Try a different symbol or name.</div>`;
+    return;
+  }
+  container.innerHTML = items.map((it, idx) => {
+    const pctCls = it.d1 != null ? (it.d1 >= 0 ? "pos" : "neg") : "";
+    const pctTxt = it.d1 != null ? `${it.d1 >= 0 ? "+" : ""}${it.d1.toFixed(2)}%` : "—";
+    return `<div class="search-result${idx === searchState.active ? ' active' : ''}" data-sym="${it.sym}" data-idx="${idx}">
+      <span class="search-result-sym">${it.sym}</span>
+      <span class="search-result-name">${it.name || "—"}</span>
+      <div class="search-result-meta">
+        <span class="search-result-tag">${it.tag}</span>
+        <span class="search-result-pct ${pctCls}">${pctTxt}</span>
+      </div>
+    </div>`;
+  }).join("");
+  const activeEl = container.querySelector(".search-result.active");
+  if (activeEl) activeEl.scrollIntoView({ block: "nearest" });
+}
+
+function openSearch(){
+  searchState.open = true;
+  searchState.results = filterSearch("");
+  searchState.active = 0;
+  document.getElementById("search-overlay").classList.add("show");
+  const input = document.getElementById("search-input");
+  if (input) {
+    input.value = "";
+    setTimeout(() => input.focus(), 50);
+  }
+  renderSearchResults();
+  lockBodyScroll();
+}
+function closeSearch(){
+  searchState.open = false;
+  document.getElementById("search-overlay").classList.remove("show");
+  unlockBodyScroll();
+}
+
+function selectSearchResult(idx){
+  const item = searchState.results[idx];
+  if (!item) return;
+  closeSearch();
+  setTimeout(() => openStockModal(item.sym), 50);
+}
+
+(function setupSearch(){
+  const overlay = document.getElementById("search-overlay");
+  const input = document.getElementById("search-input");
+  const btn = document.getElementById("search-btn");
+  const results = document.getElementById("search-results");
+  if (!overlay || !input || !btn || !results) return;
+
+  btn.onclick = () => openSearch();
+
+  document.addEventListener("keydown", (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      if (searchState.open) closeSearch();
+      else openSearch();
+      return;
+    }
+    if (!searchState.open) return;
+    if (e.key === "Escape") {
+      e.preventDefault();
+      closeSearch();
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      searchState.active = Math.min(searchState.active + 1, searchState.results.length - 1);
+      renderSearchResults();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      searchState.active = Math.max(searchState.active - 1, 0);
+      renderSearchResults();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      selectSearchResult(searchState.active);
+    }
+  });
+
+  input.addEventListener("input", () => {
+    searchState.results = filterSearch(input.value);
+    searchState.active = 0;
+    renderSearchResults();
+  });
+
+  results.addEventListener("click", (e) => {
+    const el = e.target.closest(".search-result");
+    if (!el) return;
+    const idx = parseInt(el.dataset.idx, 10);
+    if (!isNaN(idx)) selectSearchResult(idx);
+  });
+
+  results.addEventListener("mousemove", (e) => {
+    const el = e.target.closest(".search-result");
+    if (!el) return;
+    const idx = parseInt(el.dataset.idx, 10);
+    if (!isNaN(idx) && idx !== searchState.active) {
+      searchState.active = idx;
+      renderSearchResults();
+    }
+  });
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target.id === "search-overlay") closeSearch();
+  });
+})();
+
+
 // Aggregate everything we know about a symbol
 function getSymbolInfo(sym){
   if (!sym) return null;
@@ -3926,6 +4252,7 @@ function getSymbolInfo(sym){
     info.lo52 = info.lo52 ?? fromWl.lo52;
     info.vol = fromWl.vol; info.avgVol = fromWl.avgVol;
     info.ma50 = fromWl.ma50; info.ma200 = fromWl.ma200;
+    info.notes = fromWl.notes;
     info.source = info.source || "watchlist";
   }
   // history candidates: state.history (indices) or state.watchlistHistory (watchlist syms)
@@ -3973,6 +4300,18 @@ function openStockModal(sym){
     }
   }
   renderModalSparkline(sparkSvg, closes, info.d1);
+
+  // Notes section (only shown when symbol is in watchlist with notes)
+  const notesEl = document.getElementById("modal-notes");
+  const notesText = document.getElementById("modal-notes-text");
+  if (notesEl && notesText){
+    if (info.notes && info.notes.length > 0){
+      notesText.textContent = info.notes;
+      notesEl.style.display = "flex";
+    } else {
+      notesEl.style.display = "none";
+    }
+  }
 
   // 52-week range bar
   const rangeBar = document.getElementById("modal-range-bar");
@@ -4535,6 +4874,38 @@ function renderPortfolio(){
     p.allocPct = totalValue > 0 ? ((p.value ?? p.cost) / totalValue) * 100 : 0;
   }
 
+  // Portfolio vs SPY YTD benchmark
+  // Get SPY YTD from indices (column 8 = ytd in state.indices format)
+  const spyRow = state.indices.find(r => r[1] === "SPY");
+  const spyYtd = spyRow ? spyRow[8] : null;
+  // For portfolio "YTD-equivalent" return, use total P&L % as a proxy
+  // (we don't track purchase dates, so we can't compute true YTD)
+  const portfolioReturn = totalPnLPct;
+  let benchmarkBlock = "";
+  if (spyYtd != null && !isNaN(spyYtd)){
+    const diff = portfolioReturn - spyYtd;
+    const beating = diff >= 0;
+    benchmarkBlock = `
+      <div class="pf-benchmark ${beating ? 'beating' : 'lagging'}">
+        <div class="pf-bench-row">
+          <div class="pf-bench-cell">
+            <div class="pf-bench-lbl">Your portfolio</div>
+            <div class="pf-bench-val ${portfolioReturn >= 0 ? 'pos' : 'neg'}">${portfolioReturn >= 0 ? '+' : ''}${portfolioReturn.toFixed(2)}%</div>
+          </div>
+          <div class="pf-bench-vs">vs</div>
+          <div class="pf-bench-cell">
+            <div class="pf-bench-lbl">S&amp;P 500 (YTD)</div>
+            <div class="pf-bench-val ${spyYtd >= 0 ? 'pos' : 'neg'}">${spyYtd >= 0 ? '+' : ''}${spyYtd.toFixed(2)}%</div>
+          </div>
+          <div class="pf-bench-cell pf-bench-result">
+            <div class="pf-bench-lbl">${beating ? 'Beating market by' : 'Lagging market by'}</div>
+            <div class="pf-bench-val ${beating ? 'pos' : 'neg'}">${beating ? '+' : '−'}${Math.abs(diff).toFixed(2)}%</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   // Summary cards
   summaryWrap.innerHTML = `
     <div class="pf-summary">
@@ -4563,6 +4934,7 @@ function renderPortfolio(){
         <div class="pf-card-sub">P&amp;L % range</div>
       </div>
     </div>
+    ${benchmarkBlock}
   `;
 
   // Positions table
@@ -4836,15 +5208,51 @@ document.querySelectorAll("#wl-tf-btns .tf-btn").forEach(btn => {
 })();
 
 /* --- INIT --- */
+// Track next refresh time for countdown display
+state.nextRefreshAt = null;
+
+function fmtCountdown(secLeft){
+  if (secLeft == null || secLeft <= 0) return "Refreshing…";
+  if (secLeft < 60) return `Next refresh in ${Math.ceil(secLeft)}s`;
+  const m = Math.floor(secLeft / 60);
+  const s = Math.ceil(secLeft % 60);
+  if (s === 60) return `Next refresh in ${m + 1}m`;
+  return `Next refresh in ${m}m ${s}s`;
+}
+
+function tickCountdown(){
+  const el = document.getElementById("refresh-countdown");
+  if (!el) return;
+  if (!state.live){
+    el.textContent = state.consecutiveFails > 0 ? "Connection error · retrying" : "Loading data…";
+    el.style.color = state.consecutiveFails > 0 ? "var(--neg)" : "";
+    return;
+  }
+  if (state.nextRefreshAt == null){
+    el.textContent = "Live data";
+    el.style.color = "";
+    return;
+  }
+  const secLeft = (state.nextRefreshAt - Date.now()) / 1000;
+  el.textContent = fmtCountdown(secLeft);
+  // Highlight when imminent
+  if (secLeft <= 5 && secLeft > 0) el.style.color = "var(--accent-bright)";
+  else el.style.color = "";
+}
+setInterval(tickCountdown, 1000);
+
 // Smart refresh scheduler with exponential backoff on failures
 function scheduleNextLoad(){
-  // Calculate delay: base interval, doubled per consecutive failure (capped)
   const fails = state.consecutiveFails || 0;
   const baseSec = CONFIG.refreshSec;
   const backoffMultiplier = Math.min(Math.pow(2, fails), CONFIG.maxRefreshSec / baseSec);
   const delaySec = Math.min(baseSec * backoffMultiplier, CONFIG.maxRefreshSec);
   if (fails > 0) console.log(`[scheduler] next load in ${delaySec}s (${fails} consecutive fails)`);
+  state.nextRefreshAt = Date.now() + delaySec * 1000;
+  tickCountdown();
   setTimeout(async () => {
+    state.nextRefreshAt = null;
+    tickCountdown();
     await loadLive();
     scheduleNextLoad();
   }, delaySec * 1000);
