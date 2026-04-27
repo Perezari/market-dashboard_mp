@@ -195,6 +195,9 @@
   }
   *{box-sizing:border-box;margin:0;padding:0}
 
+  /* SVG icon system */
+  .icon-svg{display:inline-block;vertical-align:middle;flex-shrink:0;line-height:1}
+
   /* Custom scrollbars throughout the app */
   *{scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
   ::-webkit-scrollbar{width:8px;height:8px}
@@ -324,6 +327,8 @@
   .tab:hover{color:var(--text-bright);background:var(--bg-panel-hover)}
   .tab.active{background:var(--accent-soft);color:var(--accent-bright);font-weight:600}
   .tab-icon{margin-right:7px;font-size:13px;vertical-align:-1px;opacity:0.85}
+  .tab-icon-svg{margin-right:7px;vertical-align:-2px;opacity:0.85}
+  .tab.active .tab-icon-svg{opacity:1}
 
   /* tab badge */
   .tab-badge{display:none;margin-left:7px;padding:1px 6px;font-size:9px;
@@ -738,8 +743,6 @@
   .splash-step.failed{color:var(--neg)}
   .splash-step .icon{width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:11px}
   .splash-step.active .icon::before{content:"";display:block;width:10px;height:10px;border:1.5px solid var(--accent-bright);border-top-color:transparent;border-radius:50%;animation:splashSpin 0.7s linear infinite}
-  .splash-step.done .icon::before{content:"✓";color:var(--pos);font-weight:700}
-  .splash-step.failed .icon::before{content:"!";color:var(--neg);font-weight:700}
   .splash-step:not(.active):not(.done):not(.failed) .icon::before{content:"○";color:var(--text-dim);font-size:10px}
   @keyframes splashSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
@@ -1107,8 +1110,13 @@
     font-size:19px;line-height:1;display:block;
     transition:transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
+  .bn-tab .bn-icon-svg{
+    display:block;line-height:1;
+    transition:transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
   .bn-tab.active{color:var(--accent-bright);font-weight:600}
-  .bn-tab.active .bn-icon{transform:translateY(-1px) scale(1.08)}
+  .bn-tab.active .bn-icon,
+  .bn-tab.active .bn-icon-svg{transform:translateY(-1px) scale(1.08)}
   .bn-tab:not(.active):active{background:var(--bg-input)}
   .bn-badge{
     position:absolute;top:4px;right:calc(50% - 18px);
@@ -1146,7 +1154,7 @@
     .pill:has(span#hdr-date){display:none}
 
     /* === MAIN CONTAINER === */
-    .container{padding:10px 10px 16px}
+    .container{padding:10px 14px 16px}
 
     /* === STITLE === */
     .stitle{font-size:9.5px;gap:8px;margin:14px 0 8px}
@@ -1163,7 +1171,6 @@
 
     /* === MAIN GRID — single column === */
     .main-grid{grid-template-columns:1fr;gap:10px}
-    .panel{padding:14px 14px}
     .panel-head h2{font-size:13px}
     .panel-head{flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:10px}
     .panel-head > div{flex-wrap:wrap}
@@ -1309,14 +1316,18 @@
     .wl-kpi-val{font-size:18px}
 
     /* === Theme picker dropdown === */
-    .theme-menu{right:auto;left:0;width:160px}
+    .theme-menu{
+      right:0;left:auto;
+      width:auto;min-width:170px;max-width:calc(100vw - 24px);
+    }
   }
 
   /* Tighter still for very narrow phones */
   @media (max-width: 380px){
     .bn-tab{font-size:9px;padding:6px 1px 4px}
     .bn-tab .bn-icon{font-size:18px}
-    .container{padding:8px 8px 14px}
+    .bn-tab .bn-icon-svg{width:20px;height:20px}
+    .container{padding:8px 12px 14px}
     .index-cards{gap:6px}
     .idx-card{padding:9px 10px}
     .idx-card .price{font-size:16px}
@@ -1356,7 +1367,7 @@
         Click below — Google will create your own copy in seconds.
         <div class="setup-step-action">
           <a class="setup-btn" id="setup-copy-btn" target="_blank" rel="noopener">
-            <span>📋</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
             <span>Copy Template</span>
           </a>
         </div>
@@ -1448,8 +1459,9 @@
       <div class="pill"><span class="lbl">DATE</span><span id="hdr-date">—</span></div>
       <div class="pill"><span class="lbl">UPDATED</span><span id="hdr-updated">—</span></div>
       <div class="pill" id="hdr-mode">DEMO</div>
-      <button class="header-btn" id="search-btn" title="Search (⌘K)"><span class="icon">⌕</span></button>
-      <button class="header-btn" id="settings-btn" title="Change sheet"><span class="icon">⚙</span></button>
+      <button class="header-btn" id="search-btn" title="Search (⌘K)"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></button>
+      <button class="header-btn" id="open-sheet-btn" title="Open my Google Sheet" style="display:none"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg></button>
+      <button class="header-btn" id="settings-btn" title="Change sheet"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
       <div class="theme-picker" id="theme-picker">
         <button class="theme-btn" id="theme-btn">
           <span class="swatch-dot" id="theme-swatch"></span>
@@ -1465,7 +1477,7 @@
               <span style="background:#EF5350"></span>
             </div>
             <span>TradingView</span>
-            <span class="check">✓</span>
+            <span class="check"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
           </div>
           <div class="theme-option" data-theme="bloomberg">
             <div class="preview">
@@ -1475,7 +1487,7 @@
               <span style="background:#FF4757"></span>
             </div>
             <span>Bloomberg</span>
-            <span class="check">✓</span>
+            <span class="check"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
           </div>
           <div class="theme-option" data-theme="midnight">
             <div class="preview">
@@ -1485,7 +1497,7 @@
               <span style="background:#FF5C8A"></span>
             </div>
             <span>Midnight</span>
-            <span class="check">✓</span>
+            <span class="check"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
           </div>
           <div class="theme-option" data-theme="carbon">
             <div class="preview">
@@ -1495,7 +1507,7 @@
               <span style="background:#F85149"></span>
             </div>
             <span>Carbon</span>
-            <span class="check">✓</span>
+            <span class="check"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
           </div>
           <div class="theme-option" data-theme="light">
             <div class="preview">
@@ -1505,7 +1517,7 @@
               <span style="background:#E02424"></span>
             </div>
             <span>Light</span>
-            <span class="check">✓</span>
+            <span class="check"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg></span>
           </div>
         </div>
       </div>
@@ -1514,12 +1526,12 @@
 
   <!-- TABS -->
   <div class="tabs" id="tabs">
-    <button class="tab active" data-view="markets"><span class="tab-icon">▣</span>MARKETS</button>
-    <button class="tab" data-view="israel"><span class="tab-icon">✡</span>ISRAEL</button>
-    <button class="tab" data-view="watchlist"><span class="tab-icon">★</span>WATCHLIST</button>
-    <button class="tab" data-view="portfolio"><span class="tab-icon">◉</span>PORTFOLIO</button>
-    <button class="tab" data-view="scanner"><span class="tab-icon">⌕</span>SCANNER</button>
-    <button class="tab" data-view="alerts"><span class="tab-icon">⚑</span>ALERTS<span class="tab-badge" id="alerts-badge"></span></button>
+    <button class="tab active" data-view="markets"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="3" y1="20" x2="21" y2="20"></line></svg>MARKETS</button>
+    <button class="tab" data-view="israel"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M12 2 L3.5 17 L20.5 17 Z"></path><path d="M12 22 L3.5 7 L20.5 7 Z"></path></svg>ISRAEL</button>
+    <button class="tab" data-view="watchlist"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>WATCHLIST</button>
+    <button class="tab" data-view="portfolio"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>PORTFOLIO</button>
+    <button class="tab" data-view="scanner"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>SCANNER</button>
+    <button class="tab" data-view="alerts"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>ALERTS<span class="tab-badge" id="alerts-badge"></span></button>
   </div>
 
   <!-- ========== VIEW: MARKETS ========== -->
@@ -1821,7 +1833,7 @@
   <div class="view" id="view-alerts">
 
     <div class="alerts-info">
-      <div class="alerts-info-icon">⚑</div>
+      <div class="alerts-info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg></div>
       <div class="alerts-info-body">
         <div class="alerts-info-title">Alerts are managed in your Google Sheet</div>
         <div class="alerts-info-desc">Edit the <code>alerts</code> tab to add, remove, or modify triggers. Changes appear here on next refresh (~60s).</div>
@@ -1869,7 +1881,7 @@
 <div class="search-overlay" id="search-overlay">
   <div class="search-box" id="search-box">
     <div class="search-input-wrap">
-      <span class="search-icon">⌕</span>
+      <span class="search-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
       <input type="text" class="search-input" id="search-input"
         placeholder="Search symbol or company name…" autocomplete="off" spellcheck="false">
       <span class="search-kbd">ESC</span>
@@ -1889,27 +1901,27 @@
 <nav class="bottom-nav" id="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bn-tab active" data-view="markets">
-      <span class="bn-icon">▣</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="3" y1="20" x2="21" y2="20"></line></svg>
       <span>Markets</span>
     </button>
     <button class="bn-tab" data-view="israel">
-      <span class="bn-icon">✡</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><path d="M12 2 L3.5 17 L20.5 17 Z"></path><path d="M12 22 L3.5 7 L20.5 7 Z"></path></svg>
       <span>Israel</span>
     </button>
     <button class="bn-tab" data-view="watchlist">
-      <span class="bn-icon">★</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
       <span>Watch</span>
     </button>
     <button class="bn-tab" data-view="portfolio">
-      <span class="bn-icon">◉</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
       <span>Portfolio</span>
     </button>
     <button class="bn-tab" data-view="scanner">
-      <span class="bn-icon">⌕</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       <span>Scanner</span>
     </button>
     <button class="bn-tab" data-view="alerts">
-      <span class="bn-icon">⚑</span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
       <span>Alerts</span>
       <span class="bn-badge" id="bn-alerts-badge"></span>
     </button>
@@ -1927,7 +1939,7 @@
         <div class="modal-sym" id="modal-sym">—</div>
         <div class="modal-name" id="modal-name">—</div>
       </div>
-      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <button class="modal-close" id="modal-close" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
     </div>
     <div class="modal-price-row">
       <div class="modal-price" id="modal-price">—</div>
@@ -1969,6 +1981,35 @@
 
 <script>
 /* ============================================================
+   ICON SYSTEM (Lucide-style inline SVG)
+   ============================================================ */
+const ICONS = {
+  // Source: Lucide (lucide.dev) — MIT licensed
+  copy:        '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>',
+  externalLink:'<path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>',
+  fileText:    '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line>',
+  settings:    '<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path><circle cx="12" cy="12" r="3"></circle>',
+  star:        '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>',
+  // Star of David — two overlapping triangles forming a proper hexagram
+  starOfDavid: '<path d="M12 2 L3.5 17 L20.5 17 Z"></path><path d="M12 22 L3.5 7 L20.5 7 Z"></path>',
+  flag:        '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line>',
+  x:           '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>',
+  check:       '<polyline points="20 6 9 17 4 12"></polyline>',
+  // Markets: bar-chart-2 (vertical bars)
+  barChart:    '<line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line><line x1="3" y1="20" x2="21" y2="20"></line>',
+  // Portfolio: pie-chart
+  pieChart:    '<path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path>',
+  // Scanner: search
+  search:      '<circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>'
+};
+
+function svgIcon(name, size = 16, strokeWidth = 2){
+  const path = ICONS[name];
+  if (!path) return '';
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${strokeWidth}" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true">${path}</svg>`;
+}
+
+/* ============================================================
    SPLASH LOADER
    ============================================================ */
 const SPLASH_STEPS = ["indices","history","stocks","israel","watchlist","watchlist-history","portfolio","alerts"];
@@ -1981,6 +2022,17 @@ function setSplashStep(step, status){
   if (!el) return;
   el.classList.remove("active","done","failed");
   el.classList.add(status);
+  // Replace icon with appropriate SVG/spinner
+  const iconEl = el.querySelector(".icon");
+  if (iconEl){
+    if (status === "done"){
+      iconEl.innerHTML = svgIcon('check', 12, 2.8);
+    } else if (status === "failed"){
+      iconEl.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+    } else if (status === "active"){
+      iconEl.innerHTML = ""; // spinner is drawn via CSS ::before
+    }
+  }
   // update progress bar based on done/failed steps
   const total = SPLASH_STEPS.length;
   let completed = 0;
@@ -2151,6 +2203,21 @@ function extractSheetId(input){
   const btn = document.getElementById("settings-btn");
   if (btn) btn.onclick = () => showSetupScreen();
 })();
+
+// Open Sheet button — shown only when a sheet is connected
+// (Initialized later, after CONFIG is set)
+function initOpenSheetBtn(){
+  const btn = document.getElementById("open-sheet-btn");
+  if (!btn) return;
+  if (CONFIG.sheetId) {
+    btn.style.display = "";
+    btn.onclick = () => {
+      window.open(`https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/edit`, "_blank", "noopener");
+    };
+  } else {
+    btn.style.display = "none";
+  }
+}
 
 
 const THEMES = {
@@ -4678,7 +4745,7 @@ function showToast(a){
   const condLabel = formatAlertCond(a.cond, a.val);
   const toast = document.createElement("div");
   toast.className = "toast";
-  toast.innerHTML = `<div class="icon">⚑</div><div class="body"><div class="title">Alert Triggered</div><div class="msg">${a.sym} ${condLabel}${a.note ? ' · ' + a.note : ''}</div></div>`;
+  toast.innerHTML = `<div class="icon">${svgIcon('flag', 18)}</div><div class="body"><div class="title">Alert Triggered</div><div class="msg">${a.sym} ${condLabel}${a.note ? ' · ' + a.note : ''}</div></div>`;
   toast.onclick = () => toast.remove();
   stack.appendChild(toast);
   try {
@@ -5325,6 +5392,9 @@ document.querySelectorAll("#wl-tf-btns .tf-btn").forEach(btn => {
 })();
 
 /* --- INIT --- */
+// Initialize header buttons that depend on CONFIG
+initOpenSheetBtn();
+
 // Track next refresh time for countdown display
 state.nextRefreshAt = null;
 
