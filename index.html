@@ -491,7 +491,64 @@
     font-family:'Inter',sans-serif;letter-spacing:0.02em}
 
 
-  /* === QUICK SEARCH (Cmd+K) === */
+  /* === TIP JAR — floating support button === */
+  .tip-jar{
+    position:fixed;bottom:20px;right:20px;z-index:400;
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 16px;border-radius:24px;
+    background:linear-gradient(135deg, #6B5BFF 0%, #9D7BFF 100%);
+    color:#fff;
+    font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
+    text-decoration:none;
+    box-shadow:0 4px 14px rgba(107, 91, 255, 0.32),
+               0 1px 3px rgba(0, 0, 0, 0.15);
+    cursor:pointer;
+    transition:transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+               box-shadow 0.2s, background 0.2s;
+    -webkit-user-select:none;user-select:none;
+    border:1px solid rgba(255,255,255,0.18);
+  }
+  .tip-jar:hover{
+    transform:translateY(-2px) scale(1.04);
+    box-shadow:0 8px 22px rgba(107, 91, 255, 0.45),
+               0 2px 5px rgba(0, 0, 0, 0.18);
+    background:linear-gradient(135deg, #7969FF 0%, #AB8AFF 100%);
+  }
+  .tip-jar:active{transform:translateY(0) scale(0.98)}
+  .tip-jar-icon{
+    font-size:16px;line-height:1;display:inline-block;
+    transform:translateY(-1px);
+  }
+  .tip-jar-label{line-height:1;letter-spacing:-0.01em}
+  .tip-jar-arrow{
+    opacity:0.85;transform:translateY(0.5px);
+    transition:transform 0.2s;
+  }
+  .tip-jar:hover .tip-jar-arrow{transform:translate(1px, -1px)}
+
+  /* Heart-beat shimmer once on first load to attract a quick glance, then quiet */
+  @keyframes tipJarPulse{
+    0%, 100%{box-shadow:0 4px 14px rgba(107, 91, 255, 0.32), 0 1px 3px rgba(0,0,0,0.15)}
+    50%     {box-shadow:0 4px 14px rgba(107, 91, 255, 0.55), 0 1px 3px rgba(0,0,0,0.15), 0 0 0 6px rgba(107, 91, 255, 0.10)}
+  }
+  .tip-jar{animation:tipJarPulse 2.4s ease-in-out 1.5s 2}  /* pulse twice, then stop */
+
+  /* Footer text variant — mobile + as additional discoverability */
+  .footer-tip-link{
+    color:var(--accent-bright) !important;
+    text-decoration:none;
+    font-weight:500;
+    transition:opacity 0.15s;
+  }
+  .footer-tip-link:hover{opacity:0.8;text-decoration:underline}
+
+  /* Hide floating button on mobile (footer link is enough, doesn't clash w/ bottom nav) */
+  @media (max-width: 768px){
+    .tip-jar{display:none}
+  }
+
+  /* When modal is open, hide tip jar so it doesn't sit over modal backdrop */
+  body.no-scroll .tip-jar{opacity:0;pointer-events:none}
   .search-overlay{
     position:fixed;inset:0;z-index:1200;
     display:none;
@@ -2097,10 +2154,22 @@
       <span id="refresh-countdown" title="Time until next data refresh">Next refresh in —</span>
       <span class="sep">·</span>
       <span>Not investment advice</span>
+      <span class="sep">·</span>
+      <a href="https://links.payboxapp.com/A2Lh6pF5F2b" target="_blank" rel="noopener noreferrer" class="footer-tip-link" data-i18n="Buy me a coffee ☕">Buy me a coffee ☕</a>
     </div>
   </div>
 
 </div>
+
+<!-- TIP JAR — floating support button (desktop only) -->
+<a href="https://links.payboxapp.com/A2Lh6pF5F2b" target="_blank" rel="noopener noreferrer"
+   class="tip-jar" id="tip-jar" title="Support this project · PayBox">
+  <span class="tip-jar-icon">☕</span>
+  <span class="tip-jar-label">Support</span>
+  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="tip-jar-arrow" aria-hidden="true">
+    <path d="M7 17 17 7"></path><path d="M7 7h10v10"></path>
+  </svg>
+</a>
 
 <!-- QUICK SEARCH OVERLAY (Cmd+K) -->
 <div class="search-overlay" id="search-overlay">
@@ -3112,7 +3181,8 @@ const STRINGS = {
   "Source: Google Finance via Sheets": "מקור: Google Finance דרך Sheets",
   "~20 min delay": "השהיה של ~20 דקות",
   "Not investment advice": "אינו ייעוץ השקעות",
-  "Next refresh in": "רענון הבא בעוד"
+  "Next refresh in": "רענון הבא בעוד",
+  "Buy me a coffee ☕": "קנו לי קפה ☕"
 };
 
 function t(key){
