@@ -1009,6 +1009,17 @@
   .wl-cross.golden{background:var(--warn-soft);color:var(--warn);border:1px solid rgba(255,152,0,0.35)}
   .wl-cross.death{background:var(--neg-soft);color:var(--neg);border:1px solid rgba(239,83,80,0.3)}
   .wl-cross.neutral{background:rgba(120,123,134,0.10);color:var(--text-muted);border:1px solid rgba(120,123,134,0.2)}
+
+  /* Symbol cell with optional note icon */
+  .wl-sym-wrap{display:inline-flex;align-items:center;gap:5px;line-height:1}
+  .wl-note-icon{
+    font-size:10px;line-height:1;
+    opacity:0.55;cursor:help;
+    transition:opacity 0.15s,transform 0.15s;
+    -webkit-user-select:none;user-select:none;
+    filter:saturate(0.85);
+  }
+  .wl-note-icon:hover{opacity:1;transform:scale(1.15)}
   .wl-vol{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;
     font-family:'Inter',sans-serif;font-weight:500}
   .wl-vol.high{background:var(--pos-soft);color:var(--pos);border:1px solid rgba(38,166,154,0.3)}
@@ -1736,7 +1747,9 @@
           <th>Market Value</th>
           <th>P&amp;L $</th>
           <th>P&amp;L %</th>
+          <th>Annual %</th>
           <th>1D %</th>
+          <th>Held</th>
           <th>Allocation</th>
         </tr></thead>
         <tbody></tbody>
@@ -2850,16 +2863,20 @@ async function loadLive(){
   }
 
   // --- parse portfolio tab ---
-  // Columns: Symbol, Shares, AvgCost, Notes
+  // Columns: Symbol, Shares, AvgCost, PurchaseDate, Notes
   if (portfolioRows && portfolioRows.length > 1){
     const positions = [];
+    // Detect date format from purchase date column
+    const isDDMM_pf = detectDDMM(portfolioRows, 3, 1);
     for (const r of portfolioRows.slice(1)){
       const sym = (r[0]||"").toString().trim().toUpperCase();
       const shares = num(r[1]);
       const avgCost = num(r[2]);
-      const notes = (r[3]||"").toString().trim();
+      const dateStr = (r[3]||"").toString().trim();
+      const notes = (r[4]||"").toString().trim();
       if (!sym || shares == null || avgCost == null || shares <= 0) continue;
-      positions.push({ sym, shares, avgCost, notes });
+      const purchaseDate = dateStr ? parseHistDate(dateStr, isDDMM_pf) : null;
+      positions.push({ sym, shares, avgCost, purchaseDate, notes });
     }
     state.portfolio = positions;
   } else if (portfolioRows !== null) {
@@ -3768,8 +3785,12 @@ function renderWatchlist(){
       return `<td class="${cls} ${tfCls}">${Math.abs(v).toFixed(2)}%</td>`;
     };
 
+    const noteIcon = (s.notes && s.notes.trim().length > 0)
+      ? `<span class="wl-note-icon" data-note="${s.notes.replace(/"/g, '&quot;')}" title="${s.notes.replace(/"/g, '&quot;')}">📝</span>`
+      : '';
+
     return `<tr data-sym="${s.sym}">
-      <td class="sym clickable-sym" data-sym="${s.sym}">${s.sym}</td>
+      <td class="sym clickable-sym" data-sym="${s.sym}"><span class="wl-sym-wrap">${s.sym}${noteIcon}</span></td>
       <td class="name">${s.name || ""}</td>
       <td class="price">${fmt2(s.price)}</td>
       ${pcCellTf(s.d1, "1D")}
@@ -4770,6 +4791,44 @@ function renderAlerts(){
    PORTFOLIO
    ============================================================ */
 
+// Compute days between a purchase date and today
+function daysSince(purchaseDate){
+  if (!purchaseDate) return null;
+  const ms = Date.now() - purchaseDate.getTime();
+  return Math.max(0, Math.floor(ms / (1000 * 60 * 60 * 24)));
+}
+
+// Compute annualized return (IRR-equivalent for single-cashflow):
+// IRR = (currentValue / cost) ^ (365/days) - 1
+function annualizedReturn(cost, currentValue, days){
+  if (!cost || cost <= 0 || !currentValue || currentValue <= 0 || !days || days < 1) return null;
+  const totalReturn = currentValue / cost;
+  if (totalReturn <= 0) return null;
+  const years = days / 365;
+  if (years < 0.02) return null; // less than ~7 days, IRR is unstable
+  const annual = Math.pow(totalReturn, 1 / years) - 1;
+  return annual * 100; // as percentage
+}
+
+// Format holding period in human terms
+function fmtHolding(days){
+  if (days == null) return "—";
+  if (days < 1) return "today";
+  if (days === 1) return "1 day";
+  if (days < 30) return `${days} days`;
+  if (days < 365){
+    const m = Math.floor(days / 30);
+    const d = days - m * 30;
+    return d > 0 ? `${m}mo ${d}d` : `${m}mo`;
+  }
+  const y = Math.floor(days / 365);
+  const remDays = days - y * 365;
+  const m = Math.floor(remDays / 30);
+  if (y === 1 && m === 0) return "1 year";
+  if (m === 0) return `${y}y`;
+  return `${y}y ${m}mo`;
+}
+
 // Resolve current price for a portfolio position from any data source
 function getPortfolioPrice(sym){
   const fromStocks = state.stocks.find(s => s.sym === sym);
@@ -4852,7 +4911,13 @@ function renderPortfolio(){
     const pnl = value != null ? value - cost : null;
     const pnlPct = (value != null && cost > 0) ? (pnl / cost) * 100 : null;
     const dayChange = (price != null && d1 != null) ? value * (d1 / 100) : null;
-    return { ...p, name, sector, price, d1, cost, value, pnl, pnlPct, dayChange, color: DONUT_PALETTE[i % DONUT_PALETTE.length] };
+    const heldDays = daysSince(p.purchaseDate);
+    const annualReturn = (value != null && heldDays != null)
+      ? annualizedReturn(cost, value, heldDays)
+      : null;
+    return { ...p, name, sector, price, d1, cost, value, pnl, pnlPct, dayChange,
+             heldDays, annualReturn,
+             color: DONUT_PALETTE[i % DONUT_PALETTE.length] };
   });
 
   if (meta) meta.textContent = `${positions.length} POSITION${positions.length === 1 ? '' : 'S'}`;
@@ -4864,6 +4929,24 @@ function renderPortfolio(){
   const totalPnLPct = totalCost > 0 ? (totalPnL / totalCost) * 100 : 0;
   const totalDayChange = positions.reduce((s, p) => s + (p.dayChange ?? 0), 0);
   const totalDayPct = totalValue > 0 ? (totalDayChange / (totalValue - totalDayChange)) * 100 : 0;
+
+  // Weighted average IRR across all dated positions
+  // Weight by cost basis to be most accurate; positions without dates excluded
+  let weightedIrrSum = 0, weightedIrrTotal = 0;
+  let avgHoldingDays = null, holdingDaysCount = 0;
+  for (const p of positions){
+    if (p.annualReturn != null && p.cost > 0){
+      weightedIrrSum += p.annualReturn * p.cost;
+      weightedIrrTotal += p.cost;
+    }
+    if (p.heldDays != null){
+      avgHoldingDays = (avgHoldingDays ?? 0) + p.heldDays;
+      holdingDaysCount++;
+    }
+  }
+  const portfolioIrr = weightedIrrTotal > 0 ? weightedIrrSum / weightedIrrTotal : null;
+  const avgHolding = holdingDaysCount > 0 ? Math.floor(avgHoldingDays / holdingDaysCount) : null;
+  const positionsWithDates = positions.filter(p => p.purchaseDate).length;
 
   // Best/worst by P&L %
   const bestP = positions.reduce((a, b) => ((b.pnlPct ?? -Infinity) > (a.pnlPct ?? -Infinity) ? b : a), positions[0]);
@@ -4906,6 +4989,26 @@ function renderPortfolio(){
     `;
   }
 
+  // Build Annualized Return card content
+  let annualCardContent;
+  if (portfolioIrr != null && positionsWithDates > 0){
+    const irrCls = portfolioIrr >= 0 ? "pos" : "neg";
+    const subText = avgHolding != null
+      ? `Avg held: ${fmtHolding(avgHolding)}${positionsWithDates < positions.length ? ` · ${positionsWithDates}/${positions.length} dated` : ''}`
+      : "";
+    annualCardContent = `
+      <div class="pf-card-lbl">Annualized Return</div>
+      <div class="pf-card-val ${irrCls}">${portfolioIrr >= 0 ? '+' : ''}${portfolioIrr.toFixed(2)}%</div>
+      <div class="pf-card-sub">${subText}</div>
+    `;
+  } else {
+    annualCardContent = `
+      <div class="pf-card-lbl">Annualized Return</div>
+      <div class="pf-card-val" style="font-size:14px;color:var(--text-muted)">—</div>
+      <div class="pf-card-sub">Add <code style="background:var(--bg-input);padding:1px 5px;border-radius:3px;font-size:10px">PurchaseDate</code> to track</div>
+    `;
+  }
+
   // Summary cards
   summaryWrap.innerHTML = `
     <div class="pf-summary">
@@ -4924,14 +5027,8 @@ function renderPortfolio(){
         <div class="pf-card-val ${totalDayChange >= 0 ? 'pos' : 'neg'}">${totalDayChange >= 0 ? '+' : '−'}$${Math.abs(totalDayChange).toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
         <div class="pf-card-sub ${totalDayPct >= 0 ? 'pos' : 'neg'}" style="color:${totalDayPct >= 0 ? 'var(--pos)' : 'var(--neg)'}">${totalDayPct >= 0 ? '+' : ''}${totalDayPct.toFixed(2)}%</div>
       </div>
-      <div class="pf-card green">
-        <div class="pf-card-lbl">Best / Worst</div>
-        <div class="pf-card-val" style="font-size:14px;line-height:1.3">
-          <span class="pos">${bestP?.sym || '—'}</span> ${bestP?.pnlPct != null ? `<span style="color:var(--pos);font-size:11px">+${bestP.pnlPct.toFixed(1)}%</span>` : ''}
-          <br>
-          <span class="neg">${worstP?.sym || '—'}</span> ${worstP?.pnlPct != null ? `<span style="color:var(--neg);font-size:11px">${worstP.pnlPct.toFixed(1)}%</span>` : ''}
-        </div>
-        <div class="pf-card-sub">P&amp;L % range</div>
+      <div class="pf-card ${portfolioIrr != null ? (portfolioIrr >= 0 ? 'green' : 'red') : 'blue'}">
+        ${annualCardContent}
       </div>
     </div>
     ${benchmarkBlock}
@@ -4943,8 +5040,18 @@ function renderPortfolio(){
     const pnlCls = (p.pnl ?? 0) >= 0 ? "pos" : "neg";
     const pnlPctCls = (p.pnlPct ?? 0) >= 0 ? "pos" : "neg";
     const d1Cls = (p.d1 ?? 0) >= 0 ? "pos" : "neg";
+    const annCls = p.annualReturn != null ? (p.annualReturn >= 0 ? "pos" : "neg") : "";
+    const annTxt = p.annualReturn != null
+      ? `${p.annualReturn >= 0 ? '+' : ''}${p.annualReturn.toFixed(1)}%`
+      : '<span style="color:var(--text-muted)">—</span>';
+    const heldTxt = p.heldDays != null
+      ? `<span style="color:var(--text-muted)">${fmtHolding(p.heldDays)}</span>`
+      : '<span style="color:var(--text-muted)">—</span>';
+    const noteIcon = (p.notes && p.notes.trim().length > 0)
+      ? `<span class="wl-note-icon" title="${p.notes.replace(/"/g, '&quot;')}">📝</span>`
+      : '';
     return `<tr>
-      <td class="sym clickable-sym" data-sym="${p.sym}">${p.sym}</td>
+      <td class="sym clickable-sym" data-sym="${p.sym}"><span class="wl-sym-wrap">${p.sym}${noteIcon}</span></td>
       <td class="name">${p.name || "—"}</td>
       <td>${p.shares.toLocaleString()}</td>
       <td>$${p.avgCost.toFixed(2)}</td>
@@ -4952,7 +5059,9 @@ function renderPortfolio(){
       <td>${p.value != null ? '$'+p.value.toLocaleString(undefined,{maximumFractionDigits:0}) : '—'}</td>
       <td class="${pnlCls}">${p.pnl != null ? (p.pnl>=0?'+':'−')+'$'+Math.abs(p.pnl).toLocaleString(undefined,{maximumFractionDigits:0}) : '—'}</td>
       <td class="${pnlPctCls}">${p.pnlPct != null ? (p.pnlPct>=0?'+':'')+p.pnlPct.toFixed(2)+'%' : '—'}</td>
+      <td class="${annCls}">${annTxt}</td>
       <td class="${d1Cls}">${p.d1 != null ? (p.d1>=0?'+':'')+p.d1.toFixed(2)+'%' : '—'}</td>
+      <td>${heldTxt}</td>
       <td>
         <span class="pf-alloc-bar"><span style="width:${p.allocPct.toFixed(1)}%;background:${p.color}"></span></span>
         <span style="color:var(--text-muted);font-size:11px">${p.allocPct.toFixed(1)}%</span>
@@ -4962,12 +5071,20 @@ function renderPortfolio(){
 
   // Footer total row
   if (tfoot){
+    const irrCellTxt = portfolioIrr != null
+      ? `<span class="${portfolioIrr>=0?'pos':'neg'}">${portfolioIrr>=0?'+':''}${portfolioIrr.toFixed(2)}%</span>`
+      : '<span style="color:var(--text-muted)">—</span>';
+    const avgHoldingTxt = avgHolding != null
+      ? `<span style="color:var(--text-muted)">${fmtHolding(avgHolding)} avg</span>`
+      : '—';
     tfoot.innerHTML = `<tr>
       <td colspan="5">TOTAL</td>
       <td>$${totalValue.toLocaleString(undefined,{maximumFractionDigits:0})}</td>
       <td class="${totalPnL>=0?'pos':'neg'}">${totalPnL>=0?'+':'−'}$${Math.abs(totalPnL).toLocaleString(undefined,{maximumFractionDigits:0})}</td>
       <td class="${totalPnLPct>=0?'pos':'neg'}">${totalPnLPct>=0?'+':''}${totalPnLPct.toFixed(2)}%</td>
+      <td>${irrCellTxt}</td>
       <td class="${totalDayPct>=0?'pos':'neg'}">${totalDayPct>=0?'+':''}${totalDayPct.toFixed(2)}%</td>
+      <td>${avgHoldingTxt}</td>
       <td>100.0%</td>
     </tr>`;
   }
