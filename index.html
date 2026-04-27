@@ -997,6 +997,15 @@
   .toast .body .title{font-weight:600;color:var(--neg);font-size:11px;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:3px}
   .toast .body .msg{color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px}
   @keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+  /* Neutral info toast (used by settings changes) */
+  .toast.toast-info{
+    border-color:var(--accent);border-left:3px solid var(--accent);
+  }
+  .toast.toast-info .body .msg{
+    font-family:'Inter',sans-serif;font-size:13px;color:var(--text-bright);font-weight:500;
+  }
+
   .view{display:none;flex-direction:column;gap:18px}
   .view.active{display:flex}
 
@@ -2502,6 +2511,30 @@ function syncSettingsToUI(){
     }
   });
 
+  // === CONNECTION SECTION WIRING ===
+
+  // Open Sheet button
+  const openSheetBtn = document.getElementById("settings-open-sheet");
+  if (openSheetBtn){
+    openSheetBtn.addEventListener("click", () => {
+      if (!CONFIG.sheetId){
+        showInfoToast(t("No sheet connected"));
+        return;
+      }
+      window.open(`https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/edit`, "_blank", "noopener");
+    });
+  }
+
+  // Change Sheet button — closes Settings and opens Setup Screen
+  const changeSheetBtn = document.getElementById("settings-change-sheet");
+  if (changeSheetBtn){
+    changeSheetBtn.addEventListener("click", () => {
+      closeSettingsModal();
+      // Small delay to allow modal close animation, then open setup
+      setTimeout(() => showSetupScreen(), 200);
+    });
+  }
+
   // === DISPLAY SECTION WIRING ===
 
   // Theme select
@@ -2518,7 +2551,7 @@ function syncSettingsToUI(){
     dvSelect.addEventListener("change", () => {
       PREFS.defaultView = dvSelect.value;
       savePrefs(PREFS);
-      showToast(t("Default View") + ": " + t(dvSelect.options[dvSelect.selectedIndex].text), "info");
+      showInfoToast(t("Default View") + ": " + t(dvSelect.options[dvSelect.selectedIndex].text));
     });
   }
 
@@ -2554,6 +2587,34 @@ function syncSettingsToUI(){
       if (typeof renderAll === "function" && state && state.indices) renderAll();
     });
   });
+
+  // === ABOUT SECTION WIRING ===
+
+  // Reset all settings
+  const resetBtn = document.getElementById("settings-reset");
+  if (resetBtn){
+    resetBtn.addEventListener("click", () => {
+      const confirmed = confirm(
+        t("Reset all settings?") + "\n\n" +
+        t("This will reset currency, language, theme, default view, and clear settings cache. Your sheet connection will be kept.")
+      );
+      if (!confirmed) return;
+
+      // Reset preferences to defaults
+      try { localStorage.removeItem(PREFS_KEY); } catch(e){}
+      try { localStorage.removeItem("mt-theme"); } catch(e){}
+      // Note: we DO NOT remove "mt-sheet-id" — user keeps their sheet connection
+
+      // Apply defaults immediately (without page reload) for smoother UX
+      Object.assign(PREFS, DEFAULT_PREFS);
+      applyTheme("tradingview");
+      applyTranslations();
+      syncSettingsToUI();
+      if (typeof renderAll === "function" && state && state.indices) renderAll();
+
+      showInfoToast(t("Settings reset to defaults"));
+    });
+  }
 })();
 
 /* Apply translations to all data-i18n elements (called on language change) */
@@ -2564,17 +2625,18 @@ function applyTranslations(){
   });
 }
 
-/* Lightweight toast helper (used by settings) */
-function showToast(message, type){
-  // Reuse the alerts toast container if available
-  const container = document.getElementById("toast-container");
-  if (!container){ console.log("[toast]", message); return; }
+/* Lightweight info toast helper for settings (separate from alerts toast) */
+function showInfoToast(message){
+  const stack = document.getElementById("toast-stack");
+  if (!stack){ console.log("[toast]", message); return; }
   const toast = document.createElement("div");
-  toast.className = "toast" + (type ? " toast-" + type : "");
+  toast.className = "toast toast-info";
   toast.innerHTML = `<div class="body"><div class="msg">${message}</div></div>`;
-  container.appendChild(toast);
+  toast.onclick = () => toast.remove();
+  stack.appendChild(toast);
   setTimeout(() => {
-    toast.classList.add("hide");
+    toast.style.opacity = "0";
+    toast.style.transition = "opacity 0.3s";
     setTimeout(() => toast.remove(), 300);
   }, 2200);
 }
@@ -2867,8 +2929,12 @@ const STRINGS = {
   "Change Sheet": "החלף גיליון",
   "Open Sheet": "פתח גיליון",
   "Reset all settings": "אפס את כל ההגדרות",
+  "Reset all settings?": "לאפס את כל ההגדרות?",
+  "This will reset currency, language, theme, default view, and clear settings cache. Your sheet connection will be kept.": "פעולה זו תאפס את המטבע, השפה, ערכת הנושא, תצוגת ברירת המחדל, ותנקה את ה-cache של ההגדרות. החיבור לגיליון יישמר.",
+  "Settings reset to defaults": "ההגדרות אופסו לברירת המחדל",
   "English": "אנגלית",
   "Hebrew": "עברית",
+  "No sheet connected": "אין גיליון מחובר",
 
   // Footer
   "Source: Google Finance via Sheets": "מקור: Google Finance דרך Sheets",
