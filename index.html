@@ -1424,7 +1424,7 @@
     .brand .logo{width:30px;height:30px;font-size:14px;flex-shrink:0}
     .brand h1{font-size:14px;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .brand .sub{display:none}
-    .header-right{gap:6px;flex-wrap:wrap;justify-content:flex-end;width:100%}
+    .header-right{gap:6px;flex-wrap:wrap;justify-content:width:100%}
     .pill{padding:4px 8px;font-size:9.5px}
     .pill .lbl{display:none}
     .header-btn{padding:4px 7px;font-size:10px}
@@ -1839,7 +1839,7 @@
     <!-- Performance chart -->
     <div class="panel" style="position:relative">
       <div class="perf-head">
-        <h2>Normalized Index Performance</h2>
+        <h2>Index Performance</h2>
         <div class="tf-btns" id="tf-btns">
           <button class="tf-btn" data-tf="1W">1W</button>
           <button class="tf-btn" data-tf="1M">1M</button>
@@ -1876,7 +1876,7 @@
     <span class="dot" style="background:var(--lime);box-shadow:0 0 8px var(--lime)"></span>
     <span>HEATMAP · TOP HOLDINGS</span>
     <span class="line"></span>
-    <span class="tag">SIZE = MARKET CAP · COLOR = 1D CHANGE</span>
+    <span class="tag">SIZE = MARKET CAP</span>
   </div>
   <div class="panel">
     <svg class="heatmap-svg" id="heatmap" viewBox="0 0 1600 720" preserveAspectRatio="xMidYMid meet"></svg>
@@ -2147,14 +2147,9 @@
       <span class="item"><span class="swatch" style="background:var(--accent)"></span>Symbol</span>
     </div>
     <div class="source">
-      <span>Source: Google Finance via Sheets</span>
-      <span class="sep">·</span>
-      <span>~20 min delay</span>
-      <span class="sep">·</span>
       <span id="refresh-countdown" title="Time until next data refresh">Next refresh in —</span>
-      <span class="sep">·</span>
-      <span>Not investment advice</span>
-      <span class="sep">·</span>
+    </div>
+	<div class="source">
       <a href="https://links.payboxapp.com/A2Lh6pF5F2b" target="_blank" rel="noopener noreferrer" class="footer-tip-link" data-i18n="Buy me a coffee ☕">Buy me a coffee ☕</a>
     </div>
   </div>
