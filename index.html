@@ -347,7 +347,7 @@
   .setup-screen{position:fixed;inset:0;background:var(--bg-app);z-index:9000;
     display:none;align-items:center;justify-content:center;padding:20px;overflow:auto}
   .setup-screen.show{display:flex}
-  .setup-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;
+  .setup-card{background:var(--bg-app);border:1px solid var(--border);border-radius:12px;
     width:min(540px,100%);padding:28px 32px;box-shadow:var(--shadow);
     display:flex;flex-direction:column;gap:18px}
   .setup-brand{display:flex;align-items:center;gap:12px;margin-bottom:4px}
@@ -860,7 +860,7 @@
   .modal-backdrop.show{display:flex}
   @keyframes modalFadeIn{from{opacity:0}to{opacity:1}}
 
-  .modal{background:var(--bg-panel);border:1px solid var(--border);
+  .modal{background:var(--bg-app);border:1px solid var(--border);
     border-radius:12px;width:min(640px,calc(100vw - 40px));max-height:calc(100vh - 60px);
     overflow:auto;box-shadow:0 12px 48px rgba(0,0,0,0.5);
     animation:modalSlideIn 0.25s ease-out;display:flex;flex-direction:column;
