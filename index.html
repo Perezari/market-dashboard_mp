@@ -1139,7 +1139,7 @@
   /* === TRADING JOURNAL === */
   .journal-info{display:flex;gap:14px;padding:14px 18px;background:var(--bg-panel);
     border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;
-    align-items:flex-start;margin-bottom:14px}
+    align-items:flex-start}
   .journal-info-icon{color:var(--accent-bright);line-height:1;margin-top:2px;flex-shrink:0}
   .journal-info-body{flex:1;display:flex;flex-direction:column;gap:6px}
   .journal-info-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--text-bright)}
@@ -1155,7 +1155,7 @@
     padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10.5px}
 
   /* KPI summary cards */
-  .journal-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+  .journal-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
   .jrn-kpi{padding:14px 16px;background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;
     display:flex;flex-direction:column;gap:4px;min-width:0}
   .jrn-kpi-lbl{font-family:'Inter',sans-serif;font-size:10.5px;color:var(--text-muted);
@@ -1168,7 +1168,7 @@
   /* Filter chip bar + search */
   .journal-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;
     flex-wrap:wrap;margin:10px 0 14px}
-  .journal-filters{display:flex;gap:6px;flex-wrap:wrap}
+  .journal-filters{display:flex;gap:3px;flex-wrap:wrap}
   .jrn-chip{
     appearance:none;cursor:pointer;
     background:var(--bg-input);border:1px solid var(--border);
@@ -1280,7 +1280,7 @@
   .jrn-empty-desc{font-family:'Inter',sans-serif;font-size:12.5px;color:var(--text-muted);max-width:480px;line-height:1.5}
 
   @media (max-width: 768px){
-    .journal-info{padding:11px 13px;gap:10px}
+    .journal-info{padding:10px 10px;gap:10px}
     .journal-info-cols{gap:3px 12px;font-size:11px}
     .journal-kpis{grid-template-columns:repeat(2,1fr);gap:7px}
     .jrn-kpi{padding:10px 12px}
@@ -1637,7 +1637,7 @@
     .brand .logo{width:30px;height:30px;font-size:14px;flex-shrink:0}
     .brand h1{font-size:14px;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .brand .sub{display:none}
-    .header-right{gap:6px;flex-wrap:wrap;justify-content:flex-end;width:100%}
+    .header-right{gap:6px;flex-wrap:wrap;width:100%}
     .pill{padding:4px 8px;font-size:9.5px}
     .pill .lbl{display:none}
     .header-btn{padding:4px 7px;font-size:10px}
@@ -2065,7 +2065,7 @@
     <!-- Performance chart -->
     <div class="panel" style="position:relative">
       <div class="perf-head">
-        <h2>Normalized Index Performance</h2>
+        <h2>Index Performance</h2>
         <div class="tf-btns" id="tf-btns">
           <button class="tf-btn" data-tf="1W">1W</button>
           <button class="tf-btn" data-tf="1M">1M</button>
@@ -2102,7 +2102,7 @@
     <span class="dot" style="background:var(--lime);box-shadow:0 0 8px var(--lime)"></span>
     <span>HEATMAP · TOP HOLDINGS</span>
     <span class="line"></span>
-    <span class="tag">SIZE = MARKET CAP · COLOR = 1D CHANGE</span>
+    <span class="tag">SIZE = MARKET CAP</span>
   </div>
   <div class="panel">
     <svg class="heatmap-svg" id="heatmap" viewBox="0 0 1600 720" preserveAspectRatio="xMidYMid meet"></svg>
@@ -2181,7 +2181,6 @@
 
     <div class="panel">
       <div class="panel-head">
-        <h2>Personal Watchlist</h2>
         <div style="display:flex;align-items:center;gap:14px">
           <div style="font-family:'Inter',sans-serif;font-size:11px;color:var(--text-muted)">Highlight:</div>
           <div class="tf-btns" id="wl-tf-btns">
