@@ -222,15 +222,13 @@
     }
     body{
       padding:0;
-      padding-bottom:72px;
+      padding-bottom:calc(56px + env(safe-area-inset-bottom));
       /* Disable text selection on mobile by default */
       -webkit-user-select:none;
       -moz-user-select:none;
       -ms-user-select:none;
       user-select:none;
-      /* Disable iOS tap highlight on tappable elements */
       -webkit-tap-highlight-color:transparent;
-      /* Disable iOS callout on long press */
       -webkit-touch-callout:none;
     }
     /* Apply safe-area to terminal (content wrapper), not body, so position:fixed overlays span fullscreen */
@@ -1418,7 +1416,7 @@
     /* Show bottom nav, hide top tabs */
     .bottom-nav{display:block}
     .tabs{display:none}
-    body{padding-bottom:72px} /* leave room for bottom nav */
+    body{padding-bottom:calc(56px + env(safe-area-inset-bottom))} /* match bottom nav height */
 
     /* === HEADER COMPACTION === */
     .header{
@@ -1551,18 +1549,22 @@
 
     /* === MODAL — full screen on mobile === */
     .modal-backdrop{
-      padding:0;align-items:stretch;justify-content:stretch;
-      /* Pin to viewport explicitly — overrides any inherited centering */
+      padding:0;
+      align-items:stretch;justify-content:stretch;
+      flex-direction:column;
       top:0;right:0;bottom:0;left:0;
     }
     .modal{
       width:100%;max-width:100%;
-      height:100%;
+      height:100%;min-height:100%;
       max-height:none;
       flex:1 1 auto;
+      display:flex;flex-direction:column;
       border-radius:0;border-left:0;border-right:0;border-top:0;
       overflow-y:auto;-webkit-overflow-scrolling:touch;
     }
+    /* Push the footer to the bottom of the modal so there's never empty space */
+    .modal-footer{margin-top:auto}
     .modal-header{padding:calc(14px + env(safe-area-inset-top)) 16px 14px}
     .modal-sym{font-size:20px}
     .modal-name{font-size:12px}
