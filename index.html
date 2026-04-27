@@ -296,6 +296,79 @@
   @keyframes blink{0%,60%{opacity:1}80%{opacity:0.3}100%{opacity:1}}
   .pill .lbl{color:var(--text-dim);margin-right:4px;font-weight:400}
 
+  /* Session pill — dynamic states */
+  #session-pill{transition:color 0.3s, border-color 0.3s, background 0.3s}
+  #session-pill.s-regular{color:var(--pos);border-color:rgba(38,166,154,0.35);background:var(--pos-soft)}
+  #session-pill.s-regular::before{content:"●";color:var(--pos);margin-right:5px;animation:blink 2s infinite}
+  #session-pill.s-pre,
+  #session-pill.s-after{color:var(--warn);border-color:rgba(255,152,0,0.35);background:var(--warn-soft)}
+  #session-pill.s-pre::before,
+  #session-pill.s-after::before{content:"○";color:var(--warn);margin-right:5px}
+  #session-pill.s-closed{color:var(--text-muted)}
+  .session-sep{color:var(--text-dim);margin:0 6px;font-weight:400}
+  #session-detail{font-weight:400;letter-spacing:0.01em}
+
+  /* === MACRO STRIP — top-of-page market context bar === */
+  .macro-strip{
+    display:flex;align-items:center;gap:8px;
+    overflow-x:auto;overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    white-space:nowrap;
+  }
+  .macro-strip::-webkit-scrollbar{display:none}
+  .macro-strip:empty{display:none}
+  .macro-chip{
+    display:inline-flex;align-items:baseline;gap:6px;
+    padding:5px 10px;border-radius:5px;
+    background:var(--bg-panel);border:1px solid var(--border-soft);
+    cursor:pointer;flex-shrink:0;
+    transition:border-color 0.15s, background 0.15s;
+  }
+  .macro-chip:hover{border-color:var(--border-strong);background:var(--bg-panel-hover)}
+  .macro-chip.unavail{opacity:0.4;cursor:default}
+  .macro-chip.unavail:hover{border-color:var(--border-soft);background:var(--bg-panel)}
+  .macro-chip-lbl{
+    color:var(--text-muted);font-weight:500;font-size:10px;
+    letter-spacing:0.06em;text-transform:uppercase;
+  }
+  .macro-chip-val{color:var(--text-bright);font-weight:600;font-variant-numeric:tabular-nums}
+  .macro-chip-chg{font-weight:600;font-variant-numeric:tabular-nums;font-size:10.5px}
+  .macro-chip-chg.pos{color:var(--pos)}
+  .macro-chip-chg.neg{color:var(--neg)}
+  .macro-divider{
+    width:1px;height:18px;background:var(--border);flex-shrink:0;margin:0 4px;
+  }
+  .breadth-chip{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:5px 10px;border-radius:5px;
+    background:var(--bg-panel);border:1px solid var(--border-soft);
+    flex-shrink:0;font-variant-numeric:tabular-nums;
+  }
+  .breadth-chip-lbl{
+    color:var(--text-muted);font-weight:500;font-size:10px;
+    letter-spacing:0.06em;text-transform:uppercase;
+  }
+  .breadth-bar{
+    display:inline-block;width:80px;height:5px;border-radius:3px;
+    background:var(--bg-input);overflow:hidden;position:relative;
+  }
+  .breadth-bar-fill{height:100%;background:var(--pos);transition:width 0.3s}
+  .breadth-up{color:var(--pos);font-weight:600}
+  .breadth-down{color:var(--neg);font-weight:600}
+  .breadth-near{color:var(--text-bright);font-weight:600;font-size:10.5px}
+  .breadth-near .pos{color:var(--pos)}
+  .breadth-near .neg{color:var(--neg)}
+
+  @media (max-width: 768px){
+    .macro-strip{padding:6px 10px;gap:6px}
+    .macro-chip{padding:4px 8px;gap:5px}
+    .macro-chip-lbl{font-size:9.5px}
+    .breadth-chip{padding:4px 8px}
+    .breadth-bar{width:60px}
+  }
+
   /* theme picker */
   .theme-picker{position:relative;display:inline-block}
   .theme-btn{display:flex;align-items:center;gap:7px;padding:5px 10px;
@@ -481,6 +554,29 @@
 
   .pf-charts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .pf-chart-panel{padding:18px 22px;background:var(--bg-panel);border:1px solid var(--border);border-radius:8px}
+
+  /* Concentration alerts — sits above the donut charts */
+  .pf-conc{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 10px 0;
+    padding:10px 14px;background:var(--bg-panel);border:1px solid var(--border);border-radius:8px}
+  .pf-conc.warn{border-color:rgba(255,152,0,0.4);background:rgba(255,152,0,0.06)}
+  .pf-conc.danger{border-color:rgba(239,83,80,0.4);background:rgba(239,83,80,0.06)}
+  .pf-conc-icon{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;
+    width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+    background:var(--bg-input);color:var(--text-muted);flex-shrink:0}
+  .pf-conc.warn .pf-conc-icon{background:var(--warn-soft);color:var(--warn)}
+  .pf-conc.danger .pf-conc-icon{background:var(--neg-soft);color:var(--neg)}
+  .pf-conc-msg{font-family:'Inter',sans-serif;font-size:12px;color:var(--text);font-weight:500;flex:1;min-width:200px}
+  .pf-conc-msg b{font-family:'JetBrains Mono',monospace;font-weight:600}
+  .pf-conc-metrics{display:flex;gap:14px;font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    color:var(--text-muted);letter-spacing:0.02em;flex-shrink:0}
+  .pf-conc-metric{display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+  .pf-conc-metric-lbl{color:var(--text-dim);font-size:9.5px;text-transform:uppercase;letter-spacing:0.05em}
+  .pf-conc-metric-val{color:var(--text-bright);font-weight:600;font-size:12px}
+  @media (max-width:768px){
+    .pf-conc{padding:8px 10px;gap:6px}
+    .pf-conc-msg{font-size:11px;min-width:0;width:100%}
+    .pf-conc-metrics{width:100%;justify-content:space-around}
+  }
   .pf-chart-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--text-bright);
     margin-bottom:14px;letter-spacing:-0.005em}
   .pf-donut-wrap{display:flex;gap:18px;align-items:center}
@@ -498,64 +594,6 @@
     font-family:'Inter',sans-serif;letter-spacing:0.02em}
 
 
-  /* === TIP JAR — floating support button === */
-  .tip-jar{
-    position:fixed;bottom:20px;right:20px;z-index:400;
-    display:inline-flex;align-items:center;gap:8px;
-    padding:10px 16px;border-radius:24px;
-    background:linear-gradient(135deg, #6B5BFF 0%, #9D7BFF 100%);
-    color:#fff;
-    font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
-    text-decoration:none;
-    box-shadow:0 4px 14px rgba(107, 91, 255, 0.32),
-               0 1px 3px rgba(0, 0, 0, 0.15);
-    cursor:pointer;
-    transition:transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-               box-shadow 0.2s, background 0.2s;
-    -webkit-user-select:none;user-select:none;
-    border:1px solid rgba(255,255,255,0.18);
-  }
-  .tip-jar:hover{
-    transform:translateY(-2px) scale(1.04);
-    box-shadow:0 8px 22px rgba(107, 91, 255, 0.45),
-               0 2px 5px rgba(0, 0, 0, 0.18);
-    background:linear-gradient(135deg, #7969FF 0%, #AB8AFF 100%);
-  }
-  .tip-jar:active{transform:translateY(0) scale(0.98)}
-  .tip-jar-icon{
-    font-size:16px;line-height:1;display:inline-block;
-    transform:translateY(-1px);
-  }
-  .tip-jar-label{line-height:1;letter-spacing:-0.01em}
-  .tip-jar-arrow{
-    opacity:0.85;transform:translateY(0.5px);
-    transition:transform 0.2s;
-  }
-  .tip-jar:hover .tip-jar-arrow{transform:translate(1px, -1px)}
-
-  /* Heart-beat shimmer once on first load to attract a quick glance, then quiet */
-  @keyframes tipJarPulse{
-    0%, 100%{box-shadow:0 4px 14px rgba(107, 91, 255, 0.32), 0 1px 3px rgba(0,0,0,0.15)}
-    50%     {box-shadow:0 4px 14px rgba(107, 91, 255, 0.55), 0 1px 3px rgba(0,0,0,0.15), 0 0 0 6px rgba(107, 91, 255, 0.10)}
-  }
-  .tip-jar{animation:tipJarPulse 2.4s ease-in-out 1.5s 2}  /* pulse twice, then stop */
-
-  /* Footer text variant — mobile + as additional discoverability */
-  .footer-tip-link{
-    color:var(--accent-bright) !important;
-    text-decoration:none;
-    font-weight:500;
-    transition:opacity 0.15s;
-  }
-  .footer-tip-link:hover{opacity:0.8;text-decoration:underline}
-
-  /* Hide floating button on mobile (footer link is enough, doesn't clash w/ bottom nav) */
-  @media (max-width: 768px){
-    .tip-jar{display:none}
-  }
-
-  /* When modal is open, hide tip jar so it doesn't sit over modal backdrop */
-  body.no-scroll .tip-jar{opacity:0;pointer-events:none}
   .search-overlay{
     position:fixed;inset:0;z-index:1200;
     display:none;
@@ -1097,6 +1135,167 @@
     padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10.5px}
 
   .alerts-list{display:flex;flex-direction:column;gap:6px}
+
+  /* === TRADING JOURNAL === */
+  .journal-info{display:flex;gap:14px;padding:14px 18px;background:var(--bg-panel);
+    border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;
+    align-items:flex-start;margin-bottom:14px}
+  .journal-info-icon{color:var(--accent-bright);line-height:1;margin-top:2px;flex-shrink:0}
+  .journal-info-body{flex:1;display:flex;flex-direction:column;gap:6px}
+  .journal-info-title{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:var(--text-bright)}
+  .journal-info-desc{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-muted);line-height:1.5}
+  .journal-info-desc code{background:var(--bg-input);color:var(--accent-bright);
+    padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11px;
+    border:1px solid var(--border)}
+  .journal-info-cols{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:4px;
+    font-family:'Inter',sans-serif;font-size:11.5px;color:var(--text-muted)}
+  .journal-info-cols span{display:inline-flex;align-items:center;gap:4px}
+  .journal-info-cols strong{color:var(--text);font-weight:600}
+  .journal-info-cols code{background:var(--bg-input);color:var(--accent-bright);
+    padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10.5px}
+
+  /* KPI summary cards */
+  .journal-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+  .jrn-kpi{padding:14px 16px;background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;
+    display:flex;flex-direction:column;gap:4px;min-width:0}
+  .jrn-kpi-lbl{font-family:'Inter',sans-serif;font-size:10.5px;color:var(--text-muted);
+    text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
+  .jrn-kpi-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;
+    color:var(--text-bright);font-variant-numeric:tabular-nums;line-height:1.1;letter-spacing:-0.01em}
+  .jrn-kpi-sub{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-dim);
+    font-variant-numeric:tabular-nums;letter-spacing:0.02em}
+
+  /* Filter chip bar + search */
+  .journal-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;
+    flex-wrap:wrap;margin:10px 0 14px}
+  .journal-filters{display:flex;gap:6px;flex-wrap:wrap}
+  .jrn-chip{
+    appearance:none;cursor:pointer;
+    background:var(--bg-input);border:1px solid var(--border);
+    color:var(--text-muted);
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;
+    letter-spacing:0.04em;
+    padding:5px 10px;border-radius:5px;
+    transition:color 0.15s, background 0.15s, border-color 0.15s;
+  }
+  .jrn-chip:hover{color:var(--text-bright);border-color:var(--border-strong)}
+  .jrn-chip.active{color:var(--text-bright);background:var(--bg-panel-hover);border-color:var(--accent-bright)}
+  .journal-search-wrap{position:relative;display:flex;align-items:center}
+  .journal-search-icon{position:absolute;left:10px;color:var(--text-dim);pointer-events:none}
+  .journal-search{
+    background:var(--bg-input);border:1px solid var(--border);
+    color:var(--text);
+    font-family:'Inter',sans-serif;font-size:12px;
+    padding:6px 10px 6px 30px;border-radius:5px;
+    width:240px;outline:none;
+    transition:border-color 0.15s;
+  }
+  .journal-search:focus{border-color:var(--accent)}
+  .journal-search::placeholder{color:var(--text-dim)}
+
+  /* Feed */
+  .journal-feed{display:flex;flex-direction:column;gap:0}
+  .jrn-month-head{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;
+    color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;
+    padding:18px 0 8px;display:flex;align-items:center;gap:10px;
+  }
+  .jrn-month-head::after{content:"";flex:1;height:1px;background:var(--border)}
+  .jrn-month-count{color:var(--text-muted);font-weight:500;letter-spacing:0.05em}
+
+  .jrn-entry{
+    display:grid;grid-template-columns:64px 78px 1fr;gap:14px;align-items:flex-start;
+    padding:14px 16px;background:var(--bg-panel);border:1px solid var(--border);
+    border-radius:8px;margin-bottom:6px;
+    transition:border-color 0.15s, background 0.15s;
+  }
+  .jrn-entry:hover{border-color:var(--border-strong)}
+  .jrn-date{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-muted);
+    font-variant-numeric:tabular-nums;letter-spacing:0.02em;line-height:1.4;
+    display:flex;flex-direction:column;gap:1px;
+  }
+  .jrn-date-day{color:var(--text-bright);font-size:14px;font-weight:600}
+  .jrn-date-mo{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em}
+  .jrn-date-yr{font-size:9.5px;color:var(--text-dim);font-weight:400}
+
+  .jrn-action{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:0.05em;
+    padding:4px 9px;border-radius:4px;text-align:center;
+    display:inline-block;width:fit-content;
+    border:1px solid transparent;line-height:1.2;
+  }
+  .jrn-a-buy{background:var(--pos-soft);color:var(--pos-bright);border-color:rgba(38,166,154,0.4)}
+  .jrn-a-add{background:var(--pos-soft);color:var(--pos);border-color:rgba(38,166,154,0.25)}
+  .jrn-a-sell{background:var(--neg-soft);color:var(--neg-bright);border-color:rgba(239,83,80,0.4)}
+  .jrn-a-trim{background:var(--neg-soft);color:var(--neg);border-color:rgba(239,83,80,0.25)}
+  .jrn-a-note{background:var(--bg-input);color:var(--text);border-color:var(--border)}
+  .jrn-a-watch{background:var(--accent-soft);color:var(--accent-bright);border-color:rgba(41,98,255,0.35)}
+  .jrn-a-hold{background:var(--bg-input);color:var(--text-muted);border-color:var(--border)}
+
+  .jrn-body{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .jrn-head-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .jrn-sym{
+    font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;
+    color:var(--text-bright);letter-spacing:0.02em;
+    cursor:pointer;transition:color 0.12s;
+  }
+  .jrn-sym:hover{color:var(--accent-bright)}
+  .jrn-trade{
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-muted);
+    font-variant-numeric:tabular-nums;
+  }
+  .jrn-trade .jrn-mult{color:var(--text-dim);margin:0 2px}
+  .jrn-trade-total{color:var(--text);font-weight:500;margin-left:6px}
+  .jrn-perf-pill{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;
+    padding:2px 7px;border-radius:4px;
+    font-variant-numeric:tabular-nums;letter-spacing:0.02em;
+    border:1px solid transparent;
+  }
+  .jrn-perf-pill.pos{background:var(--pos-soft);color:var(--pos);border-color:rgba(38,166,154,0.3)}
+  .jrn-perf-pill.neg{background:var(--neg-soft);color:var(--neg);border-color:rgba(239,83,80,0.3)}
+  .jrn-perf-pill.neutral{background:var(--bg-input);color:var(--text-muted);border-color:var(--border)}
+  .jrn-note{
+    font-family:'Inter',sans-serif;font-size:13px;color:var(--text);line-height:1.5;
+    margin:0;word-wrap:break-word;
+  }
+  .jrn-note:empty{display:none}
+  .jrn-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
+  .jrn-tag{
+    font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:500;
+    padding:2px 7px;border-radius:3px;
+    background:var(--bg-input);color:var(--text-muted);
+    border:1px solid var(--border);letter-spacing:0.04em;
+  }
+
+  .jrn-empty{
+    text-align:center;padding:60px 20px;color:var(--text-muted);
+    background:var(--bg-panel);border:1px dashed var(--border);border-radius:8px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;
+  }
+  .jrn-empty-icon{font-family:'JetBrains Mono',monospace;font-size:32px;color:var(--text-dim);
+    line-height:1;opacity:0.6}
+  .jrn-empty-title{font-family:'Inter',sans-serif;font-size:14px;color:var(--text);font-weight:500}
+  .jrn-empty-desc{font-family:'Inter',sans-serif;font-size:12.5px;color:var(--text-muted);max-width:480px;line-height:1.5}
+
+  @media (max-width: 768px){
+    .journal-info{padding:11px 13px;gap:10px}
+    .journal-info-cols{gap:3px 12px;font-size:11px}
+    .journal-kpis{grid-template-columns:repeat(2,1fr);gap:7px}
+    .jrn-kpi{padding:10px 12px}
+    .jrn-kpi-val{font-size:18px}
+    .journal-controls{gap:8px}
+    .journal-search{width:100%}
+    .journal-search-wrap{flex:1;min-width:200px}
+    .jrn-entry{grid-template-columns:50px 1fr;padding:11px 12px;gap:10px}
+    .jrn-action{grid-column:2;margin-top:-4px}
+    .jrn-body{grid-column:2}
+    .jrn-date-day{font-size:13px}
+    .jrn-sym{font-size:12.5px}
+    .jrn-trade{font-size:11px}
+    .jrn-note{font-size:12.5px}
+  }
   .alert-item{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;
     padding:12px 14px;background:var(--bg-panel);border:1px solid var(--border);border-radius:7px;
     transition:all 0.12s}
@@ -1389,7 +1588,7 @@
     box-shadow:0 -4px 20px rgba(0,0,0,0.4);
   }
   .bottom-nav-inner{
-    display:grid;grid-template-columns:repeat(6,1fr);gap:0;max-width:600px;margin:0 auto;
+    display:grid;grid-template-columns:repeat(7,1fr);gap:0;max-width:600px;margin:0 auto;
   }
   .bn-tab{
     appearance:none;background:transparent;border:0;cursor:pointer;
@@ -1736,6 +1935,7 @@
         <div class="splash-step" data-step="watchlist-history"><span class="icon"></span>Watchlist sparklines</div>
         <div class="splash-step" data-step="portfolio"><span class="icon"></span>Portfolio positions</div>
         <div class="splash-step" data-step="alerts"><span class="icon"></span>Price alerts</div>
+        <div class="splash-step" data-step="journal"><span class="icon"></span>Trading journal</div>
       </div>
       <div class="splash-status" id="splash-status">Connecting to data source…</div>
     </div>
@@ -1759,7 +1959,7 @@
       <span class="sub">PRO · LIVE FEED</span>
     </div>
     <div class="header-right">
-      <div class="pill"><span class="lbl">SESSION</span>REGULAR</div>
+      <div class="pill" id="session-pill" title="—"><span class="lbl">SESSION</span><span id="session-state">—</span><span id="session-sep" class="session-sep">·</span><span id="session-detail"></span></div>
       <div class="pill"><span class="lbl">DATE</span><span id="hdr-date">—</span></div>
       <div class="pill"><span class="lbl">UPDATED</span><span id="hdr-updated">—</span></div>
       <div class="pill" id="hdr-mode">DEMO</div>
@@ -1836,7 +2036,11 @@
     <button class="tab" data-view="portfolio"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg><span data-i18n="PORTFOLIO">PORTFOLIO</span></button>
     <button class="tab" data-view="scanner"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span data-i18n="SCANNER">SCANNER</span></button>
     <button class="tab" data-view="alerts"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg><span data-i18n="ALERTS">ALERTS</span><span class="tab-badge" id="alerts-badge"></span></button>
+    <button class="tab" data-view="journal"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg tab-icon-svg" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg><span data-i18n="JOURNAL">JOURNAL</span></button>
   </div>
+
+  <!-- MACRO STRIP — global market context, persistent across views -->
+  <div class="macro-strip" id="macro-strip"></div>
 
   <!-- ========== VIEW: MARKETS ========== -->
   <div class="view active" id="view-markets">
@@ -2162,6 +2366,55 @@
 
   </div> <!-- /view-alerts -->
 
+  <!-- ========== VIEW: JOURNAL ========== -->
+  <div class="view" id="view-journal">
+
+    <div class="journal-info">
+      <div class="journal-info-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
+      <div class="journal-info-body">
+        <div class="journal-info-title">Trading journal lives in your Google Sheet</div>
+        <div class="journal-info-desc">Add a <code>journal</code> tab and append rows. Entries appear here on next refresh and are auto-analyzed.</div>
+        <div class="journal-info-cols">
+          <span><strong>Date</strong> — YYYY-MM-DD or DD/MM/YYYY</span>
+          <span><strong>Symbol</strong> — ticker (e.g. NVDA, AAPL)</span>
+          <span><strong>Action</strong> — <code>BUY</code> / <code>SELL</code> / <code>TRIM</code> / <code>ADD</code> / <code>NOTE</code> / <code>WATCH</code> / <code>HOLD</code></span>
+          <span><strong>Shares · Price</strong> — optional, for trades</span>
+          <span><strong>Note</strong> — free text</span>
+          <span><strong>Tags</strong> — comma-separated, optional</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="journal-kpis" class="journal-kpis"></div>
+
+    <div class="stitle">
+      <span class="dot" style="background:var(--accent)"></span>
+      <span>JOURNAL ENTRIES</span>
+      <span class="line"></span>
+      <span class="tag" id="journal-count-tag">0 ENTRIES</span>
+    </div>
+
+    <div class="journal-controls">
+      <div class="journal-filters" id="journal-filters">
+        <button class="jrn-chip active" data-action="ALL">All</button>
+        <button class="jrn-chip" data-action="BUY">BUY</button>
+        <button class="jrn-chip" data-action="ADD">ADD</button>
+        <button class="jrn-chip" data-action="SELL">SELL</button>
+        <button class="jrn-chip" data-action="TRIM">TRIM</button>
+        <button class="jrn-chip" data-action="NOTE">NOTE</button>
+        <button class="jrn-chip" data-action="WATCH">WATCH</button>
+        <button class="jrn-chip" data-action="HOLD">HOLD</button>
+      </div>
+      <div class="journal-search-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg journal-search-icon" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="journal-search" class="journal-search" placeholder="Search symbol, note, tag…" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+
+    <div id="journal-feed" class="journal-feed"></div>
+
+  </div> <!-- /view-journal -->
+
   <div class="footer">
     <div class="legend">
       <span class="item"><span class="swatch" style="background:var(--pos)"></span>Positive</span>
@@ -2171,27 +2424,14 @@
     <div class="source">
       <span>Source: Google Finance via Sheets</span>
       <span class="sep">·</span>
-      <span>~20 min delay</span>
-      <span class="sep">·</span>
-      <span id="refresh-countdown" title="Time until next data refresh">Next refresh in —</span>
+      <span title="Google Finance data is delayed up to ~20 min from real-time exchanges">Quotes delayed ~20 min</span>
       <span class="sep">·</span>
       <span>Not investment advice</span>
-      <span class="sep">·</span>
-      <a href="https://links.payboxapp.com/A2Lh6pF5F2b" target="_blank" rel="noopener noreferrer" class="footer-tip-link" data-i18n="Buy me a coffee ☕">Buy me a coffee ☕</a>
     </div>
   </div>
 
 </div>
 
-<!-- TIP JAR — floating support button (desktop only) -->
-<a href="https://links.payboxapp.com/A2Lh6pF5F2b" target="_blank" rel="noopener noreferrer"
-   class="tip-jar" id="tip-jar" title="Support this project · PayBox">
-  <span class="tip-jar-icon">☕</span>
-  <span class="tip-jar-label">Support</span>
-  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="tip-jar-arrow" aria-hidden="true">
-    <path d="M7 17 17 7"></path><path d="M7 7h10v10"></path>
-  </svg>
-</a>
 
 <!-- QUICK SEARCH OVERLAY (Cmd+K) -->
 <div class="search-overlay" id="search-overlay">
@@ -2273,6 +2513,7 @@
             <option value="portfolio" data-i18n="Portfolio">Portfolio</option>
             <option value="scanner" data-i18n="Scanner">Scanner</option>
             <option value="alerts" data-i18n="Alerts">Alerts</option>
+            <option value="journal" data-i18n="Journal">Journal</option>
           </select>
         </div>
 
@@ -2347,6 +2588,10 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path><line x1="4" y1="22" x2="4" y2="15"></line></svg>
       <span data-i18n="Alerts">Alerts</span>
       <span class="bn-badge" id="bn-alerts-badge"></span>
+    </button>
+    <button class="bn-tab" data-view="journal">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-svg bn-icon-svg" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+      <span data-i18n="Journal">Journal</span>
     </button>
   </div>
 </nav>
@@ -3065,6 +3310,7 @@ const CONFIG = {
   alertsTab:           "alerts",
   portfolioTab:        "portfolio",
   israelTab:           "israel",
+  journalTab:          "journal",
   settingsTab:         "_settings",
   refreshSec: 120,
   maxRefreshSec: 600
@@ -3078,7 +3324,7 @@ const PREFS_KEY = "mt-prefs-v1";
 const DEFAULT_PREFS = {
   currency: "USD",       // USD / ILS / EUR
   language: "en",        // en / he
-  defaultView: "markets" // markets / israel / watchlist / portfolio / scanner / alerts
+  defaultView: "markets" // markets / israel / watchlist / portfolio / scanner / alerts / journal
 };
 
 function loadPrefs(){
@@ -3108,12 +3354,14 @@ const STRINGS = {
   "Portfolio": "תיק השקעות",
   "Scanner": "סורק",
   "Alerts": "התראות",
+  "Journal": "יומן",
   "MARKETS": "שווקים",
   "ISRAEL": "ישראל",
   "WATCHLIST": "מעקב",
   "PORTFOLIO": "תיק",
   "SCANNER": "סורק",
   "ALERTS": "התראות",
+  "JOURNAL": "יומן",
 
   // Header
   "REGULAR": "רגיל",
@@ -3263,8 +3511,7 @@ const STRINGS = {
   "Source: Google Finance via Sheets": "מקור: Google Finance דרך Sheets",
   "~20 min delay": "השהיה של ~20 דקות",
   "Not investment advice": "אינו ייעוץ השקעות",
-  "Next refresh in": "רענון הבא בעוד",
-  "Buy me a coffee ☕": "קנו לי קפה ☕"
+  "Next refresh in": "רענון הבא בעוד"
 };
 
 function t(key){
@@ -3737,6 +3984,8 @@ const state = {
     indices: [],     // [{sym, name, price, d1, w1, m1, ytd}]
     stocks: []       // same shape
   },
+  journal: [],       // [{id, date, sym, action, shares, price, note, tags}]
+  journalFilter: { action: "ALL", search: "", symbol: "" },
   live: false,
   lastUpdate: null,
   health: { tabs: {}, lastChecked: null },
@@ -3782,6 +4031,183 @@ function fmtTime(d){
 function fmtDate(d){
   return d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}).toUpperCase();
 }
+
+/* ============================================================
+   MARKET SESSION — NYSE awareness with TASE in tooltip
+   Computes current session state + countdown to next event.
+   Holidays/early-closes through end of 2027 to last us a while.
+   ============================================================ */
+const NYSE_HOLIDAYS = new Set([
+  // 2026
+  "2026-01-01","2026-01-19","2026-02-16","2026-04-03","2026-05-25",
+  "2026-06-19","2026-07-03","2026-09-07","2026-11-26","2026-12-25",
+  // 2027
+  "2027-01-01","2027-01-18","2027-02-15","2027-03-26","2027-05-31",
+  "2027-06-18","2027-07-05","2027-09-06","2027-11-25","2027-12-24"
+]);
+const NYSE_EARLY_CLOSE = new Set([
+  // 1pm ET close
+  "2026-11-27","2026-12-24","2027-11-26"
+]);
+// TASE: closed Fri/Sat. Approx hours: 09:45–17:14 IL local.
+// Holidays are too dynamic for a static list; we just handle weekends.
+
+function nyseTimeParts(d){
+  // Returns wall-clock parts in America/New_York
+  const f = new Intl.DateTimeFormat("en-CA",{
+    timeZone:"America/New_York",
+    year:"numeric",month:"2-digit",day:"2-digit",
+    hour:"2-digit",minute:"2-digit",weekday:"short",hour12:false
+  });
+  const o = {};
+  for (const p of f.formatToParts(d)) o[p.type] = p.value;
+  return {
+    dateStr: `${o.year}-${o.month}-${o.day}`,
+    hour: +o.hour, minute: +o.minute, weekday: o.weekday
+  };
+}
+
+// Build a Date that represents a specific NY wall-clock time on a given NY date,
+// returned as a real (UTC-anchored) Date. We compute the offset by formatting "now"
+// in NY and comparing to UTC, then applying that offset.
+function nyDateAt(dateStr, hour, minute){
+  // dateStr is YYYY-MM-DD in NY local time.
+  // Use a sentinel UTC date and shift until its NY-local representation matches.
+  // Simpler: construct ISO with current NY offset (DST-aware).
+  const probe = new Date(`${dateStr}T${String(hour).padStart(2,"0")}:${String(minute).padStart(2,"0")}:00Z`);
+  // Find NY offset for that probe
+  const nyParts = nyseTimeParts(probe);
+  const nyClockMin = nyParts.hour*60 + nyParts.minute;
+  const utcClockMin = probe.getUTCHours()*60 + probe.getUTCMinutes();
+  let diff = utcClockMin - nyClockMin; // minutes NY is behind UTC (positive number)
+  if (nyParts.dateStr !== dateStr){
+    // crossed midnight in NY; adjust
+    diff += (probe.getUTCDate() > parseInt(dateStr.slice(8,10),10) ? -24*60 : 24*60);
+  }
+  return new Date(probe.getTime() + diff*60000);
+}
+
+function isNyseTradingDay(dateStr, weekday){
+  if (weekday === "Sat" || weekday === "Sun") return false;
+  if (NYSE_HOLIDAYS.has(dateStr)) return false;
+  return true;
+}
+
+// Find next NYSE trading day starting from dateStr (inclusive).
+// Returns {dateStr, weekday} object.
+function nextNyseTradingDay(fromDateStr, includeToday){
+  let d = new Date(`${fromDateStr}T12:00:00Z`); // mid-day to avoid TZ edge
+  if (!includeToday) d.setUTCDate(d.getUTCDate()+1);
+  for (let i=0; i<10; i++){
+    const parts = nyseTimeParts(d);
+    if (isNyseTradingDay(parts.dateStr, parts.weekday)) return parts;
+    d.setUTCDate(d.getUTCDate()+1);
+  }
+  return null;
+}
+
+function fmtCountdownShort(ms){
+  if (ms <= 0) return "now";
+  const totalMin = Math.round(ms / 60000);
+  if (totalMin < 60) return `${totalMin}m`;
+  const h = Math.floor(totalMin/60);
+  const m = totalMin % 60;
+  if (h < 12) return m === 0 ? `${h}h` : `${h}h ${m}m`;
+  return null; // caller should show absolute time
+}
+
+function fmtAbsIL(d){
+  // "Mon 16:30 IL" — day of week + IL local time
+  const fmt = new Intl.DateTimeFormat("en-US",{
+    timeZone:"Asia/Jerusalem",
+    weekday:"short",hour:"2-digit",minute:"2-digit",hour12:false
+  });
+  const parts = fmt.formatToParts(d);
+  const o = {};
+  for (const p of parts) o[p.type] = p.value;
+  return `${o.weekday} ${o.hour}:${o.minute} IL`;
+}
+
+// Returns: { state: "regular"|"pre"|"after"|"closed", label, detail, tooltip }
+function computeMarketSession(){
+  const now = new Date();
+  const np = nyseTimeParts(now);
+  const minutesNow = np.hour*60 + np.minute;
+  const trading = isNyseTradingDay(np.dateStr, np.weekday);
+  const earlyClose = NYSE_EARLY_CLOSE.has(np.dateStr);
+  const closeMin = earlyClose ? 13*60 : 16*60;
+  const PRE_OPEN = 4*60, REG_OPEN = 9*60+30, AH_CLOSE = 20*60;
+
+  // TASE info for tooltip — Sun-Thu 09:45-17:14 IL local
+  const ilFmt = new Intl.DateTimeFormat("en-CA",{
+    timeZone:"Asia/Jerusalem",
+    hour:"2-digit",minute:"2-digit",weekday:"short",hour12:false
+  });
+  const ilP = {};
+  for (const p of ilFmt.formatToParts(now)) ilP[p.type] = p.value;
+  const ilMin = (+ilP.hour)*60 + (+ilP.minute);
+  const ilWeekend = (ilP.weekday === "Fri" || ilP.weekday === "Sat");
+  let taseStatus;
+  if (ilWeekend) taseStatus = "TASE: closed (weekend)";
+  else if (ilMin < 9*60+45) taseStatus = `TASE: opens ${9}:45 IL`;
+  else if (ilMin < 17*60+14) taseStatus = `TASE: open · closes ~17:14 IL`;
+  else taseStatus = "TASE: closed";
+
+  let state, stateLabel, detail, target;
+  if (trading && minutesNow >= REG_OPEN && minutesNow < closeMin){
+    state = "regular"; stateLabel = "REGULAR";
+    target = nyDateAt(np.dateStr, Math.floor(closeMin/60), closeMin%60);
+    const ms = target - now;
+    const cd = fmtCountdownShort(ms);
+    detail = cd ? `closes in ${cd}` : `closes ${fmtAbsIL(target)}`;
+  } else if (trading && minutesNow >= PRE_OPEN && minutesNow < REG_OPEN){
+    state = "pre"; stateLabel = "PRE-MARKET";
+    target = nyDateAt(np.dateStr, 9, 30);
+    const ms = target - now;
+    const cd = fmtCountdownShort(ms);
+    detail = cd ? `opens in ${cd}` : `opens ${fmtAbsIL(target)}`;
+  } else if (trading && minutesNow >= closeMin && minutesNow < AH_CLOSE){
+    state = "after"; stateLabel = "AFTER-HOURS";
+    target = nyDateAt(np.dateStr, 20, 0);
+    const ms = target - now;
+    const cd = fmtCountdownShort(ms);
+    detail = cd ? `closes in ${cd}` : `closes ${fmtAbsIL(target)}`;
+  } else {
+    state = "closed"; stateLabel = "CLOSED";
+    // Find next regular open
+    const includeToday = trading && minutesNow < PRE_OPEN;
+    const next = nextNyseTradingDay(np.dateStr, includeToday);
+    if (next){
+      target = nyDateAt(next.dateStr, 9, 30);
+      const ms = target - now;
+      const cd = fmtCountdownShort(ms);
+      detail = cd ? `opens in ${cd}` : `opens ${fmtAbsIL(target)}`;
+    } else {
+      detail = "";
+    }
+  }
+
+  const tooltip = `NYSE: ${stateLabel}${detail ? " · " + detail : ""}\n${taseStatus}${earlyClose ? "\n(Early close 1pm ET today)" : ""}`;
+  return { state, label: stateLabel, detail, tooltip };
+}
+
+function renderSessionPill(){
+  const pill = document.getElementById("session-pill");
+  if (!pill) return;
+  const stateEl = document.getElementById("session-state");
+  const detailEl = document.getElementById("session-detail");
+  const sepEl = document.getElementById("session-sep");
+  const s = computeMarketSession();
+  pill.classList.remove("s-regular","s-pre","s-after","s-closed");
+  pill.classList.add(`s-${s.state}`);
+  pill.title = s.tooltip;
+  if (stateEl) stateEl.textContent = t(s.label) || s.label;
+  if (detailEl) detailEl.textContent = s.detail || "";
+  if (sepEl) sepEl.style.display = s.detail ? "" : "none";
+}
+setInterval(renderSessionPill, 30000);
+renderSessionPill();
+
 function pnCell(v){
   if (v === null || v === undefined || isNaN(v)) return `<td class="nul">—</td>`;
   const cls = v >= 0 ? "pos" : "neg";
@@ -3961,6 +4387,10 @@ async function loadLive(){
   const r8 = await fetchWithStep(CONFIG.alertsTab, "alerts", "price alerts");
   alertsRows = r8.rows; if (r8.ok) anySuccess = true;
   recordHealth("alerts", r8);
+
+  const r9 = await fetchWithStep(CONFIG.journalTab, "journal", "trading journal");
+  const journalRows = r9.rows; if (r9.ok) anySuccess = true;
+  recordHealth("journal", r9);
 
   // _settings tab — silent/optional. Populates currency rates if available.
   try {
@@ -4219,6 +4649,41 @@ async function loadLive(){
     // fetch failed completely — keep current state.alerts (could be demo or empty)
   } else {
     state.alerts = []; // sheet exists but empty
+  }
+
+  // --- parse journal tab ---
+  // Columns: Date, Symbol, Action, Shares, Price, Note, Tags
+  // Action must be one of: BUY / SELL / TRIM / ADD / NOTE / WATCH / HOLD
+  const VALID_JOURNAL_ACTIONS = ["BUY","SELL","TRIM","ADD","NOTE","WATCH","HOLD"];
+  if (journalRows && journalRows.length > 1){
+    const isDDMM = detectDDMM(journalRows, 0, 1);
+    const entries = [];
+    for (const r of journalRows.slice(1)){
+      const dateStr = (r[0]||"").trim();
+      const sym = (r[1]||"").trim().toUpperCase();
+      const action = (r[2]||"").trim().toUpperCase();
+      if (!sym || !dateStr) continue;
+      if (!VALID_JOURNAL_ACTIONS.includes(action)) continue;
+      const date = parseHistDate(dateStr, isDDMM);
+      if (!date) continue;
+      const shares = num(r[3]);
+      const price  = num(r[4]);
+      const note   = (r[5]||"").trim();
+      const tagsRaw = (r[6]||"").trim();
+      const tags = tagsRaw
+        ? tagsRaw.split(/[,;]/).map(t => t.trim()).filter(Boolean)
+        : [];
+      // Stable id from row content (so re-fetching doesn't reshuffle)
+      const id = `${date.getTime()}-${sym}-${action}-${shares||""}-${price||""}`;
+      entries.push({ id, date, dateStr, sym, action, shares, price, note, tags });
+    }
+    // Sort newest first
+    entries.sort((a, b) => b.date - a.date);
+    state.journal = entries;
+  } else if (journalRows === null) {
+    // fetch failed; keep existing
+  } else {
+    state.journal = [];
   }
 
   // --- parse portfolio tab ---
@@ -6463,7 +6928,56 @@ function renderPortfolio(){
     .map(([label, value], i) => ({ label, value, color: DONUT_PALETTE[i % DONUT_PALETTE.length] }))
     .sort((a, b) => b.value - a.value);
 
-  chartsWrap.innerHTML = `
+  // Concentration analytics
+  // HHI: sum of squared % allocations; <1500 diversified, 1500-2500 moderate, >2500 concentrated
+  const allocs = positions.map(p => p.allocPct).filter(x => x > 0);
+  const hhi = allocs.reduce((s, x) => s + x*x, 0);
+  const top = positions.slice().sort((a,b) => b.allocPct - a.allocPct);
+  const top1 = top[0];
+  const top3Sum = top.slice(0,3).reduce((s,p) => s + p.allocPct, 0);
+  let concSeverity = "ok", concIcon = "ⓘ", concMsg = "";
+  if (top1 && top1.allocPct >= 40){
+    concSeverity = "danger"; concIcon = "!";
+    concMsg = `<b>${top1.sym}</b> is ${top1.allocPct.toFixed(1)}% of your portfolio — high single-position risk.`;
+  } else if (top1 && top1.allocPct >= 30){
+    concSeverity = "warn"; concIcon = "!";
+    concMsg = `<b>${top1.sym}</b> is ${top1.allocPct.toFixed(1)}% of your portfolio — consider whether you want this much concentration.`;
+  } else if (top3Sum >= 70 && positions.length >= 4){
+    concSeverity = "warn"; concIcon = "!";
+    concMsg = `Top 3 positions = <b>${top3Sum.toFixed(1)}%</b> of portfolio. The rest of the book contributes little.`;
+  } else if (positions.length === 1){
+    concSeverity = "warn"; concIcon = "!";
+    concMsg = `Single position. No diversification.`;
+  } else {
+    concMsg = `Allocation looks balanced. Largest position: <b>${top1.sym}</b> at ${top1.allocPct.toFixed(1)}%.`;
+  }
+  let hhiLabel;
+  if (hhi < 1500) hhiLabel = "diversified";
+  else if (hhi < 2500) hhiLabel = "moderate";
+  else hhiLabel = "concentrated";
+
+  const concBlock = `
+    <div class="pf-conc ${concSeverity === 'ok' ? '' : concSeverity}">
+      <div class="pf-conc-icon">${concIcon}</div>
+      <div class="pf-conc-msg">${concMsg}</div>
+      <div class="pf-conc-metrics">
+        <div class="pf-conc-metric">
+          <span class="pf-conc-metric-lbl">HHI</span>
+          <span class="pf-conc-metric-val">${Math.round(hhi)} · ${hhiLabel}</span>
+        </div>
+        <div class="pf-conc-metric">
+          <span class="pf-conc-metric-lbl">Top 3</span>
+          <span class="pf-conc-metric-val">${top3Sum.toFixed(0)}%</span>
+        </div>
+        <div class="pf-conc-metric">
+          <span class="pf-conc-metric-lbl">Positions</span>
+          <span class="pf-conc-metric-val">${positions.length}</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  chartsWrap.innerHTML = concBlock + `
     <div class="pf-charts">
       <div class="pf-chart-panel">
         <div class="pf-chart-title">Allocation by Position</div>
@@ -6500,8 +7014,244 @@ function renderPortfolio(){
 }
 
 /* ============================================================
-   ISRAEL
+   TRADING JOURNAL — read-only view of `journal` Sheet tab
    ============================================================ */
+
+// Lookup current price for a symbol across watchlist / portfolio / indices / stocks
+function getCurrentPriceFor(sym){
+  if (!sym) return null;
+  const fromWl = (state.watchlist || []).find(w => w.sym === sym);
+  if (fromWl && fromWl.price != null) return fromWl.price;
+  const fromIdx = (state.indices || []).find(r => r[1] === sym);
+  if (fromIdx && fromIdx[3] != null) return fromIdx[3];
+  const fromStk = (state.stocks || []).find(s => s.sym === sym);
+  if (fromStk && fromStk.price != null) return fromStk.price;
+  const il = state.israel || { indices: [], stocks: [] };
+  const fromIl = [...il.indices, ...il.stocks].find(r => r.sym === sym);
+  if (fromIl && fromIl.price != null) return fromIl.price;
+  return null;
+}
+
+function jrnEscape(s){
+  return String(s||"")
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+function renderJournal(){
+  const view = document.getElementById("view-journal");
+  if (!view) return;
+  const kpisEl    = document.getElementById("journal-kpis");
+  const countTag  = document.getElementById("journal-count-tag");
+  const feedEl    = document.getElementById("journal-feed");
+  const filtersEl = document.getElementById("journal-filters");
+  const searchEl  = document.getElementById("journal-search");
+  if (!feedEl) return;
+
+  const all = state.journal || [];
+  const total = all.length;
+
+  // KPIs computed on full set, not filtered set
+  const now = new Date();
+  const last30 = all.filter(e => (now - e.date) / 86400000 <= 30).length;
+  const symCounts = {};
+  for (const e of all) symCounts[e.sym] = (symCounts[e.sym] || 0) + 1;
+  let topSym = null, topSymN = 0;
+  for (const [s, n] of Object.entries(symCounts)){
+    if (n > topSymN){ topSym = s; topSymN = n; }
+  }
+  const lastEntry = all[0]; // entries are sorted DESC
+  const daysSince = lastEntry ? Math.floor((now - lastEntry.date) / 86400000) : null;
+
+  // Trade-only stats (entries with shares & price)
+  const trades = all.filter(e =>
+    (e.action === "BUY" || e.action === "ADD" || e.action === "SELL" || e.action === "TRIM")
+    && e.price != null);
+  // Win-rate proxy: BUYs/ADDs whose current price > entry price
+  const buys = trades.filter(e => e.action === "BUY" || e.action === "ADD");
+  let wins = 0, losses = 0;
+  for (const e of buys){
+    const cur = getCurrentPriceFor(e.sym);
+    if (cur == null) continue;
+    if (cur >= e.price) wins++; else losses++;
+  }
+  const winTotal = wins + losses;
+  const winPct = winTotal > 0 ? (wins / winTotal) * 100 : null;
+
+  // Render KPIs
+  if (kpisEl){
+    kpisEl.innerHTML = `
+      <div class="jrn-kpi">
+        <span class="jrn-kpi-lbl">Total Entries</span>
+        <span class="jrn-kpi-val">${total}</span>
+        <span class="jrn-kpi-sub">${total === 0 ? '—' : 'across ' + Object.keys(symCounts).length + ' symbol' + (Object.keys(symCounts).length===1?'':'s')}</span>
+      </div>
+      <div class="jrn-kpi">
+        <span class="jrn-kpi-lbl">Last 30 Days</span>
+        <span class="jrn-kpi-val">${last30}</span>
+        <span class="jrn-kpi-sub">${last30 > 0 ? (last30/30).toFixed(1) + ' / day avg' : 'no recent entries'}</span>
+      </div>
+      <div class="jrn-kpi">
+        <span class="jrn-kpi-lbl">Most Logged</span>
+        <span class="jrn-kpi-val" style="font-size:18px">${topSym || '—'}</span>
+        <span class="jrn-kpi-sub">${topSym ? topSymN + ' entr' + (topSymN===1?'y':'ies') : 'add an entry'}</span>
+      </div>
+      <div class="jrn-kpi">
+        <span class="jrn-kpi-lbl">Open Trades In Profit</span>
+        <span class="jrn-kpi-val ${winPct == null ? '' : (winPct >= 50 ? 'pos' : 'neg')}" style="color:${winPct == null ? 'var(--text-muted)' : (winPct >= 50 ? 'var(--pos)' : 'var(--neg)')}">${winPct == null ? '—' : winPct.toFixed(0) + '%'}</span>
+        <span class="jrn-kpi-sub">${winTotal > 0 ? wins + ' of ' + winTotal + ' BUY/ADD entries' : 'need price data'}</span>
+      </div>
+    `;
+  }
+
+  // Apply filters
+  const filt = state.journalFilter || { action: "ALL", search: "", symbol: "" };
+  const q = (filt.search || "").trim().toLowerCase();
+  const filtered = all.filter(e => {
+    if (filt.action !== "ALL" && e.action !== filt.action) return false;
+    if (filt.symbol && e.sym !== filt.symbol) return false;
+    if (q){
+      const hay = (e.sym + " " + e.note + " " + e.tags.join(" ")).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  if (countTag) countTag.textContent = `${filtered.length} ENTR${filtered.length === 1 ? 'Y' : 'IES'}${filtered.length !== total ? ` / ${total}` : ''}`;
+
+  // Empty states
+  if (total === 0){
+    feedEl.innerHTML = `
+      <div class="jrn-empty">
+        <div class="jrn-empty-icon">∅</div>
+        <div class="jrn-empty-title">No journal entries yet</div>
+        <div class="jrn-empty-desc">Open your Google Sheet, add a tab named <code style="background:var(--bg-input);padding:1px 6px;border-radius:3px;color:var(--accent-bright);font-family:'JetBrains Mono',monospace">journal</code>, and add your first row. Entries appear here on next refresh.</div>
+      </div>`;
+    return;
+  }
+  if (filtered.length === 0){
+    feedEl.innerHTML = `
+      <div class="jrn-empty">
+        <div class="jrn-empty-icon">⌕</div>
+        <div class="jrn-empty-title">No entries match these filters</div>
+        <div class="jrn-empty-desc">Try clearing the search or selecting "All".</div>
+      </div>`;
+    return;
+  }
+
+  // Group by month
+  const monthNames = ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE",
+                      "JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
+  const monthShort = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  let html = "";
+  let currentMonthKey = null;
+  let monthBuffer = [];
+  let monthCount = 0;
+
+  const flushMonth = () => {
+    if (currentMonthKey == null) return;
+    const [y, m] = currentMonthKey.split("-").map(Number);
+    html += `<div class="jrn-month-head">${monthNames[m]} ${y} <span class="jrn-month-count">· ${monthCount} entr${monthCount===1?'y':'ies'}</span></div>`;
+    html += monthBuffer.join("");
+  };
+
+  for (const e of filtered){
+    const y = e.date.getFullYear();
+    const m = e.date.getMonth();
+    const key = `${y}-${m}`;
+    if (key !== currentMonthKey){
+      flushMonth();
+      currentMonthKey = key;
+      monthBuffer = [];
+      monthCount = 0;
+    }
+    monthCount++;
+
+    // Trade details
+    let tradeBlock = "";
+    if (e.shares != null && e.price != null){
+      const total = e.shares * e.price;
+      tradeBlock = `<span class="jrn-trade">${e.shares.toLocaleString()}<span class="jrn-mult">×</span>$${e.price.toFixed(2)}<span class="jrn-trade-total">= $${total.toLocaleString(undefined,{maximumFractionDigits:0})}</span></span>`;
+    } else if (e.price != null){
+      tradeBlock = `<span class="jrn-trade">@ $${e.price.toFixed(2)}</span>`;
+    }
+
+    // Live performance for actionable entries with a price
+    let perfBlock = "";
+    if (e.price != null && (e.action === "BUY" || e.action === "ADD" || e.action === "SELL" || e.action === "TRIM" || e.action === "WATCH")){
+      const cur = getCurrentPriceFor(e.sym);
+      if (cur != null && e.price > 0){
+        const chg = ((cur - e.price) / e.price) * 100;
+        // For SELL/TRIM, "since" perspective: if you sold at X and price went up Y%, that's a missed gain (color it negative for the seller's perspective)
+        const isExit = (e.action === "SELL" || e.action === "TRIM");
+        const isPosForUser = isExit ? chg <= 0 : chg >= 0;
+        const cls = isPosForUser ? "pos" : "neg";
+        const sign = chg >= 0 ? "+" : "";
+        const label = isExit ? "vs now" : "since";
+        perfBlock = `<span class="jrn-perf-pill ${cls}" title="Current: $${cur.toFixed(2)} · ${isExit?'price moved ':'gained '}${sign}${chg.toFixed(2)}% since ${e.dateStr}">${sign}${chg.toFixed(2)}% ${label}</span>`;
+      }
+    }
+
+    const dayStr = String(e.date.getDate()).padStart(2,"0");
+    const moStr  = monthShort[m].toUpperCase();
+    const yrStr  = y;
+
+    const tagsHtml = e.tags.length > 0
+      ? `<div class="jrn-tags">${e.tags.map(t => `<span class="jrn-tag">${jrnEscape(t)}</span>`).join("")}</div>`
+      : "";
+    const noteHtml = e.note ? `<p class="jrn-note">${jrnEscape(e.note)}</p>` : "";
+
+    monthBuffer.push(`
+      <div class="jrn-entry">
+        <div class="jrn-date">
+          <span class="jrn-date-day">${dayStr}</span>
+          <span class="jrn-date-mo">${moStr}</span>
+          <span class="jrn-date-yr">${yrStr}</span>
+        </div>
+        <div class="jrn-action jrn-a-${e.action.toLowerCase()}">${e.action}</div>
+        <div class="jrn-body">
+          <div class="jrn-head-row">
+            <span class="jrn-sym clickable-sym" data-sym="${e.sym}">${e.sym}</span>
+            ${tradeBlock}
+            ${perfBlock}
+          </div>
+          ${noteHtml}
+          ${tagsHtml}
+        </div>
+      </div>
+    `);
+  }
+  flushMonth();
+  feedEl.innerHTML = html;
+}
+
+// Filter wiring (set up once on page load)
+function initJournalControls(){
+  const filtersEl = document.getElementById("journal-filters");
+  const searchEl  = document.getElementById("journal-search");
+  if (filtersEl){
+    filtersEl.addEventListener("click", (e) => {
+      const chip = e.target.closest(".jrn-chip");
+      if (!chip) return;
+      filtersEl.querySelectorAll(".jrn-chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      state.journalFilter.action = chip.dataset.action;
+      renderJournal();
+    });
+  }
+  if (searchEl){
+    let searchTimer = null;
+    searchEl.addEventListener("input", (e) => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        state.journalFilter.search = e.target.value;
+        renderJournal();
+      }, 150);
+    });
+  }
+}
+initJournalControls();
+
 
 function renderIsrael(){
   const idxBody = document.querySelector("#il-indices tbody");
@@ -6549,8 +7299,114 @@ function renderIsrael(){
   }
 }
 
+/* ============================================================
+   MACRO STRIP + BREADTH — global market context bar
+   ============================================================ */
+// Each entry: label + accepted symbols (first found in state.indices wins).
+// User just needs to add the symbols to their `sectors` tab in the Sheet.
+const MACRO_STRIP = [
+  { label: "VIX",   syms: ["^VIX","VIX","VIXY"] },
+  { label: "DXY",   syms: ["DXY","UUP","DX-Y.NYB"] },
+  { label: "10Y",   syms: ["^TNX","TNX","IEF"] },
+  { label: "OIL",   syms: ["USO","CL=F","OIL","BNO"] },
+  { label: "GOLD",  syms: ["GLD","GC=F","GOLD","IAU"] },
+  { label: "BTC",   syms: ["BTC-USD","IBIT","GBTC","BTC"] },
+];
+
+function findMacroRow(syms){
+  // state.indices rows: [type, sym, name, price, d1, w1, m1, q3, ytd, y1, hi52, lo52, ...]
+  if (!state.indices) return null;
+  for (const sym of syms){
+    const row = state.indices.find(r => r[1] === sym);
+    if (row) return { sym, name: row[2], price: row[3], d1: row[4] };
+  }
+  return null;
+}
+
+function fmtMacroPrice(v, sym){
+  if (v == null || isNaN(v)) return "—";
+  if (sym === "BTC-USD" || sym === "BTC" || (sym && sym.startsWith("BTC"))){
+    if (v >= 1000) return v.toLocaleString(undefined,{maximumFractionDigits:0});
+  }
+  if (Math.abs(v) >= 1000) return v.toLocaleString(undefined,{maximumFractionDigits:0});
+  if (Math.abs(v) >= 100)  return v.toFixed(1);
+  return v.toFixed(2);
+}
+
+function renderMacroStrip(){
+  const wrap = document.getElementById("macro-strip");
+  if (!wrap) return;
+  if (!state.indices || state.indices.length === 0){
+    wrap.innerHTML = "";
+    return;
+  }
+  const macroChips = MACRO_STRIP.map(m => {
+    const found = findMacroRow(m.syms);
+    if (!found){
+      const hint = `Add one of: ${m.syms.join(", ")} to your "sectors" tab`;
+      return `<div class="macro-chip unavail" title="${hint}">
+        <span class="macro-chip-lbl">${m.label}</span>
+        <span class="macro-chip-val">—</span>
+      </div>`;
+    }
+    const cls = found.d1 == null ? "" : (found.d1 >= 0 ? "pos" : "neg");
+    const sign = (found.d1 != null && found.d1 >= 0) ? "+" : "";
+    const chg = found.d1 != null ? `${sign}${found.d1.toFixed(2)}%` : "—";
+    const tip = `${m.label} (${found.sym})${found.name ? " · " + found.name : ""}`;
+    return `<div class="macro-chip clickable-sym" data-sym="${found.sym}" title="${tip}">
+      <span class="macro-chip-lbl">${m.label}</span>
+      <span class="macro-chip-val">${fmtMacroPrice(found.price, found.sym)}</span>
+      <span class="macro-chip-chg ${cls}">${chg}</span>
+    </div>`;
+  }).join("");
+
+  // Breadth from S&P 500 components (state.stocks) + 52w proximity from watchlist
+  const stocks = state.stocks || [];
+  let advCount = 0, decCount = 0, unchCount = 0;
+  for (const s of stocks){
+    if (s.chg == null || isNaN(s.chg)) continue;
+    if (s.chg > 0.05) advCount++;
+    else if (s.chg < -0.05) decCount++;
+    else unchCount++;
+  }
+  const totalBreadth = advCount + decCount + unchCount;
+  let breadthChip = "";
+  if (totalBreadth > 0){
+    const advPct = (advCount / totalBreadth) * 100;
+    const tip = `S&P breadth · ${advCount} up, ${decCount} down, ${unchCount} flat (n=${totalBreadth})`;
+    breadthChip = `<div class="breadth-chip" title="${tip}">
+      <span class="breadth-chip-lbl">Breadth</span>
+      <span class="breadth-up">${advCount}↑</span>
+      <span class="breadth-bar"><span class="breadth-bar-fill" style="width:${advPct.toFixed(1)}%"></span></span>
+      <span class="breadth-down">${decCount}↓</span>
+    </div>`;
+  }
+
+  // 52-week proximity from watchlist (within 2% of 52w high or low)
+  let nearHi = 0, nearLo = 0;
+  const wl = state.watchlist || [];
+  for (const w of wl){
+    if (w.price == null || w.hi52 == null || w.lo52 == null) continue;
+    if (w.hi52 > 0 && w.price >= w.hi52 * 0.98) nearHi++;
+    if (w.lo52 > 0 && w.price <= w.lo52 * 1.02) nearLo++;
+  }
+  let nearChip = "";
+  if (wl.length > 0){
+    const tip = `Watchlist symbols within 2% of 52-week high/low (n=${wl.length})`;
+    nearChip = `<div class="breadth-chip" title="${tip}">
+      <span class="breadth-chip-lbl">52W</span>
+      <span class="breadth-near"><span class="pos">${nearHi}</span> hi · <span class="neg">${nearLo}</span> lo</span>
+    </div>`;
+  }
+
+  const divider = (breadthChip || nearChip) ? `<span class="macro-divider"></span>` : "";
+  wrap.innerHTML = macroChips + divider + breadthChip + nearChip;
+}
+
+
 function renderAll(){
   renderIndexCards();
+  renderMacroStrip();
   renderGauge();
   renderPerfChart();
   renderSectorBars();
@@ -6564,6 +7420,7 @@ function renderAll(){
   renderAlerts();
   renderPortfolio();
   renderIsrael();
+  renderJournal();
   checkAlerts();
   // Apply flash-on-change AFTER DOM is updated, BEFORE saving new snapshot
   applyFlashes();
@@ -6697,39 +7554,6 @@ document.querySelectorAll("#wl-tf-btns .tf-btn").forEach(btn => {
 // Initialize header buttons that depend on CONFIG
 initOpenSheetBtn();
 
-// Track next refresh time for countdown display
-state.nextRefreshAt = null;
-
-function fmtCountdown(secLeft){
-  if (secLeft == null || secLeft <= 0) return "Refreshing…";
-  if (secLeft < 60) return `Next refresh in ${Math.ceil(secLeft)}s`;
-  const m = Math.floor(secLeft / 60);
-  const s = Math.ceil(secLeft % 60);
-  if (s === 60) return `Next refresh in ${m + 1}m`;
-  return `Next refresh in ${m}m ${s}s`;
-}
-
-function tickCountdown(){
-  const el = document.getElementById("refresh-countdown");
-  if (!el) return;
-  if (!state.live){
-    el.textContent = state.consecutiveFails > 0 ? "Connection error · retrying" : "Loading data…";
-    el.style.color = state.consecutiveFails > 0 ? "var(--neg)" : "";
-    return;
-  }
-  if (state.nextRefreshAt == null){
-    el.textContent = "Live data";
-    el.style.color = "";
-    return;
-  }
-  const secLeft = (state.nextRefreshAt - Date.now()) / 1000;
-  el.textContent = fmtCountdown(secLeft);
-  // Highlight when imminent
-  if (secLeft <= 5 && secLeft > 0) el.style.color = "var(--accent-bright)";
-  else el.style.color = "";
-}
-setInterval(tickCountdown, 1000);
-
 // Smart refresh scheduler with exponential backoff on failures
 function scheduleNextLoad(){
   const fails = state.consecutiveFails || 0;
@@ -6737,11 +7561,7 @@ function scheduleNextLoad(){
   const backoffMultiplier = Math.min(Math.pow(2, fails), CONFIG.maxRefreshSec / baseSec);
   const delaySec = Math.min(baseSec * backoffMultiplier, CONFIG.maxRefreshSec);
   if (fails > 0) console.log(`[scheduler] next load in ${delaySec}s (${fails} consecutive fails)`);
-  state.nextRefreshAt = Date.now() + delaySec * 1000;
-  tickCountdown();
   setTimeout(async () => {
-    state.nextRefreshAt = null;
-    tickCountdown();
     await loadLive();
     scheduleNextLoad();
   }, delaySec * 1000);
