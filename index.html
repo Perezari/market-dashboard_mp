@@ -347,7 +347,7 @@
   .setup-screen{position:fixed;inset:0;background:var(--bg-app);z-index:9000;
     display:none;align-items:center;justify-content:center;padding:20px;overflow:auto}
   .setup-screen.show{display:flex}
-  .setup-card{background:var(--bg-app);border:1px solid var(--border);border-radius:12px;
+  .setup-card{background:var(--bg-panel);border:1px solid var(--border);border-radius:12px;
     width:min(540px,100%);padding:28px 32px;box-shadow:var(--shadow);
     display:flex;flex-direction:column;gap:18px}
   .setup-brand{display:flex;align-items:center;gap:12px;margin-bottom:4px}
@@ -836,10 +836,16 @@
 
   /* Mobile */
   @media (max-width: 768px){
-    .settings-overlay{padding:0;align-items:stretch}
+    .settings-overlay{padding:0;background:var(--bg-app)}
     .settings-modal{
-      width:100%;height:100vh;height:100dvh;max-height:none;
-      border-radius:0;border-left:0;border-right:0;border-top:0;
+      position:absolute;
+      inset:0;
+      width:auto;max-width:none;
+      height:auto;max-height:none;
+      background:var(--bg-app);
+      border:0;border-radius:0;
+      box-shadow:none;
+      display:flex;flex-direction:column;
     }
     .settings-header{padding:calc(16px + env(safe-area-inset-top)) 18px 14px}
     .settings-body{padding:8px 18px calc(22px + env(safe-area-inset-bottom))}
@@ -860,7 +866,7 @@
   .modal-backdrop.show{display:flex}
   @keyframes modalFadeIn{from{opacity:0}to{opacity:1}}
 
-  .modal{background:var(--bg-app);border:1px solid var(--border);
+  .modal{background:var(--bg-panel);border:1px solid var(--border);
     border-radius:12px;width:min(640px,calc(100vw - 40px));max-height:calc(100vh - 60px);
     overflow:auto;box-shadow:0 12px 48px rgba(0,0,0,0.5);
     animation:modalSlideIn 0.25s ease-out;display:flex;flex-direction:column;
@@ -1552,25 +1558,19 @@
     .pf-table{font-size:10.5px}
     .pf-alloc-bar{width:50px}
 
-    /* === MODAL — full screen on mobile === */
-    .modal-backdrop{
-      padding:0;
-      flex-direction:column;
-      align-items:stretch;
-      justify-content:flex-start;
-      top:0;right:0;bottom:0;left:0;
-    }
+    /* === MODAL — full screen, dead simple === */
+    .modal-backdrop{padding:0;background:var(--bg-app)}
     .modal{
-      width:100%;max-width:100%;
-      max-height:none;
-      flex:1 1 auto;
-      min-height:0;
-      display:flex;flex-direction:column;
-      border-radius:0;border-left:0;border-right:0;border-top:0;border-bottom:0;
+      position:absolute;
+      inset:0;
+      width:auto;max-width:none;
+      max-height:none;height:auto;
+      background:var(--bg-app);
+      border:0;border-radius:0;
+      box-shadow:none;
       overflow-y:auto;-webkit-overflow-scrolling:touch;
+      display:flex;flex-direction:column;
     }
-    /* Push the footer to the bottom of the modal so there's never empty space */
-    .modal-footer{margin-top:auto}
     .modal-header{padding:calc(14px + env(safe-area-inset-top)) 16px 14px}
     .modal-sym{font-size:20px}
     .modal-name{font-size:12px}
@@ -1593,22 +1593,20 @@
     /* === FEAR & GREED GAUGE === */
     .gauge-wrap{padding:8px 4px}
 
-    /* === SETUP SCREEN === */
-    .setup-screen{
-      padding:0;
-      flex-direction:column;
-      align-items:stretch;
-      justify-content:flex-start;
-    }
+    /* === SETUP SCREEN — full screen, dead simple === */
+    .setup-screen{padding:0}
     .setup-card{
-      width:100%;max-width:100%;border-radius:0;
-      border-left:0;border-right:0;border-top:0;border-bottom:0;
+      position:absolute;
+      inset:0;
+      width:auto;max-width:none;
+      background:var(--bg-app);
+      border:0;border-radius:0;
+      box-shadow:none;
+      overflow-y:auto;-webkit-overflow-scrolling:touch;
       padding-top:calc(22px + env(safe-area-inset-top));
       padding-left:calc(18px + env(safe-area-inset-left));
       padding-right:calc(18px + env(safe-area-inset-right));
       padding-bottom:calc(28px + env(safe-area-inset-bottom));
-      flex:1 1 auto;
-      min-height:0;
     }
     .setup-step{padding:11px 12px;gap:10px}
     .setup-input{font-size:11px}
